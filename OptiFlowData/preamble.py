@@ -4,9 +4,11 @@ from IPython.display import set_matplotlib_formats, display
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import mglearn
-from cycler import cycler
 import matplotlib
+import torch
+import torch.nn as nn
+import seaborn as sns
+import cycler
 
 matplotlib.rc("font", family="Malgun Gothic") # windows
 # matplotlib.rc("font", family="AppleGothic") # mac
@@ -21,13 +23,13 @@ plt.rcParams["image.interpolation"] = "none"
 plt.rcParams["savefig.bbox"] = "tight"
 plt.rcParams["lines.linewidth"] = 2
 plt.rcParams["legend.numpoints"] = 1
-plt.rc(
-    "axes",
-    prop_cycle=(
-        cycler("color", mglearn.plot_helpers.cm_cycle.colors)
-        + cycler("linestyle", ["-", "-", "--", (0, (3, 3)), (0, (1.5, 1.5))])
-    ),
-)
+# plt.rc(
+#     "axes",
+#     prop_cycle=(
+#         cycler("color", mglearn.plot_helpers.cm_cycle.colors)
+#         + cycler("linestyle", ["-", "-", "--", (0, (3, 3)), (0, (1.5, 1.5))])
+#     ),
+# )
 
 
 np.set_printoptions(precision=3, suppress=True)
