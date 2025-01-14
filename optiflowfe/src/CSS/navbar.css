@@ -1,0 +1,10 @@
+.navBG {
+    position: absolute;
+    width: 260px;
+    height: 100vh;
+    left: 0px;
+    top: 0px;
+
+    background: linear-gradient(177.74deg, #7099D7 0.84%, #003149 99.37%);
+
+}
