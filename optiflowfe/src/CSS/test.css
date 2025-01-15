@@ -1,0 +1,41 @@
+.wave-container {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  overflow: hidden;
+  background-color: white;
+  border: 1px black solid;
+}
+
+.wave {
+  border-right: 0;
+  border-bottom: 0;
+  border-top: 30px solid transparent;
+  margin: 10px;
+  padding: 5px;
+  -webkit-border-image: url("C:\OptiFlow\optiflowfe\public\images\wavebox.png") round;
+  border-image: url("C:\OptiFlow\optiflowfe\public\images\wavebox.png") round;
+  border-image-slice: 37%;
+}
+
+.wave-path {
+  /* animation: waveAnimation 3s infinite ease-in-out; */
+
+}
+
+
+@keyframes waveMove {
+  0% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-50%);
+    /* 왼쪽으로 이동 */
+  }
+
+  100% {
+    transform: translateX(0);
+    /* 원래 위치로 복귀 */
+  }
+}
