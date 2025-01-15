@@ -63,6 +63,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.withClaim("memberId", user.getUsername())
 				.sign(Algorithm.HMAC256("com.optiflow.jwt"));
 		
+		response.addHeader("username", user.getUsername());
 		response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 		response.setStatus(HttpStatus.OK.value());
 	}

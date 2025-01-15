@@ -21,11 +21,12 @@ public class SuccessHandler implements AuthenticationSuccessHandler{
 	
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-        String username = authentication.getName();
-
-        String jwtToken = JWTUtil.getJWT(username);
-
-        String redirectUrl = String.format("http://localhost:3000/member", jwtToken);
+//        String username = authentication.getName();
+//
+//        String jwtToken = JWTUtil.getJWT(username);
+//        String redirectUrl = String.format("http://localhost:3000/member", jwtToken);
+        
+        String redirectUrl = String.format("http://localhost:3000/member");
         response.sendRedirect(redirectUrl);
 	}
 
