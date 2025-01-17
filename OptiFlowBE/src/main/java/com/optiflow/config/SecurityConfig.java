@@ -42,6 +42,7 @@ public class SecurityConfig {
 //				.requestMatchers("/member/**").authenticated()
 //				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest().permitAll());
+		
 		http.httpBasic(basic -> basic.disable());
 		http.formLogin(form -> form.successHandler(successHandler));
 		
