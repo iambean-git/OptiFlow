@@ -23,13 +23,6 @@ plt.rcParams["image.interpolation"] = "none"
 plt.rcParams["savefig.bbox"] = "tight"
 plt.rcParams["lines.linewidth"] = 2
 plt.rcParams["legend.numpoints"] = 1
-# plt.rc(
-#     "axes",
-#     prop_cycle=(
-#         cycler("color", mglearn.plot_helpers.cm_cycle.colors)
-#         + cycler("linestyle", ["-", "-", "--", (0, (3, 3)), (0, (1.5, 1.5))])
-#     ),
-# )
 
 
 np.set_printoptions(precision=3, suppress=True)
@@ -37,4 +30,4 @@ np.set_printoptions(precision=3, suppress=True)
 pd.set_option("display.max_columns", None)
 pd.set_option("display.precision", 2)
 
-__all__ = ["np", "mglearn", "display", "plt", "pd"]  
+__all__ = ["np", "display", "plt", "pd", "torch", "nn", "sns"]  
