@@ -1,23 +1,24 @@
 package com.optiflow.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.optiflow.domain.Reservoir;
 import com.optiflow.service.ReservoirService;
 
-@Controller
-@RequestMapping("/api/reservoir")
+@RestController
+@RequestMapping("/api")
 public class ReservoirController {
 	
 	@Autowired
 	private ReservoirService reservoirService;
 	
-	@GetMapping
-	public Reservoir getReservoirByName(@PathVariable String name) {
-		return null;
+	@GetMapping("/reservoirs")
+	public List<Reservoir> getAllReservoir() {
+		return reservoirService.getAllReservoir();
 	}
 }

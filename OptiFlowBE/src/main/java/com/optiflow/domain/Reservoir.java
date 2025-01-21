@@ -33,10 +33,13 @@ public class Reservoir {
     @Column(name = "location")
     private String location;
     
-    @Column(name = "capacity")
-    private Float capacity;
+    @Column(name = "height")
+    private Float height;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_updated")
 	private Date lastUpdated = new Date();
+    
+    @Column(name = "capacity")
+    private Float capacity;
 }

@@ -14,7 +14,7 @@ public class ReservoirService {
 	@Autowired
 	private ReservoirRepository reservoirRepo;
 	
-	public List<Reservoir> getReservoirByName(String name){
-		return reservoirRepo.findByName(name);
+	public List<Reservoir> getAllReservoir(){
+		return reservoirRepo.findAll();
 	}
 }

@@ -1,11 +1,9 @@
-import NavBar from "../COMPONENTS/NavBar";
+import NavBar from "../components/NavBar";
 
 export default function Dashboard() {
   return (
     <div className="w-full h-screen ">
-      <NavBar/>
-
-     
+      <NavBar />
     </div>
-  )
+  );
 }
