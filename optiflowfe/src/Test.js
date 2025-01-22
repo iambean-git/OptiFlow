@@ -1,4 +1,4 @@
-import "./CSS/test.css";
+import "./css/test.css";
 
 import { useNavigate } from "react-router-dom";
 import WaterDrop from "./test/WaterDropTest";

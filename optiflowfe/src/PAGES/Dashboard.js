@@ -1,5 +1,5 @@
-import NavBar from "../COMPONENTS/NavBar";
-import WaterFlow from "../COMPONENTS/waterFlow/WaterFlow";
+import NavBar from "../components/NavBar";
+import WaterFlow from "../components/waterFlow/WaterFlow";
 
 export default function Dashboard() {
   return (
