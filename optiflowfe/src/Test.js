@@ -1,6 +1,7 @@
 import "./CSS/test.css";
 
 import { useNavigate } from "react-router-dom";
+import WaterDrop from "./test/WaterDropTest";
 
 export default function Test() {
   const navigate = useNavigate();
@@ -31,6 +32,9 @@ export default function Test() {
         </svg>
       </div>
 
+      <div className="size-10 bg-lime-50">
+        <WaterDrop/>
+      </div>
     </>
 
   )

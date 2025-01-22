@@ -5,7 +5,6 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 import Test from "./Test";
 import GraphTest from "./test/GraphTest";
-import FlowTest from "./test/FlowTest";
 import FreeTest from "./test/FreeTest";
 
 import Signin from "./pages/Signin";
@@ -16,12 +15,12 @@ import MapTest from "./mapTest/MapTest";
 function App() {
   return (
     <BrowserRouter>
-      {/* <div className="w-[100px] h-[100px] bg-red-50"> */}
+
+     {/* <div className="w-[100px] h-[100px] bg-red-50"> */}
       <Routes>
         <Route path="/test" element={<Test />} />
         <Route path="/graph" element={<GraphTest />} />
-        <Route path="/flow" element={<FlowTest />} />
-
+        
         <Route path="/free" element={<FreeTest />} />
 
         <Route path="/login" element={<Signin />} />
