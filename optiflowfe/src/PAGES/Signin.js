@@ -1,4 +1,4 @@
-import "../CSS/signin.css";
+import "../css/signin.css";
 import loginBG from "../assets/images/loginBG.png";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
