@@ -7,13 +7,15 @@ import Test from "./Test";
 import GraphTest from "./test/GraphTest";
 import FreeTest from "./test/FreeTest";
 
-import Signin from "./PAGES/Signin";
-import Main from "./PAGES/Main";
-import Dashboard from "./PAGES/Dashboard";
+import Signin from "./pages/Signin";
+import Main from "./pages/Main";
+import Dashboard from "./pages/Dashboard";
+import MapTest from "./mapTest/MapTest";
 
 function App() {
   return (
     <BrowserRouter>
+
      {/* <div className="w-[100px] h-[100px] bg-red-50"> */}
       <Routes>
         <Route path="/test" element={<Test />} />
@@ -24,9 +26,9 @@ function App() {
         <Route path="/login" element={<Signin />} />
         <Route path="/" element={<Main />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/maptest" element={<MapTest />} />
       </Routes>
       {/* </div> */}
-
     </BrowserRouter>
   );
 }
