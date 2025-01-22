@@ -1,7 +1,7 @@
 import { FaChevronRight } from "react-icons/fa6";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import "../CSS/navbar.css";
+import "./navBar/navbar.css";
 
 import LocalTime from "./navBar/LocalTime";
 

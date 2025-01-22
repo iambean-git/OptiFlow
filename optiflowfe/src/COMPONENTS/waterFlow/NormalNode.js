@@ -3,8 +3,8 @@ import { Handle, Position } from '@xyflow/react';
 export default function NormalNode({ data }) {
     return (
         <>
-            <div className='w-12 h-5 flex bg-gray-300 rounded-sm justify-center items-center
-                            text-[10px]'>
+            <div className='flex bg-gray-300 rounded-sm justify-center items-center
+                            text-lg px-2 py-1'>
                 {data.label}
             </div>
 
@@ -12,14 +12,15 @@ export default function NormalNode({ data }) {
                 type="source"
                 position={Position.Top}
                 id="t-source"
-                className=""
+                className="!min-w-0 !min-h-0  !w-[2px] !h-[2px]  !border-0 !bg-[#00000000]"
             />
+
 
             <Handle
                 type="target"
                 position={Position.Top}
                 id="t-target"
-                className=""
+                className="!min-w-0 !min-h-0  !w-[2px] !h-[2px]  !border-0 !bg-[#00000000]"
             />
 
 
@@ -27,13 +28,13 @@ export default function NormalNode({ data }) {
                 type="source"
                 position={Position.Bottom}
                 id="b-source"
-                className=""
+                className="!min-w-0 !min-h-0  !w-[2px] !h-[2px]  !border-0 !bg-[#00000000]"
             />
             <Handle
                 type="target"
                 position={Position.Bottom}
                 id="b-target"
-                className=""
+                className="!min-w-0 !min-h-0  !w-[2px] !h-[2px]  !border-0 !bg-[#00000000]"
             />
         </>
     )
