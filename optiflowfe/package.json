@@ -6,7 +6,6 @@
     "@ant-design/charts": "^2.2.6",
     "@xyflow/react": "^12.4.0",
     "apexcharts": "^4.3.0",
-    "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "react": "^18.2.0",
     "react-datepicker": "^7.6.0",
