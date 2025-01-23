@@ -36,7 +36,7 @@ export default function NavBar() {
 
             {/* 메뉴 영역 */}
             <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
-                onClick={()=>console.log("대시보드 클릭")}>
+                onClick={()=>navigate("/dashboard")}>
                 <MdOutlineSpaceDashboard className="size-6 mr-2"/>
                 <p>대시보드</p>
                 <FaChevronRight className="absolute right-2" />
@@ -48,9 +48,10 @@ export default function NavBar() {
                 <FaChevronRight className="absolute right-2" />
             </div>
 
-            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer">
+            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer" 
+                onClick={()=>navigate("/regions")}>
                 <MdOutlineSpaceDashboard className="size-6 mr-2"/>
-                <p>대시보드</p>
+                <p>지역별</p>
                 <FaChevronRight className="absolute right-2" />
             </div>
 

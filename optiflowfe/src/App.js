@@ -11,6 +11,7 @@ import Signin from "./pages/Signin";
 import Main from "./pages/Main";
 import Dashboard from "./pages/Dashboard";
 import MapTest from "./mapTest/MapTest";
+import Regions from "./pages/Regions";
 
 function App() {
   return (
@@ -22,11 +23,13 @@ function App() {
         <Route path="/graph" element={<GraphTest />} />
         
         <Route path="/free" element={<FreeTest />} />
+        <Route path="/maptest" element={<MapTest />} />
 
         <Route path="/login" element={<Signin />} />
         <Route path="/" element={<Main />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/maptest" element={<MapTest />} />
+        <Route path="/regions" element={<Regions />} />
+
       </Routes>
       {/* </div> */}
     </BrowserRouter>
