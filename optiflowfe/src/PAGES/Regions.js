@@ -100,6 +100,7 @@ export default function Regions() {
   }, []);
 
   const clickMarkers = (label) => {
+    if(label=="정수장") return;
     console.log(label);
     setGraphTitle(label+" 배수지");
   };
@@ -167,19 +168,21 @@ export default function Regions() {
   }
 
   return (
-    <div className="w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
+    <div className="w-fit min-[1530px]:w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
       <NavBar />
       <div className="w-full h-screen pl-[260px] flex flex-col">
         <section className="w-full h-[160px] px-10 flex justify-between ">
           <div className="h-full flex items-end">
-            <p className="text-xs mb-[-1rem]">상기 배수장 및 배수지의 위치 정보는 참고용으로 제공된 것으로, 실제 위치와는 차이가 있을 수 있습니다.</p>
+            <h1 className="text-3xl">타이틀</h1>
+            {/* <p className="text-xs mb-[-1rem]">상기 배수장 및 배수지의 위치 정보는 참고용으로 제공된 것으로, 실제 위치와는 차이가 있을 수 있습니다.</p> */}
           </div>
           <button onClick={getMapInfo} className="bg-blue-300">지도정보보기</button>
         </section>
 
         <div className="px-10 pb-10 pt-6 w-full h-full flex">
           {/* ===== 지도 section ===== */}
-          <section className="w-full h-full min-w-[620px] pr-3">
+          <section className="w-full h-full min-w-[620px] pr-3 relative">
+            <p className="absolute bottom-2 right-5 z-10 text-xs bg-white bg-opacity-80 p-1 rounded-sm">지도에 표시된 정수장 및 배수지의 위치는 시각적 참고를 위해 설정된 가상의 위치로, 실제 위치와 다를 수 있습니다.</p>
             <div id="map" className="w-full h-full border rounded-lg"></div>
           </section>
 

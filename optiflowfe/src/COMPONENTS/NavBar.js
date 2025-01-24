@@ -35,12 +35,7 @@ export default function NavBar() {
 
 
             {/* 메뉴 영역 */}
-            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
-                onClick={()=>navigate("/dashboard")}>
-                <MdOutlineSpaceDashboard className="size-6 mr-2"/>
-                <p>대시보드</p>
-                <FaChevronRight className="absolute right-2" />
-            </div>
+            
             
             <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer">
                 <MdOutlineSpaceDashboard className="size-6 mr-2"/>
@@ -48,10 +43,17 @@ export default function NavBar() {
                 <FaChevronRight className="absolute right-2" />
             </div>
 
+            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
+                onClick={()=>navigate("/dashboard")}>
+                <MdOutlineSpaceDashboard className="size-6 mr-2"/>
+                <p>실시간 수위 정보</p>
+                <FaChevronRight className="absolute right-2" />
+            </div>
+
             <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer" 
                 onClick={()=>navigate("/regions")}>
                 <MdOutlineSpaceDashboard className="size-6 mr-2"/>
-                <p>지역별</p>
+                <p>배수지별 통계 정보</p>
                 <FaChevronRight className="absolute right-2" />
             </div>
 
