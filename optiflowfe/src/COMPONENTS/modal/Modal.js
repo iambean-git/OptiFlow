@@ -1,7 +1,7 @@
 import "./modal.css";
 
 export default function Modal({ open, close, data }) {
-    console.log("modal data : ", data);
+    // console.log("modal data : ", data);
     return (
         <div className={open ? 'openModal modal' : 'modal'}>
             {open ? (

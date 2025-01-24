@@ -105,13 +105,15 @@ export default function WaterFlow({ selectedDate }) {
 
 
     useEffect(() => {
-        fetchWaterLevel("T10:00:00");
+        console.log("WaterFlow 렌더링");
+        // fetchWaterLevel("T10:00:00");
         fetchReservoirInfo();
         // fetchdata33();
     }, []);
 
     useEffect(() => {
         console.log("시간:", selectedDate);
+        console.log("패치함");
         fetchWaterLevel(selectedDate);
     }, [selectedDate]);
 
@@ -119,10 +121,10 @@ export default function WaterFlow({ selectedDate }) {
         if (!time) return;
         // const url = `http://10.125.121.226:8080/api/waterlevels/2023-10-21T10:00:00`;
         const url = `http://10.125.121.226:8080/api/waterlevels/2023-10-21${time}`;
-        console.log("패치 url : ", url);
+        // console.log("패치 url : ", url);
         const resp = await fetch(url);
         const data = await resp.json();  // JSON 형식으로 응답 받기
-        console.log("수위 data :", data);
+        // console.log("수위 data :", data);
         setWaterLevel(data);
     }
 
@@ -146,7 +148,7 @@ export default function WaterFlow({ selectedDate }) {
             {
                 id: 'base', type: 'normal', position: { x: 0, y: 0 },
                 dragHandle: "false",
-                onclick: console.log("click"),
+                // onclick: console.log("click"),
                 data: { label: '정수지' },
             },
 

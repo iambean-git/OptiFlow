@@ -2,7 +2,7 @@ import NavBar from "../components/NavBar";
 import WaterFlow from "../components/waterFlow/WaterFlow";
 
 import { FaRegCalendar } from "react-icons/fa";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, forwardRef } from "react";
 import DatePicker from "react-datepicker";
 import { ko } from 'date-fns/locale';
 
@@ -44,6 +44,7 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    console.log("[Dashboard] 날짜 및 시간 선택 : ", selectedDate);
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
     const day = String(selectedDate.getDate()).padStart(2, "0");
@@ -51,9 +52,20 @@ export default function Dashboard() {
     const minutes = String(selectedDate.getMinutes()).padStart(2, "0");
     const seconds = String(selectedDate.getSeconds()).padStart(2, "0");
     // setTextDate(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}`);
+
     setTextDate(`T${hours}:${minutes}:${seconds}`);
   }, [selectedDate]);
 
+  const CustomInput = forwardRef(
+    ({ value, onClick }, ref) => (
+      <div className="mx-2 px-12 py-2 flex items-center relative bg-white border rounded-lg"
+        style={{boxShadow:"0px 0px 15px rgba(0, 0, 0, 0.15)"}}
+        onClick={onClick} ref={ref}>
+        <FaRegCalendar className='absolute left-4' />
+        <p className='left-2'>{value}</p>
+      </div>
+    ),
+  );
   return (
     <div className="w-full min-w-[1000px] h-screen bg-[#f2f2f2] ">
       <NavBar />
@@ -66,92 +78,71 @@ export default function Dashboard() {
           </div>
 
           {/* 달력 */}
-          <div className="h-full bg-blue-50 relative  ">
-            <section className="absolute bottom-0 right-0 !focus-within::border-2 !focus-within:border-black ">
-              {/* <div className={`absolute bottom-[37px] left-2 bg-[#f2f2f2] px-1 z-10 text-[10px]
-                              ${isFocused ? "text-blue-600" : "text-gray-600"}`}>
-                DATE
-              </div> */}
-              <label className={`flex items-center w-60  rounded-md text-gray-700 bg-white
-                                ${isFocused ? "border-2 border-[#6c717c]" : "border-2 border-[#e5e7eb]"}`
-              } >
-                <DatePicker
-                  renderCustomHeader={({
-                    date,
-                    changeYear,
-                    changeMonth,
-                    decreaseMonth,
-                    increaseMonth,
-                    prevMonthButtonDisabled,
-                    nextMonthButtonDisabled,
-                  }) => (
-                    <div className="헤더">
-                      <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}
-                        className="mx-2">
-                        {"<"}
-                      </button>
+          <div className="h-full  relative min-w-72 ">
+            <section className="absolute bottom-0 right-0 ">
+              <DatePicker
+                renderCustomHeader={({
+                  date,
+                  changeYear,
+                  changeMonth,
+                  decreaseMonth,
+                  increaseMonth,
+                  prevMonthButtonDisabled,
+                  nextMonthButtonDisabled,
+                }) => (
+                  <div className="헤더">
+                    <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}
+                      className="mx-2">
+                      {"<"}
+                    </button>
 
-                      {/* 년도 */}
-                      <select
-                        value={(date.getFullYear())}
-                        onChange={({ target: { value } }) => changeYear(value)}
-                        className="w-[60px] h-6 pl-1 rounded-lg focus:outline-none text-black"
-                      >
-                        {years.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="ml-1 mr-3">년</span>
+                    {/* 년도 */}
+                    <select
+                      value={(date.getFullYear())}
+                      onChange={({ target: { value } }) => changeYear(value)}
+                      className="w-[60px] h-6 pl-1 rounded-lg focus:outline-none text-black"
+                    >
+                      {years.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="ml-1 mr-3">년</span>
 
-                      {/* 월 */}
-                      <select
-                        value={months[date.getMonth()]}
-                        onChange={({ target: { value } }) =>
-                          changeMonth(months.indexOf(value))
-                        }
-                        className="w-[60px] h-6 pl-1 rounded-lg focus:outline-none text-black"
-                      >
-                        {months.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="ml-1">월</span>
-                      <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}
-                        className="mx-2">
-                        {">"}
-                      </button>
-                    </div>
+                    {/* 월 */}
+                    <select
+                      value={months[date.getMonth()]}
+                      onChange={({ target: { value } }) =>
+                        changeMonth(months.indexOf(value))
+                      }
+                      className="w-[60px] h-6 pl-1 rounded-lg focus:outline-none text-black"
+                    >
+                      {months.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="ml-1">월</span>
+                    <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}
+                      className="mx-2">
+                      {">"}
+                    </button>
+                  </div>
 
-                  )}
-                  ref={datePickerRef} // ref 추가
-                  selected={selectedDate}
-                  className="px-2 py-3 flex flex-col bg- justify-center  ml-2 text-sm items-center  focus:outline-none"
-                  locale={ko}
-                  dateFormat={"yyyy/MM/dd HH:mm"}
-                  maxDate={maxDate}
-                  onFocus={() => setIsFocused(true)} // 포커스 시 상태 업데이트
-                  onBlur={() => setIsFocused(false)} // 블러 시(포커스 해제 시) 상태 해제
+                )}
+                selected={selectedDate}
+                // className="px-2 py-3 flex flex-col bg- justify-center  ml-2 text-sm items-center  focus:outline-none"
+                locale={ko}
+                dateFormat={"yyyy/MM/dd HH:mm"}
+                maxDate={maxDate}
 
-                  timeIntervals={15} // 30분 간격
-                  showTimeSelect
-                  open={isFocused}
-                  onChange={date => {
-                    // date.setHours(0, 0, 0, 0);
-                    setSelectedDate(date);
-
-                    // 날짜와 시간이 선택되었을 때 자동으로 달력 닫기
-                    if (date.getHours() !== 0 || date.getMinutes() !== 0) {
-                      setIsFocused(false);
-                    }
-                  }}
-                />
-
-                <FaRegCalendar className="ml-6" />
-              </label>
+                timeIntervals={15} // 30분 간격
+                showTimeSelect
+                onChange={date => setSelectedDate(date)}
+                customInput={<CustomInput/>}
+              />
             </section>
 
           </div>
