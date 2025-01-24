@@ -27,7 +27,7 @@ function MapTest() {
   return (
     <MapDiv
       style={{
-        height: "800px", // 높이를 문자열로 지정해야 브라우저에서 올바르게 인식합니다.
+        height: "800px",
       }}
     >
       <NaverMap
