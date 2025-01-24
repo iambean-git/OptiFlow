@@ -10,17 +10,17 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
+import DrainageNode from './DrainageNode';
+import InterSectionNode from './InterSectionNode';
+import NormalNode from './NormalNode';
 
-import FlowEdge from "./FlowEdge";
+import FlowEdge from './FlowEdge';
 
-import Modal from "../modal/Modal";
+import Modal from '../modal/Modal';
 
-const nodeTypes = {
-  drain: DrainageNode,
-  intersection: InterSectionNode,
-  normal: NormalNode,
-};
-const edgeTypes = { flowEdge: FlowEdge };
+const nodeTypes = { drain: DrainageNode, intersection: InterSectionNode, normal: NormalNode };
+const edgeTypes = { flowEdge: FlowEdge }
+
 
 const initialEdges = [
     { id: 'base-n1', source: 'base', target: 'n1', sourceHandle: "b-source", targetHandle: "t-target", animated: true },
