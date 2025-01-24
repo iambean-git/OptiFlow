@@ -1,14 +1,15 @@
-import { RiMapPinFill } from "react-icons/ri";
+
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
 
 import sggData from "../assets/data/sggdata.json";
+import WaterOutFlowGraph from "../components/graph/WaterOutFlowGraph";
 
 export default function Regions() {
   const { kakao } = window;
   const [map, setMap] = useState(null);
   const [container, setContainer] = useState(null);
-
+  const [graphTitle, setGraphTitle] = useState("J 배수지");
 
   // 지도 생성
   useEffect(() => {
@@ -45,27 +46,75 @@ export default function Regions() {
       }
     });
 
-    const imgSrc = "/images/maker_red.png";
-    const imageSize = new kakao.maps.Size(64, 69) // 마커이미지의 크기입니다
-    const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+    const markersInfo = [
+      { type: "waterPlant", label: "정수장", positon: [35.9775480870027, 127.227240562789] },
+      { type: "reservoir", label: "A", positon: [35.73, 126.92] },
+      { type: "reservoir", label: "B", positon: [35.59, 126.81] },
+      { type: "reservoir", label: "C", positon: [35.56, 126.92] },
+      { type: "reservoir", label: "D", positon: [36.04, 127.01] },
+      { type: "reservoir", label: "E", positon: [35.94, 126.96] },
+      { type: "reservoir", label: "F", positon: [35.92, 126.75] },
+      { type: "reservoir", label: "G", positon: [35.81, 126.82] },
+      { type: "reservoir", label: "H", positon: [35.79, 127.03] },
+      { type: "reservoir", label: "I", positon: [35.87, 127.31] },
+      { type: "reservoir", label: "J", positon: [35.84, 127.13] },
+      { type: "reservoir", label: "K", positon: [35.76, 127.19] },
+      { type: "reservoir", label: "L", positon: [35.70, 127.16] },
+    ];
 
-    const markerImage = new kakao.maps.MarkerImage(imgSrc, imageSize, imageOption);
-    const markerPosition = new kakao.maps.LatLng(35.9775480870027, 127.227240562789); // 마커가 표시될 위치입니다
 
-    //마커 생성
-    const marker = new kakao.maps.Marker({
-      position: markerPosition,
-      image: markerImage // 마커이미지 설정 
+
+    markersInfo.map((m) => {
+      const markerimgSrc = m.type == "reservoir" ? "/images/marker_blue.png" : "/images/marker_red.png";
+      const markerimageSize = m.type == "reservoir" ? new kakao.maps.Size(42, 45) : new kakao.maps.Size(50, 54); // 마커이미지의 크기
+      const markerimageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+      const makerImage = new kakao.maps.MarkerImage(markerimgSrc, markerimageSize, markerimageOption);
+
+      const positon = new kakao.maps.LatLng(m.positon[0], m.positon[1]);
+
+      const marker = new kakao.maps.Marker({
+        position: positon,
+        image: makerImage
+      });
+
+      marker.setMap(map);
+
+
+      // 글자
+      const blueIwContent = `<div id=${m.label} class="pointer-events-none text-white relative bottom-10 right-[6px] font-bold" >${m.label}</div>`;
+      const redIwContent = '<div class="px-4 py-1 text-xs relative top-3 left-[-3px] bg-white rounded-md">정수장</div>';
+
+      const markerOverlay = new kakao.maps.CustomOverlay({
+        map: map,
+        position: positon,
+        content: m.type == "reservoir" ? blueIwContent : redIwContent,
+        yAnchor: 1
+      });
+
+      kakao.maps.event.addListener(marker, 'click', function () {
+        // 마커 위에 인포윈도우를 표시합니다
+        clickMarkers(m.label);
+      });
     });
-
-    // 마커가 지도 위에 표시되도록 설정합니다
-    marker.setMap(map);
-
-
-    
   }, []);
 
+  const clickMarkers = (label) => {
+    console.log(label);
+    setGraphTitle(label+" 배수지");
+  };
 
+  const Window = ({ label }) =>
+    <div className="text-white font-bold"
+      onClick={() => console.log("hello :", label)}>
+      {label}
+    </div>
+
+  useEffect(()=>{
+    console.log("[Regions] 그래프타이틀 : ", graphTitle);
+  },[]);
+
+  //주소를 지오코드로 변환
   const addrToGeo = () => {
     const geocoder = new kakao.maps.services.Geocoder();
 
@@ -117,7 +166,6 @@ export default function Regions() {
     console.log(message);
   }
 
-
   return (
     <div className="w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
       <NavBar />
@@ -128,9 +176,30 @@ export default function Regions() {
           </div>
           <button onClick={getMapInfo} className="bg-blue-300">지도정보보기</button>
         </section>
-        <section className="px-10 pb-10 pt-6 w-2/3 h-full">
-          <div id="map" className="w-full h-full border rounded-lg"></div>
-        </section>
+
+        <div className="px-10 pb-10 pt-6 w-full h-full flex">
+          {/* ===== 지도 section ===== */}
+          <section className="w-full h-full min-w-[620px] pr-3">
+            <div id="map" className="w-full h-full border rounded-lg"></div>
+          </section>
+
+          <div className="pl-3 w-fit">
+            {/* ===== 그래프1 ===== */}
+            <section className="h-1/2 pb-4 w-[600px]">
+              <div className="w-full h-full border-black bg-white flex justify-center items-center">
+                <WaterOutFlowGraph graphTitle={graphTitle} />
+              </div>
+            </section>
+            {/* ===== 그래프2 ===== */}
+            <section className="h-1/2 pt-4 w-[600px]">
+              <div className="w-full h-full border-black bg-white ">
+                <Window label="hello" />
+              </div>
+            </section>
+          </div>
+        </div>
+
+
       </div>
     </div>
   );
