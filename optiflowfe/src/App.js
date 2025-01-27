@@ -3,6 +3,11 @@
 
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
+import "./css/fonts/Freesentation.css";
+import "./css/fonts/Pretendard.css";
+
+import "./css/fonts/SUIT.css";
+
 import Test from "./Test";
 import GraphTest from "./test/GraphTest";
 import FreeTest from "./test/FreeTest";

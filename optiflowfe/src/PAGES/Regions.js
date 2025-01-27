@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import sggData from "../assets/data/sggdata.json";
 import WaterOutFlowGraph from "../components/graph/WaterOutFlowGraph";
-
+import DatePickerWithOption from "../components/datepicker/DatePickerWithOption";
 export default function Regions() {
   const { kakao } = window;
   const [map, setMap] = useState(null);
@@ -48,18 +48,18 @@ export default function Regions() {
 
     const markersInfo = [
       { type: "waterPlant", label: "정수장", positon: [35.9775480870027, 127.227240562789] },
-      { type: "reservoir", label: "A", positon: [35.73, 126.92] },
-      { type: "reservoir", label: "B", positon: [35.59, 126.81] },
-      { type: "reservoir", label: "C", positon: [35.56, 126.92] },
-      { type: "reservoir", label: "D", positon: [36.04, 127.01] },
-      { type: "reservoir", label: "E", positon: [35.94, 126.96] },
-      { type: "reservoir", label: "F", positon: [35.92, 126.75] },
-      { type: "reservoir", label: "G", positon: [35.81, 126.82] },
-      { type: "reservoir", label: "H", positon: [35.79, 127.03] },
-      { type: "reservoir", label: "I", positon: [35.87, 127.31] },
-      { type: "reservoir", label: "J", positon: [35.84, 127.13] },
-      { type: "reservoir", label: "K", positon: [35.76, 127.19] },
-      { type: "reservoir", label: "L", positon: [35.70, 127.16] },
+      { type: "reservoir", label: "B", positon: [35.73, 126.92] },
+      { type: "reservoir", label: "L", positon: [35.59, 126.81] },
+      { type: "reservoir", label: "K", positon: [35.56, 126.92] },
+      { type: "reservoir", label: "F", positon: [36.04, 127.01] },
+      { type: "reservoir", label: "D", positon: [35.94, 126.96] },
+      { type: "reservoir", label: "E", positon: [35.92, 126.75] },
+      { type: "reservoir", label: "A", positon: [35.81, 126.82] },
+      { type: "reservoir", label: "C", positon: [35.79, 127.03] },
+      { type: "reservoir", label: "J", positon: [35.87, 127.31] },
+      { type: "reservoir", label: "G", positon: [35.84, 127.13] },
+      { type: "reservoir", label: "I", positon: [35.76, 127.19] },
+      { type: "reservoir", label: "H", positon: [35.70, 127.16] },
     ];
 
 
@@ -83,7 +83,7 @@ export default function Regions() {
 
       // 글자
       const blueIwContent = `<div id=${m.label} class="pointer-events-none text-white relative bottom-10 right-[6px] font-bold" >${m.label}</div>`;
-      const redIwContent = '<div class="px-4 py-1 text-xs relative top-3 left-[-3px] bg-white rounded-md">정수장</div>';
+      const redIwContent =`<div class="px-4 py-1 text-xs relative top-3 left-[-3px] bg-white rounded-md">${m.label}</div>`;
 
       const markerOverlay = new kakao.maps.CustomOverlay({
         map: map,
@@ -97,6 +97,8 @@ export default function Regions() {
         clickMarkers(m.label);
       });
     });
+
+
   }, []);
 
   const clickMarkers = (label) => {
@@ -171,12 +173,13 @@ export default function Regions() {
     <div className="w-fit min-[1530px]:w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
       <NavBar />
       <div className="w-full h-screen pl-[260px] flex flex-col">
-        <section className="w-full h-[160px] px-10 flex justify-between ">
+        <section className="w-full h-[160px] px-10 flex justify-between items-end">
           <div className="h-full flex items-end">
             <h1 className="text-3xl">타이틀</h1>
             {/* <p className="text-xs mb-[-1rem]">상기 배수장 및 배수지의 위치 정보는 참고용으로 제공된 것으로, 실제 위치와는 차이가 있을 수 있습니다.</p> */}
           </div>
-          <button onClick={getMapInfo} className="bg-blue-300">지도정보보기</button>
+          <button onClick={getMapInfo} className="bg-blue-300 font-Freesentation font-light">지도정보보기</button>
+          <DatePickerWithOption/>
         </section>
 
         <div className="px-10 pb-10 pt-6 w-full h-full flex">

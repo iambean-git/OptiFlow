@@ -6,8 +6,9 @@ import React, { useEffect, useState, useRef, forwardRef } from "react";
 import DatePicker from "react-datepicker";
 import { ko } from 'date-fns/locale';
 
-import "../css/datepicker.css";
+// import "../css/datepicker.css";
 import "react-datepicker/dist/react-datepicker.css";
+import DateNTime from "../components/datepicker/DateNTime";
 
 export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -80,69 +81,7 @@ export default function Dashboard() {
           {/* 달력 */}
           <div className="h-full  relative min-w-72 ">
             <section className="absolute bottom-0 right-0 ">
-              <DatePicker
-                renderCustomHeader={({
-                  date,
-                  changeYear,
-                  changeMonth,
-                  decreaseMonth,
-                  increaseMonth,
-                  prevMonthButtonDisabled,
-                  nextMonthButtonDisabled,
-                }) => (
-                  <div className="헤더">
-                    <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}
-                      className="mx-2">
-                      {"<"}
-                    </button>
-
-                    {/* 년도 */}
-                    <select
-                      value={(date.getFullYear())}
-                      onChange={({ target: { value } }) => changeYear(value)}
-                      className="w-[60px] h-6 pl-1 rounded-lg focus:outline-none text-black"
-                    >
-                      {years.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="ml-1 mr-3">년</span>
-
-                    {/* 월 */}
-                    <select
-                      value={months[date.getMonth()]}
-                      onChange={({ target: { value } }) =>
-                        changeMonth(months.indexOf(value))
-                      }
-                      className="w-[60px] h-6 pl-1 rounded-lg focus:outline-none text-black"
-                    >
-                      {months.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="ml-1">월</span>
-                    <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}
-                      className="mx-2">
-                      {">"}
-                    </button>
-                  </div>
-
-                )}
-                selected={selectedDate}
-                // className="px-2 py-3 flex flex-col bg- justify-center  ml-2 text-sm items-center  focus:outline-none"
-                locale={ko}
-                dateFormat={"yyyy/MM/dd HH:mm"}
-                maxDate={maxDate}
-
-                timeIntervals={15} // 30분 간격
-                showTimeSelect
-                onChange={date => setSelectedDate(date)}
-                customInput={<CustomInput/>}
-              />
+              <DateNTime />
             </section>
 
           </div>
