@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -19,12 +20,14 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "reservoir_data")
+@IdClass(ReservoirDataId.class)
 public class ReservoirData {
 	
 	@Id
     @Column(name = "observation_time")
     private LocalDateTime observationTime;
-
+	
+	@Id
 	@ManyToOne
 	@JoinColumn(name = "reservoir_id", insertable = false, updatable = false)
 	private Reservoir reservoirId;
@@ -37,6 +40,5 @@ public class ReservoirData {
 
     @Column(name = "height")
     private Float height;
-
 
 }

@@ -33,7 +33,7 @@ public class Reservoir {
     @Column(name = "location")
     private String location;
     
-    @Column(name = "height")
+    @Column(name = "max_height")
     private Float height;
     
     @Temporal(TemporalType.TIMESTAMP)
