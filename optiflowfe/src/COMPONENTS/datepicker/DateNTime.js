@@ -6,21 +6,10 @@ import { ko } from 'date-fns/locale';
 import "react-datepicker/dist/react-datepicker.css";
 import "./datepickerwithoption.css"
 
-export default function DateNTime() {
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    const [maxDate, setMaxDate] = useState(new Date());
-
-    useEffect(() => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1); // 하루 전으로 설정
-        yesterday.setHours(10, 0, 0, 0); // 오전 10시로 설정 (분, 초, 밀리초는 0으로 초기화)
-        setSelectedDate(yesterday);
-
-        const maxdate = new Date();
-        maxdate.setDate(maxdate.getDate() - 1); // 하루 전으로 설정
-        maxdate.setHours(23, 59, 59, 999); // 어제의 끝으로 설정
-        setMaxDate(maxdate);
-    }, []);
+export default function DateNTime({ selectedDate, setSelectedDate }) {
+    const [maxDate, setMaxDate] = useState(()=>{
+        return new Date(2024, 9, 16, 23, 59, 59);
+    });
 
     function range(start, end, step = 1) {
         const result = [];
@@ -30,7 +19,7 @@ export default function DateNTime() {
         return result;
     }
 
-    const years = range(2023, new Date().getFullYear() + 1, 1);
+    const years = range(2023, 2025, 1);
 
     const months = [
         "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
