@@ -32,6 +32,9 @@ public class Member {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
     
+    @Column(name = "reservoir_id")
+    private int reservoirId;
+    
     @Builder
     public Member(String username, String password, Role role) {
         this.username = username;
