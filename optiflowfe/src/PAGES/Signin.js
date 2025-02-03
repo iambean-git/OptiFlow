@@ -68,7 +68,7 @@ export default function Signin() {
 
   return (
     <div
-      className="w-full h-screen bg-red-50 flex justify-center items-center"
+      className="w-full h-screen flex justify-center items-center"
       style={{
         backgroundImage: `url(${loginBG})`,
         backgroundSize: "cover", // 이미지가 화면을 꽉 채우도록 설정

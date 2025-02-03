@@ -7,7 +7,10 @@ module.exports = {
         '128': '32rem',
       },
       fontFamily: {
-        Pretendard : 'Pretendard-Regular'
+        PeoplefirstILTTF : 'PeoplefirstILTTF',
+        Freesentation : 'Freesentation',
+        Pretendard : 'Pretendard',
+        SUIT : 'SUIT'
       }
     },
   },

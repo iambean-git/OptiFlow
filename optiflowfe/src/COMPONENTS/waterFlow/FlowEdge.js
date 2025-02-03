@@ -1,17 +1,7 @@
-import {
-    BaseEdge,
-    getSmoothStepPath,
-} from '@xyflow/react';
+import { memo } from "react";
+import { BaseEdge, getSmoothStepPath } from '@xyflow/react';
 
-export default function FlowEdge({
-    id,
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition, }) {
-
+const FlowEdge = memo(({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition }) => {
     const [edgePath] = getSmoothStepPath({
         sourceX,
         sourceY,
@@ -28,5 +18,7 @@ export default function FlowEdge({
                 <animateMotion dur="2s" repeatCount="indefinite" path={edgePath} />
             </circle>
         </>
-    )
-}
+    );
+});
+
+export default FlowEdge;

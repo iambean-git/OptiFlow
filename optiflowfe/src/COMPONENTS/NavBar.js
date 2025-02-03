@@ -8,11 +8,11 @@ import LocalTime from "./navBar/LocalTime";
 export default function NavBar() {
 
     const navigate = useNavigate();
-    
+
     const username = sessionStorage.getItem("username");
 
     const handleLogout = () => {
-        if(window.confirm("로그아웃 하시겠습니까?")){
+        if (window.confirm("로그아웃 하시겠습니까?")) {
             sessionStorage.clear();
             navigate("/");
         }
@@ -28,31 +28,32 @@ export default function NavBar() {
             {/* 날짜 및 시간 */}
             <div className="w-full flex flex-col justify-center items-center 
                             py-6 px-4">
-                <LocalTime/>
+                <LocalTime />
                 <div className="my-4"> 4℃ 맑음 </div>
 
             </div>
 
 
             {/* 메뉴 영역 */}
-            
-            
-            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer">
-                <MdOutlineSpaceDashboard className="size-6 mr-2"/>
+
+
+            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
+                onClick={() => navigate("/dashboard")}>
+                <MdOutlineSpaceDashboard className="size-6 mr-2" />
                 <p>대시보드</p>
                 <FaChevronRight className="absolute right-2" />
             </div>
 
             <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
-                onClick={()=>navigate("/dashboard")}>
-                <MdOutlineSpaceDashboard className="size-6 mr-2"/>
+                onClick={() => navigate("/waterlevel")}>
+                <MdOutlineSpaceDashboard className="size-6 mr-2" />
                 <p>실시간 수위 정보</p>
                 <FaChevronRight className="absolute right-2" />
             </div>
 
-            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer" 
-                onClick={()=>navigate("/regions")}>
-                <MdOutlineSpaceDashboard className="size-6 mr-2"/>
+            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
+                onClick={() => navigate("/regions")}>
+                <MdOutlineSpaceDashboard className="size-6 mr-2" />
                 <p>배수지별 통계 정보</p>
                 <FaChevronRight className="absolute right-2" />
             </div>

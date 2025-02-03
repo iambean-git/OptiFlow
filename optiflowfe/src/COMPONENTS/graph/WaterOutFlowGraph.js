@@ -3,13 +3,15 @@ import ApexCharts from 'apexcharts';
 
 import testdata from "../../assets/data/testdata.json";
 
-export default function WaterOutFlowGraph({ graphTitle, data }) {
-    
-    console.log("[WaterOutFlowGraph] 그래프타이틀 : ", graphTitle);
+export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }) {
 
-    const axisX = Object.keys(testdata.hourly_water_outflow);
-    const data1 = Object.values(testdata.hourly_water_outflow);
-    const data2 = Object.values(testdata.predicted_water_outflow);
+    // console.log("[WaterOutFlowGraph] data : ", data);
+    // console.log("[WaterOutFlowGraph] 그래프타이틀 : ", graphTitle);
+    // console.log("[WaterOutFlowGraph] datepickerOption : ", datepickerOption);
+    const dateUnit = { hourly: "시", daily: "일", monthly: "월" };
+    const axisX = Object.keys(data);
+    const data1 = Object.values(data);
+    const data2 = Object.values(data);
     const chartRef = useRef(null);
 
     const options = {
@@ -21,22 +23,18 @@ export default function WaterOutFlowGraph({ graphTitle, data }) {
             name: "예측값",
             data: data2
         },
-            // {
-            //     name: 'Total Visits',
-            //     data: [87, 57, 74, 99, 75, 38, 62, 47, 82, 56, 45, 47]
-            // }
         ],
         chart: {
-            width: '560px',
-            height: '300px',
+            width: '660px',
+            height: '280px',
             type: 'line',
+            fontFamily: 'SUIT',
             zoom: {
                 enabled: false
             },
             toolbar: {
                 tools: {
                     download: false,
-                    // csv: false,         //csv 다운로드 비활성화 (안먹힘)
                 },
 
             },
@@ -50,17 +48,17 @@ export default function WaterOutFlowGraph({ graphTitle, data }) {
             // dashArray: [0, 8, 5]
         },
         title: {
-            text: `${graphTitle} 시간별 유출량 비교`,
-            align: 'left'
+            text: `${graphTitle} 배수지 시간별 유출량 비교`,
+            align: 'left',
+            style : {
+                fontFamily: 'SUIT',
+            }
         },
         legend: {
-            // customLegendItems: ["실측값", "예측값"],
             tooltipHoverFormatter: function (val, opts) {
-                return val ;
+                return val;
             }
-            // onItemClick: {
-            //     toggleDataSeries: true // 기본값: true
-            // }
+
         },
         markers: {
             size: 0,
@@ -69,25 +67,32 @@ export default function WaterOutFlowGraph({ graphTitle, data }) {
             }
         },
         xaxis: {
-            // categories: ['01 Jan', '02 Jan', '03 Jan', '04 Jan', '05 Jan', '06 Jan', '07 Jan', '08 Jan', '09 Jan',
-            //     '10 Jan', '11 Jan', '12 Jan'
-            // ],
-
             categories: axisX,
-            tooltip :{
-                enabled:false,
+            tooltip: {
+                enabled: false,
+            }
+        },
+        yaxis: {
+            labels: {
+                formatter: function (value) {
+                    return Math.round(value);  // Y축에서 소수점 제거
+                }
             }
         },
         tooltip: {
             x: {
-                
+
                 formatter: function (val) {
-                    return val + "시"
+                    return val + dateUnit[datepickerOption]
                 },
             },
 
             y: [
                 {
+                    formatter: function (value) {
+                        return value.toFixed(2);  // 툴팁에서는 소수점 2자리까지 유지
+                    },
+                    
                     title: {
                         formatter: function (val) {
                             return val + " (m³)"
@@ -116,7 +121,7 @@ export default function WaterOutFlowGraph({ graphTitle, data }) {
         return () => {
             chart.destroy(); // Clean up the chart on component unmount
         };
-    }, [graphTitle]);
+    }, [graphTitle, datepickerOption, data]);
 
     return (
         <div>

@@ -1,26 +1,20 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
-
+import { useEffect, useState} from 'react';
 import {
     ReactFlow,
     ReactFlowProvider,
     useReactFlow,
-    addEdge,
-    applyEdgeChanges,
-    applyNodeChanges,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import "./waterFlow.css";
 
 import DrainageNode from './DrainageNode';
 import InterSectionNode from './InterSectionNode';
 import NormalNode from './NormalNode';
-
 import FlowEdge from './FlowEdge';
-
 import Modal from '../modal/Modal';
 
 const nodeTypes = { drain: DrainageNode, intersection: InterSectionNode, normal: NormalNode };
-const edgeTypes = { flowEdge: FlowEdge }
-
+const edgeTypes = { flowEdge: FlowEdge };
 
 const initialEdges = [
     { id: 'base-n1', source: 'base', target: 'n1', sourceHandle: "b-source", targetHandle: "t-target", animated: true },
@@ -53,102 +47,62 @@ const initialEdges = [
     { id: 'n14-drainL', source: 'n14', target: 'drainL', sourceHandle: "b-source", targetHandle: "t-target", animated: true, type: "flowEdge" },
 ];
 
-export default function WaterFlow({ selectedDate }) {
+// ✅ `LayoutFlow`를 유지하면서 `fitView`를 적용하는 방식
+const LayoutFlow = ({ nodes, edges, onNodeClick }) => {
+    const { fitView } = useReactFlow();
 
+    useEffect(() => {
+        const handleResize = () => {
+            fitView({ padding: 0.1 }); // fitView를 호출 (padding은 선택 사항)
+        };
 
-    // ================================= 모달 관련 start =================================
+        // 초기 실행
+        handleResize();
+
+        // 윈도우 리사이즈 이벤트에 핸들러 등록
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            // 컴포넌트 언마운트 시 이벤트 리스너 제거
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [fitView]);
+
+    return (
+        <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodeClick={onNodeClick}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            fitView
+            preventScrolling={false}
+            panOnDrag={false}
+        />
+    );
+};
+
+function WaterFlowComponent({ waterLevel }) {
+    const [nodes, setNodes] = useState([]);
+    const [edges, setEdges] = useState(initialEdges);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState('');
 
-    const closeModal = () => {
-        setModalOpen(false);
-    };
-
-    //각 노드를 클릭했을 때
+    const closeModal = () => setModalOpen(false);
     const onNodeClick = (event, node) => {
-
-        console.log("Clicked node:", node);
-
-        //노드 유형이 drain일 때만 모달팝업 오픈
         if (node.type !== "drain") return;
         setModalData(node);
         setModalOpen(true);
     };
-    // ================================= 모달 관련 end =================================
-
-
-    const [waterLevel, setWaterLevel] = useState('');
-    const [reservoirInfo, setReservoirInfo] = useState();
-
-
-    const [nodes, setNodes] = useState('');
-    const [edges, setEdges] = useState(initialEdges);
-
-    const onNodesChange = useCallback(
-        (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-        [setNodes],
-    );
-    const onEdgesChange = useCallback(
-        (changes) => { setEdges((eds) => applyEdgeChanges(changes, eds)) },
-
-        [setEdges],
-    );
-    const onConnect = useCallback(
-        (connection) => setEdges((eds) => addEdge(connection, eds)),
-        [setEdges],
-    );
-
-    const handleNodeDragStop = (event, node) => {
-        console.log(`Node ${node.id} final position:`, node.position);
-    };
-
-
 
     useEffect(() => {
-        console.log("WaterFlow 렌더링");
-        // fetchWaterLevel("T10:00:00");
-        fetchReservoirInfo();
-        // fetchdata33();
-    }, []);
-
-    useEffect(() => {
-        console.log("시간:", selectedDate);
-        console.log("패치함");
-        fetchWaterLevel(selectedDate);
-    }, [selectedDate]);
-
-    const fetchWaterLevel = async (time) => {
-        if (!time) return;
-        // const url = `http://10.125.121.226:8080/api/waterlevels/2023-10-21T10:00:00`;
-        const url = `http://10.125.121.226:8080/api/waterlevels/2023-10-21${time}`;
-        // console.log("패치 url : ", url);
-        const resp = await fetch(url);
-        const data = await resp.json();  // JSON 형식으로 응답 받기
-        // console.log("수위 data :", data);
-        setWaterLevel(data);
-    }
-
-    const fetchReservoirInfo = async () => {
-        const url = "http://10.125.121.226:8080/api/reservoirs";
-        const resp = await fetch(url);
-        const data = await resp.json();  // JSON 형식으로 응답 받기
-        // console.log("fetchReservoirInfo :", data);
-        setReservoirInfo(data);
-    }
-
-    useEffect(() => {
-        if (waterLevel.length < 1) return;
-        if (!reservoirInfo) return;
-
-        // console.log("waterLevel : ", waterLevel);
-        // console.log("reservoirInfo : ", reservoirInfo);
+        // console.log("[WaterFlow] waterLevel 변경 감지", waterLevel);
+        if (!waterLevel) return;
 
         const initialNodes = [
-
             {
                 id: 'base', type: 'normal', position: { x: 0, y: 0 },
                 dragHandle: "false",
-                // onclick: console.log("click"),
                 data: { label: '정수지' },
             },
 
@@ -165,12 +119,12 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainF', type: 'drain', position: { x: -300, y: 34 },
-                data: { label: "F배수지", capacity: reservoirInfo[1].capacity, maxHeight: reservoirInfo[1].height, crtHeight: waterLevel[0]["j"], crtVol: 10 },
+                data: { label: "F배수지", capacity: waterLevel[1].reservoirId.capacity, maxHeight: waterLevel[1].reservoirId.height, crtHeight: waterLevel[1].height },
             },
 
             {
                 id: 'drainJ', type: 'drain', position: { x: 214, y: 34 },
-                data: { label: "J배수지", capacity: reservoirInfo[0].capacity, maxHeight: reservoirInfo[0].height, crtHeight: waterLevel[0]["j"], crtVol: 55 },
+                data: { label: "J배수지", capacity: waterLevel[0].reservoirId.capacity, maxHeight: waterLevel[0].reservoirId.height, crtHeight: waterLevel[0].height },
             },
 
             {
@@ -185,7 +139,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainE', type: 'drain', position: { x: -140, y: 370 },
-                data: { label: "E배수지", capacity: reservoirInfo[2].capacity, maxHeight: reservoirInfo[2].height, crtHeight: waterLevel[0]["e"], crtVol: 35 },
+                data: { label: "E배수지", capacity: waterLevel[1].reservoirId.capacity, maxHeight: waterLevel[2].reservoirId.height, crtHeight: waterLevel[2].height},
             },
 
             {
@@ -195,7 +149,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainD', type: 'drain', position: { x: -240, y: 370 },
-                data: { label: "D배수지", capacity: reservoirInfo[3].capacity, maxHeight: reservoirInfo[3].height, crtHeight: waterLevel[0]["d"], crtVol: 35 },
+                data: { label: "D배수지", capacity: waterLevel[3].reservoirId.capacity, maxHeight: waterLevel[3].reservoirId.height, crtHeight: waterLevel[3].height, },
             },
 
             {
@@ -205,7 +159,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainA', type: 'drain', position: { x: -340, y: 370 },
-                data: { label: "A배수지", capacity: reservoirInfo[4].capacity, maxHeight: reservoirInfo[4].height, crtHeight: waterLevel[0]["a"], crtVol: 120 },
+                data: { label: "A배수지", capacity: waterLevel[4].reservoirId.capacity, maxHeight: waterLevel[4].reservoirId.height, crtHeight: waterLevel[4].height, },
             },
 
             {
@@ -215,7 +169,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainB', type: 'drain', position: { x: -440, y: 370 },
-                data: { label: "B배수지", capacity: reservoirInfo[5].capacity, maxHeight: reservoirInfo[5].height, crtHeight: waterLevel[0]["b"], crtVol: 120 },
+                data: { label: "B배수지", capacity: waterLevel[5].reservoirId.capacity, maxHeight: waterLevel[5].reservoirId.height, crtHeight: waterLevel[5].height, },
             },
 
             {
@@ -225,7 +179,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainC', type: 'drain', position: { x: -540, y: 370 },
-                data: { label: "C배수지", capacity: reservoirInfo[6].capacity, maxHeight: reservoirInfo[6].height, crtHeight: waterLevel[0]["c"], crtVol: 120 },
+                data: { label: "C배수지", capacity: waterLevel[6].reservoirId.capacity, maxHeight: waterLevel[6].reservoirId.height, crtHeight: waterLevel[6].height, },
             },
 
 
@@ -241,7 +195,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainG', type: 'drain', position: { x: 40, y: 410 },
-                data: { label: "G배수지", capacity: reservoirInfo[7].capacity, maxHeight: reservoirInfo[7].height, crtHeight: waterLevel[0]["g"], crtVol: 20 },
+                data: { label: "G배수지", capacity: waterLevel[7].reservoirId.capacity, maxHeight: waterLevel[7].reservoirId.height, crtHeight: waterLevel[7].height, },
             },
 
             {
@@ -256,7 +210,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainI', type: 'drain', position: { x: 160, y: 480 },
-                data: { label: "I배수지", capacity: reservoirInfo[8].capacity, maxHeight: reservoirInfo[8].height, crtHeight: waterLevel[0]["i"], crtVol: 20 },
+                data: { label: "I배수지", capacity: waterLevel[8].reservoirId.capacity, maxHeight: waterLevel[8].reservoirId.height, crtHeight: waterLevel[8].height, },
             },
 
             {
@@ -266,7 +220,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainH', type: 'drain', position: { x: 260, y: 480 },
-                data: { label: "H배수지", capacity: reservoirInfo[9].capacity, maxHeight: reservoirInfo[9].height, crtHeight: waterLevel[0]["h"], crtVol: 20 },
+                data: { label: "H배수지", capacity: waterLevel[9].reservoirId.capacity, maxHeight: waterLevel[9].reservoirId.height, crtHeight: waterLevel[9].height, },
             },
 
             {
@@ -281,7 +235,7 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainK', type: 'drain', position: { x: 495, y: 480 },
-                data: { label: "K배수지", capacity: reservoirInfo[11].capacity, maxHeight: reservoirInfo[11].height, crtHeight: waterLevel[0]["k"], crtVol: 70 },
+                data: { label: "K배수지", capacity: waterLevel[11].reservoirId.capacity, maxHeight: waterLevel[11].reservoirId.height, crtHeight: waterLevel[11].height, },
             },
 
             {
@@ -291,66 +245,26 @@ export default function WaterFlow({ selectedDate }) {
 
             {
                 id: 'drainL', type: 'drain', position: { x: 595, y: 480 },
-                data: { label: "L배수지", capacity: reservoirInfo[10].capacity, maxHeight: reservoirInfo[10].height, crtHeight: waterLevel[0]["l"], crtVol: 20 },
+                data: { label: "L배수지", capacity: waterLevel[10].reservoirId.capacity, maxHeight: waterLevel[10].reservoirId.height, crtHeight: waterLevel[10].height, },
             },
-
-
         ];
-        setNodes(initialNodes);
 
-    }, [waterLevel, reservoirInfo]);
-
-    const LayoutFlow = () => {
-        const { fitView } = useReactFlow();
-
-        useEffect(() => {
-            const handleResize = () => {
-              fitView({ padding: 0.1 }); // fitView를 호출 (padding은 선택 사항)
-            };
-        
-            // 초기 실행
-            handleResize();
-        
-            // 윈도우 리사이즈 이벤트에 핸들러 등록
-            window.addEventListener("resize", handleResize);
-        
-            return () => {
-              // 컴포넌트 언마운트 시 이벤트 리스너 제거
-              window.removeEventListener("resize", handleResize);
-            };
-          }, [fitView]);
-
-        return (
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onNodeClick={onNodeClick}
-                onEdgesChange={onEdgesChange}
-                onNodeDragStop={handleNodeDragStop}
-                onConnect={onConnect}
-                nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
-                fitView
-
-                preventScrolling={false}
-                panOnDrag={false}
-            />
-        );
-    };
+        setNodes((prevNodes) => JSON.stringify(prevNodes) === JSON.stringify(initialNodes) ? prevNodes : initialNodes);
+    }, [waterLevel]);
 
     return (
-        <div className="w-full h-full  rounded-lg bg-white"
-         style={{boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)"}}
-        >
-
-            <div className='size-full '>
-                <ReactFlowProvider>
-                    <LayoutFlow />
-                </ReactFlowProvider>
-            </div>
-
+        <div className="w-full h-full rounded-lg bg-white" style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}>
+            <LayoutFlow nodes={nodes} edges={edges} onNodeClick={onNodeClick} />
             <Modal open={modalOpen} close={closeModal} data={modalData} />
         </div>
-    )
+    );
+}
+
+// ✅ `ReactFlowProvider`를 최상위에서 감싸고, 내부 컴포넌트는 변화가 있을 때만 리렌더링!
+export default function WaterFlow(props) {
+    return (
+        <ReactFlowProvider>
+            <WaterFlowComponent {...props} />
+        </ReactFlowProvider>
+    );
 }
