@@ -1,12 +1,17 @@
 package com.optiflow.domain;
 
 import java.util.Date;
+import java.util.List;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -32,7 +37,9 @@ public class Predict {
     private String text;
     
     @Column(name = "result")
-    private String result;
+    @Lob // Large Object (TEXT, BLOB 등) 타입 지정
+    @JdbcTypeCode(SqlTypes.JSON) // JSON 타입으로 지정 (MySQL 8+ 또는 PostgreSQL)
+    private List<String> result; // List<String> 타입으로 변경 (JSON으로 직렬화/역직렬화)
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")

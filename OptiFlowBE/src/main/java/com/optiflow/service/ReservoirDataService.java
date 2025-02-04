@@ -2,6 +2,7 @@ package com.optiflow.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -30,16 +31,7 @@ public class ReservoirDataService {
  
 	public List<ReservoirStats> findDailyStatsByReservoirId(int reservoirId) {
 		List<Object[]> results = reservoirDataRepo.findDailyStatsByReservoirId(reservoirId);
-		List<ReservoirStats> stats = results.stream()
-		    .map(result -> new ReservoirStats(
-		        (String) result[0],          // observationTime
-		        (int) result[1],            // reservoirId
-		        ((Double)result[2]), // totalInput
-		        ((Double)result[3]), // totalOutput
-		        ((Double)result[4])  // avgHeight
-		    ))
-		    .collect(Collectors.toList());
-		return stats;
+		return convertObjectArraysToReservoirStats(results);
 	}
 	
 	 // 시간별 통계 (일별 기준)
@@ -48,8 +40,8 @@ public class ReservoirDataService {
         LocalDate endDate = startDate; // 당일 하루
 
         List<Object[]> results = reservoirDataRepo.findHourlyStatsByDailyObservationTimeAndReservoirId(
-                startDate.toString() + " 00:00:00", // startTime (yyyy-MM-dd 00:00:00)
-                endDate.toString() + " 23:59:59",   // endTime (yyyy-MM-dd 23:59:59)
+                startDate.toString() + " 00:00:00",
+                endDate.toString() + " 23:59:59",
                 reservoirId);
         return convertObjectArraysToReservoirStats(results);
     }
@@ -59,10 +51,16 @@ public class ReservoirDataService {
         YearMonth yearMonth = YearMonth.parse(month, DateTimeFormatter.ofPattern("yyyy-MM"));
         LocalDate startDate = yearMonth.atDay(1); // 월 시작일
         LocalDate endDate = yearMonth.atEndOfMonth(); // 월 마지막일
+        
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIDNIGHT);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.of(23, 59, 59));
+
+        String startTime = startDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String endTime = endDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         List<Object[]> results = reservoirDataRepo.findDailyStatsByMonthlyObservationTimeAndReservoirId(
-                startDate.toString(), // startTime (yyyy-MM-dd)
-                endDate.toString(),   // endTime (yyyy-MM-dd)
+                startTime,
+                endTime,
                 reservoirId);
         return convertObjectArraysToReservoirStats(results);
     }
@@ -70,11 +68,11 @@ public class ReservoirDataService {
     // 월별 통계 (년별 기준)
     public List<ReservoirStats> findMonthlyStatsByYearlyObservationTimeAndReservoirId(String year, int reservoirId) {
         Year yearObj = Year.parse(year, DateTimeFormatter.ofPattern("yyyy"));
-        LocalDate startMonth = yearObj.atMonth(1).atDay(1); // 1월
-        LocalDate endMonth = yearObj.atMonth(12).atEndOfMonth();  // 12월
+        LocalDate startMonth = yearObj.atMonth(1).atDay(1);
+        LocalDate endMonth = yearObj.atMonth(12).atEndOfMonth();
         List<Object[]> results = reservoirDataRepo.findMonthlyStatsByYearlyObservationTimeAndReservoirId(
-                startMonth.toString(), // startTime (yyyy-MM)
-                endMonth.toString(),   // endTime (yyyy-MM)
+                startMonth.toString(),
+                endMonth.toString(),
                 reservoirId);
         return convertObjectArraysToReservoirStats(results);
     }
@@ -83,11 +81,11 @@ public class ReservoirDataService {
     private List<ReservoirStats> convertObjectArraysToReservoirStats(List<Object[]> results) {
         return results.stream()
                 .map(result -> new ReservoirStats(
-                        (String) result[0],          // observationTime (String으로 유지)
-                        (int) result[1],            // reservoirId
-                        ((Number) result[2]).doubleValue(), // totalInput (Double 또는 BigDecimal 등 Number 타입 처리)
-                        ((Number) result[3]).doubleValue(), // totalOutput (Double 또는 BigDecimal 등 Number 타입 처리)
-                        ((Number) result[4]).doubleValue()  // avgHeight (Double 또는 BigDecimal 등 Number 타입 처리)
+                        (String) result[0], 				// observationTime
+                        (int) result[1],            		// reservoirId
+                        ((Number) result[2]).doubleValue(), // totalInput
+                        ((Number) result[3]).doubleValue(), // totalOutput
+                        ((Number) result[4]).doubleValue()  // avgHeight
                 ))
                 .collect(Collectors.toList());
     }
