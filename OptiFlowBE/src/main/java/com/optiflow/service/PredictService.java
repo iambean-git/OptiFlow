@@ -1,5 +1,7 @@
 package com.optiflow.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,58 +12,138 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optiflow.domain.Predict;
 import com.optiflow.dto.PredictRequestDto;
 import com.optiflow.dto.PredictResponseDto;
+import com.optiflow.dto.PredictionItemDto;
 import com.optiflow.persistence.PredictRepository;
-
-import java.util.List;
 
 @Service
 public class PredictService {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(PredictService.class); // Logger 추가
 
-    @Value("${fastapi.url}")
-    private String fastapiUrl;
-    
+	@Value("${fastapi.url}")
+	private String fastapiUrl;
+	
 	@Autowired
 	private PredictRepository predictRepo;
-	
-	public Predict savePredict(String text, List<String> result) {
-		Predict predict = new Predict();
-		predict.setText(text);
-		predict.setResult(result);	
-		return predictRepo.save(predict);
-	}
-	
-	public List<Predict> getAllPredicts(){
+
+	public List<Predict> getAllPredicts() {
 		return predictRepo.findAll();
 	}
 	
+	public Predict savePredict(String datetime, List<PredictionItemDto> list) {
+		Predict predict = new Predict();
+		predict.setDatetime(datetime);
+		predict.setResult(list);
+		return predictRepo.save(predict);
+	}
+	
 	public PredictResponseDto getPrediction(PredictRequestDto requestDto) {
-        log.info("PredictService.getPrediction called with request: {}", requestDto);
+	    log.info("PredictService.getPrediction called with request: {}", requestDto);
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+	    RestTemplate restTemplate = new RestTemplate();
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<PredictRequestDto> request = new HttpEntity<>(requestDto, headers);
-        PredictResponseDto responseDto = new PredictResponseDto();
+	    try {
+	        // Jackson ObjectMapper를 활용해 JSON 문자열로 변환 후 전송
+	        String requestJson = new ObjectMapper().writeValueAsString(requestDto);
+	        HttpEntity<String> request = new HttpEntity<>(requestJson, headers);
+	        
+	        PredictResponseDto responseDto = restTemplate.postForObject(
+	            fastapiUrl + "/api/predict", 
+	            request, 
+	            PredictResponseDto.class
+	        );
+	        
+	        if (responseDto == null) {
+	            log.error("FastAPI prediction failed or returned null response.");
+	            return new PredictResponseDto();  // 빈 결과 반환
+	        } else {
+	            log.info("FastAPI prediction successful. Response: {}", responseDto);
+	            savePredict(requestDto.getDatetime(), responseDto.getPrediction());
+	            return responseDto;
+	        }
 
-        try {
-            responseDto = restTemplate.postForObject(fastapiUrl + "/predict", request, PredictResponseDto.class); // FastAPI "/predict" 엔드포인트 호출
-            if (responseDto == null) {
-                log.error("FastAPI prediction failed or returned null response: {}", responseDto);
-                responseDto = new PredictResponseDto();
-            } else {
-                log.info("FastAPI prediction successful. Response: {}", responseDto); // 성공 응답 로깅
-                savePredict(requestDto.getDate(), responseDto.getResult());
-            }
-        } catch (Exception e) { 
-            log.error("Error while calling FastAPI for prediction: ", e);
-            responseDto = new PredictResponseDto();
-        }
-        return responseDto;
-    }
+	    } catch (Exception e) {
+	        log.error("Error while calling FastAPI for prediction: ", e);
+	        return new PredictResponseDto();  // 예외 발생 시 빈 결과 반환
+	    }
+	}
 }
+//	public PredictResponseDto getPrediction(PredictRequestDto requestDto) {
+//	    log.info("PredictService.getPrediction called with request: {}", requestDto);
+//
+//	    RestTemplate restTemplate = new RestTemplate();
+//	    HttpHeaders headers = new HttpHeaders();
+//	    headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//	    HttpEntity<PredictRequestDto> request = new HttpEntity<>(requestDto, headers);
+//	    
+//	    try {
+//	        ResponseEntity<PredictResponseDto> response = restTemplate.exchange(
+//	            fastapiUrl + "/api/predict",
+//	            HttpMethod.POST,
+//	            request,
+//	            PredictResponseDto.class
+//	        );
+//
+//	        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+//	            PredictResponseDto responseDto = response.getBody();
+//	            log.info("FastAPI prediction successful. Response: {}", responseDto);
+//	            savePredict(requestDto.getDatetime(), responseDto.getPrediction());
+//	            return responseDto;
+//	        } else {
+//	            log.error("FastAPI prediction failed with status: {}", response.getStatusCode());
+//	            return new PredictResponseDto();  // 빈 결과 반환
+//	        }
+//	    } catch (Exception e) {
+//	        log.error("Error while calling FastAPI for prediction: ", e);
+//	        return new PredictResponseDto();  // 예외 발생 시 빈 결과 반환
+//	    }
+//	}
+
+
+//	public PredictResponseDto getPrediction(PredictRequestDto requestDto) {
+//		log.info("PredictService.getPrediction called with request: {}", requestDto);
+//
+//		RestTemplate restTemplate = new RestTemplate();
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//		HttpEntity<PredictRequestDto> request = new HttpEntity<>(requestDto, headers);
+//		PredictResponseDto responseDto = new PredictResponseDto();
+//
+//		try {
+//			responseDto = restTemplate.postForObject(fastapiUrl + "/api/predict", request, PredictResponseDto.class); 
+//			
+//			if (responseDto == null) {
+//				log.error("FastAPI prediction failed or returned null response: {}", responseDto);
+//				responseDto = new PredictResponseDto();
+//			} else {
+//				log.info("FastAPI prediction successful. Response: {}", responseDto); // 성공 응답 로깅
+//				savePredict(requestDto.getDatetime(), responseDto.getPrediction());
+//			}
+//		} catch (Exception e) {
+//			log.error("Error while calling FastAPI for prediction: ", e);
+//			responseDto = new PredictResponseDto();
+//		}
+//		return responseDto;
+//	}
+
+//	private final RestTemplate restTemplate; // Bean 주입된 RestTemplate 사용
+//
+//	public PredictService(RestTemplate restTemplate) {
+//		this.restTemplate = restTemplate;
+//	}
+//
+//	private final ObjectMapper objectMapper = new ObjectMapper(); // ObjectMapper Bean 등록 후 주입받아도 좋음
+//	private void savePredictList(String datetime, List<PredictResponseDto> predictionList) {
+//        log.info("Saving {} predictions for datetime: {}", predictionList.size(), datetime);
+//        for (PredictResponseDto prediction : predictionList) {
+//            savePredict(datetime, prediction.getResult());
+//        }
+//    }

@@ -6,6 +6,8 @@ import java.util.List;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.optiflow.dto.PredictionItemDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,13 +35,13 @@ public class Predict {
     @Column(name = "predict_id")
     private int predictId;
 
-    @Column(name = "text")
-    private String text;
+    @Column(name = "datetime")
+    private String datetime;
     
     @Column(name = "result")
     @Lob // Large Object (TEXT, BLOB 등) 타입 지정
     @JdbcTypeCode(SqlTypes.JSON) // JSON 타입으로 지정 (MySQL 8+ 또는 PostgreSQL)
-    private List<String> result; // List<String> 타입으로 변경 (JSON으로 직렬화/역직렬화)
+    private List<PredictionItemDto> result;
     
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class PredictController {
     public ResponseEntity<Predict> savePredict(@RequestBody Predict predict) {
 		System.out.println("Received from fastAPI: " + predict);
         // 받은 모델 데이터를 DB에 저장
-		Predict savedPredict = predictService.savePredict(predict.getText(), predict.getResult());
+		Predict savedPredict = predictService.savePredict(predict.getDatetime(), predict.getResult());
         return ResponseEntity.ok(savedPredict);
     }
 	
@@ -40,16 +41,12 @@ public class PredictController {
 		return ResponseEntity.ok(predictList);
 	}
 	
-	@PostMapping("/predict") // 예측 요청 API 엔드포인트 추가
-    public ResponseEntity<PredictResponseDto> getPrediction(@RequestBody PredictRequestDto requestDto) {
-        log.info("Received prediction request: {}", requestDto); // 예측 요청 로깅
+	@GetMapping("/predict/{datetime}") // 예측 요청 API 엔드포인트 추가
+    public ResponseEntity<PredictResponseDto> getPrediction(@PathVariable String datetime) {
+		log.info("Received prediction request with datetime: {}", datetime); // 요청 로깅 (datetime 포함)
+        PredictRequestDto requestDto = new PredictRequestDto(); // PredictRequestDto 객체 생성
+        requestDto.setDatetime(datetime); // PathVariable 로 받은 datetime 값을 DTO 에 설정
         PredictResponseDto responseDto = predictService.getPrediction(requestDto);
         return ResponseEntity.ok(responseDto); // 예측 결과 응답 DTO 반환
     }
-//	@PostMapping("/predict") // 예측 요청 API 엔드포인트 추가
-//    public ResponseEntity<PredictResponseDto> getPrediction(@RequestBody PredictRequestDto requestDto) {
-//        log.info("Received prediction request: {}", requestDto); // 예측 요청 로깅
-//        PredictResponseDto responseDto = predictService.getPrediction(requestDto);
-//        return ResponseEntity.ok(responseDto); // 예측 결과 응답 DTO 반환
-//    }
 }

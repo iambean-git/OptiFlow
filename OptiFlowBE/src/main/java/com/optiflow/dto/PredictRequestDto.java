@@ -1,9 +1,11 @@
 package com.optiflow.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
+@Getter @Setter
 public class PredictRequestDto {
-    private String date;
-    private String text;
+    private String datetime;
 }
