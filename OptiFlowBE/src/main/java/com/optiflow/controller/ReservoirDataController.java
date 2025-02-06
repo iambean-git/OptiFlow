@@ -34,53 +34,58 @@ public class ReservoirDataController {
 		return ResponseEntity.ok(datas);
 	}
 
-	@GetMapping("/daily/{reservoirId}")
-	public ResponseEntity<List<ReservoirStats>> getDailyStatsByReservoirId(@PathVariable int reservoirId) {
+	@GetMapping("/daily/{reservoirName}")
+	public ResponseEntity<List<ReservoirStats>> getDailyStatsByReservoirId(@PathVariable String reservoirName) {
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
+        if (!reservoirOptional.isPresent()) { // 없을 경우 404 에러 반환
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+        }
+        int reservoirId = reservoirOptional.get().getReservoirId();
 		List<ReservoirStats> stats = reservoirDataService.findDailyStatsByReservoirId(reservoirId);
 		return new ResponseEntity<>(stats, HttpStatus.OK);
 	}
 
 	 // 시간별 통계 (일별 기준)
-    @GetMapping("/hourly/{date}/{reservoirName}") // 경로 변경: /hourly/daily
+    @GetMapping("/hourly/{date}/{reservoirName}") 
     public ResponseEntity<List<ReservoirStats>> findHourlyStatsByDailyObservationTimeAndReservoirId(
-            @PathVariable String date, // YYYY-MM-DD 형식 (일별 기준)
+            @PathVariable String date,
             @PathVariable String reservoirName) {
     	
-		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName); // 이름으로 Reservoir 조회
-        if (!reservoirOptional.isPresent()) { // Reservoir가 없을 경우 404 에러 반환
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 또는 다른 에러 처리 방식 적용 가능
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
+        if (!reservoirOptional.isPresent()) { 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
         }
-        int reservoirId = reservoirOptional.get().getReservoirId(); // Reservoir 엔티티에서 reservoirId 추출
+        int reservoirId = reservoirOptional.get().getReservoirId();
         List<ReservoirStats> stats = reservoirDataService.findHourlyStatsByDailyObservationTimeAndReservoirId(date, reservoirId);
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
     // 일별 통계 (월별 기준)
-    @GetMapping("/daily/{month}/{reservoirName}") // 경로 변경: /daily/monthly
+    @GetMapping("/daily/{month}/{reservoirName}")
     public ResponseEntity<List<ReservoirStats>> findDailyStatsByMonthlyObservationTimeAndReservoirId(
-            @PathVariable String month, // YYYY-MM 형식 (월별 기준)
+            @PathVariable String month,
             @PathVariable String reservoirName) {
     	
-		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName); // 이름으로 Reservoir 조회
-        if (!reservoirOptional.isPresent()) { // Reservoir가 없을 경우 404 에러 반환
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 또는 다른 에러 처리 방식 적용 가능
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
+        if (!reservoirOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        int reservoirId = reservoirOptional.get().getReservoirId(); // Reservoir 엔티티에서 reservoirId 추출
+        int reservoirId = reservoirOptional.get().getReservoirId();
         List<ReservoirStats> stats = reservoirDataService.findDailyStatsByMonthlyObservationTimeAndReservoirId(month, reservoirId);
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
     // 월별 통계 (년별 기준)
-    @GetMapping("/monthly/{year}/{reservoirName}") // 경로 변경: /monthly/yearly
+    @GetMapping("/monthly/{year}/{reservoirName}") 
     public ResponseEntity<List<ReservoirStats>> findMonthlyStatsByYearlyObservationTimeAndReservoirId(
-            @PathVariable String year, // YYYY 형식 (년별 기준)
+            @PathVariable String year,
             @PathVariable String reservoirName) {
     	
-		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName); // 이름으로 Reservoir 조회
-        if (!reservoirOptional.isPresent()) { // Reservoir가 없을 경우 404 에러 반환
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 또는 다른 에러 처리 방식 적용 가능
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
+        if (!reservoirOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        int reservoirId = reservoirOptional.get().getReservoirId(); // Reservoir 엔티티에서 reservoirId 추출
+        int reservoirId = reservoirOptional.get().getReservoirId();
         List<ReservoirStats> stats = reservoirDataService.findMonthlyStatsByYearlyObservationTimeAndReservoirId(year, reservoirId);
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }

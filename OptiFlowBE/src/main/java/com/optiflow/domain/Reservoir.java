@@ -42,4 +42,7 @@ public class Reservoir {
     
     @Column(name = "capacity")
     private Float capacity;
+    
+    @Column(name = "area")
+    private Float area;
 }

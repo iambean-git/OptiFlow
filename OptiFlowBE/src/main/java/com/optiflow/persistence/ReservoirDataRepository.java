@@ -45,8 +45,8 @@ public interface ReservoirDataRepository extends JpaRepository<ReservoirData,Res
             "ORDER BY DATE_FORMAT(rd.observation_time, '%Y-%m-%d %H')",
             nativeQuery = true)
     List<Object[]> findHourlyStatsByDailyObservationTimeAndReservoirId(
-            @Param("startTime") String startTime, // 시작 시간 (YYYY-MM-DD)
-            @Param("endTime") String endTime,     // 종료 시간 (YYYY-MM-DD)
+            @Param("startTime") String startTime,
+            @Param("endTime") String endTime,
             @Param("reservoirId") int reservoirId);
 
 
@@ -60,13 +60,13 @@ public interface ReservoirDataRepository extends JpaRepository<ReservoirData,Res
             "FROM reservoir_data rd " +
             "JOIN reservoir r ON rd.reservoir_id = r.reservoir_id " +
             "WHERE r.reservoir_id = :reservoirId " +
-            "AND rd.observation_time BETWEEN :startTime AND :endTime " + // 기간 검색 (일별)
+            "AND rd.observation_time BETWEEN :startTime AND :endTime " +
             "GROUP BY DATE_FORMAT(rd.observation_time, '%Y-%m-%d'), r.reservoir_id " +
             "ORDER BY DATE_FORMAT(rd.observation_time, '%Y-%m-%d')",
             nativeQuery = true)
     List<Object[]> findDailyStatsByMonthlyObservationTimeAndReservoirId(
-            @Param("startTime") String startTime, // 시작 월 (YYYY-MM)
-            @Param("endTime") String endTime,     // 종료 월 (YYYY-MM)
+            @Param("startTime") String startTime,
+            @Param("endTime") String endTime,
             @Param("reservoirId") int reservoirId);
 
 
@@ -80,12 +80,12 @@ public interface ReservoirDataRepository extends JpaRepository<ReservoirData,Res
             "FROM reservoir_data rd " +
             "JOIN reservoir r ON rd.reservoir_id = r.reservoir_id " +
             "WHERE r.reservoir_id = :reservoirId " +
-            "AND rd.observation_time BETWEEN :startTime AND :endTime " + // 기간 검색 (월별)
+            "AND rd.observation_time BETWEEN :startTime AND :endTime " +
             "GROUP BY DATE_FORMAT(rd.observation_time, '%Y-%m'), r.reservoir_id " +
             "ORDER BY DATE_FORMAT(rd.observation_time, '%Y-%m')",
             nativeQuery = true)
     List<Object[]> findMonthlyStatsByYearlyObservationTimeAndReservoirId(
-            @Param("startTime") String startTime, // 시작 년 (YYYY)
-            @Param("endTime") String endTime,     // 종료 년 (YYYY)
+            @Param("startTime") String startTime, 
+            @Param("endTime") String endTime,
             @Param("reservoirId") int reservoirId);
 }
