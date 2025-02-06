@@ -25,8 +25,8 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
         },
         ],
         chart: {
-            width: '660px',
-            height: '280px',
+            width: '100%',
+            height: '100%',
             type: 'line',
             fontFamily: 'SUIT',
             zoom: {
@@ -36,7 +36,6 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
                 tools: {
                     download: false,
                 },
-
             },
         },
         dataLabels: {
@@ -48,9 +47,11 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
             // dashArray: [0, 8, 5]
         },
         title: {
-            text: `${graphTitle} 배수지 시간별 유출량 비교`,
+            // text: `${graphTitle} 배수지 시간별 유출량 비교`,
+            text: "",
+
             align: 'left',
-            style : {
+            style: {
                 fontFamily: 'SUIT',
             }
         },
@@ -92,7 +93,7 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
                     formatter: function (value) {
                         return value.toFixed(2);  // 툴팁에서는 소수점 2자리까지 유지
                     },
-                    
+
                     title: {
                         formatter: function (val) {
                             return val + " (m³)"
@@ -124,8 +125,12 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
     }, [graphTitle, datepickerOption, data]);
 
     return (
-        <div>
-            <div id="chart" ref={chartRef} className=""></div>
+        <div className='w-full h-full  p-6 flex flex-col'>
+            <div className='w-full'>{graphTitle} 배수지 시간별 유출량 비교</div>
+            <div className='w-full flex-grow  '>
+                <div id="chart" ref={chartRef} className=""></div>
+            </div>
+
         </div>
     )
 }

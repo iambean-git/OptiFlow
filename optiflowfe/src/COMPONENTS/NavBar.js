@@ -1,4 +1,6 @@
 import { FaChevronRight } from "react-icons/fa6";
+import { MdOutlineAutoGraph } from "react-icons/md";
+import { MdOutlineWaterDrop } from "react-icons/md";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import "./navBar/navbar.css";
@@ -46,14 +48,14 @@ export default function NavBar() {
 
             <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
                 onClick={() => navigate("/waterlevel")}>
-                <MdOutlineSpaceDashboard className="size-6 mr-2" />
+                <MdOutlineWaterDrop className="size-6 mr-2" />
                 <p>실시간 수위 정보</p>
                 <FaChevronRight className="absolute right-2" />
             </div>
 
             <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
                 onClick={() => navigate("/regions")}>
-                <MdOutlineSpaceDashboard className="size-6 mr-2" />
+                <MdOutlineAutoGraph className="size-6 mr-2" />
                 <p>배수지별 통계 정보</p>
                 <FaChevronRight className="absolute right-2" />
             </div>

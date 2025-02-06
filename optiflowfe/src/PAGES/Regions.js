@@ -25,7 +25,7 @@ export default function Regions() {
     console.log("🌊 [Regions] url : ", url);
     const resp = await fetch(url);
     const data = await resp.json();
-    // console.log("🌊 [Regions] 유출량 데이터 :", data);
+    console.log("🌊 [Regions] 유출량 데이터 :", data);
 
     if (!data) return;
 
@@ -34,7 +34,7 @@ export default function Regions() {
       result[index + 1] = item.totalOutput.toFixed(2);
     });
 
-    console.log("🌊 [Regions] 유출량 데이터 graphData :", result);
+    // console.log("🌊 [Regions] 유출량 데이터 graphData :", result);
     setGraphData(result);
   }
 
@@ -199,7 +199,7 @@ export default function Regions() {
           <div className="pl-3 w-fit">
             {/* ===== 그래프1 ===== */}
             <section className="h-1/2 pb-4 w-[700px]">
-              <div className="w-full h-full border-black bg-white flex justify-center items-center pt-4">
+              <div className="w-full h-full border-black bg-white flex justify-center items-center">
                 {
                   graphData ?
                     <WaterOutFlowGraph graphTitle={graphTitle} data={graphData} datepickerOption={dateOption && dateOption.option} />

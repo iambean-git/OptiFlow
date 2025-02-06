@@ -1,0 +1,17 @@
+.radialChart {
+    border-radius: 0.5rem /* 8px */;
+}
+
+.selectedChart {
+    background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1)) /* #dbeafe */;
+}
+
+.unselectedChart{
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1)) /* #ffffff */;
+}
+
+.unselectedChart:hover{
+    background-color: #eff6ff ;
+    cursor: pointer;
+}
+
