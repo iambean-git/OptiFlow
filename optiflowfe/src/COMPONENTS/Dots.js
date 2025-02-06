@@ -11,6 +11,7 @@ const Dot = ({ num, currentPage }) => {
   };
   
 export default function Dots({currentPage}) {
+  //메인페이지 스크롤 점
   return (
     <div style={{ position: "fixed", top: "50%", right: "5vw" }}>
       <div

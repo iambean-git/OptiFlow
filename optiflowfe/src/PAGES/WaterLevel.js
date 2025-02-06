@@ -16,7 +16,7 @@ export default function WaterLevel() {
     const [waterLevel, setWaterLevel] = useState('');
 
     useEffect(() => {
-        // console.log("[Dashboard] 날짜 및 시간 선택 : ", selectedDate);
+        // console.log("[WaterLevel] 날짜 및 시간 선택 : ", selectedDate);
         const year = selectedDate.getFullYear();
         const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
         const day = String(selectedDate.getDate()).padStart(2, "0");
@@ -34,10 +34,10 @@ export default function WaterLevel() {
             const resp = await fetch(url);
             const data = await resp.json();
 
-            console.log("🌊 [Dashboard] 수위 데이터 :", data);
+            console.log("🌊 [WaterLevel] 수위 데이터 :", data);
             // 동일한 값이면 업데이트 방지
             if (JSON.stringify(data) === JSON.stringify(waterLevel)) {
-                console.log("⚠️ [Dashboard] 동일한 수위 데이터, 업데이트 안함.");
+                console.log("⚠️ [WaterLevel] 동일한 수위 데이터, 업데이트 안함.");
                 return;
             }
             setWaterLevel(data);
