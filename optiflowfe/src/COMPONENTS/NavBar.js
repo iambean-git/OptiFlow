@@ -49,7 +49,7 @@ export default function NavBar() {
             <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
                 onClick={() => navigate("/waterlevel")}>
                 <MdOutlineWaterDrop className="size-6 mr-2" />
-                <p>실시간 수위 정보</p>
+                <p>지난 수위 정보 조회</p>
                 <FaChevronRight className="absolute right-2" />
             </div>
 

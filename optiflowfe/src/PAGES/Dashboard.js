@@ -7,11 +7,13 @@ import DashOutputPrediction from '../components/dashboard/DashOutputPrediction';
 import DashOutput from '../components/dashboard/DashOutput';
 
 export default function Dashboard() {
-  const [selected, setSelected] = useState({label:"J 배수지", value:"J"});
+  const [selected, setSelected] = useState({ label: "J 배수지", value: "J" });
   const [options, setOptions] = useState([]);
 
   const [section1Data, setSection1Data] = useState(null);
   const [section2Data, setSection2Data] = useState(null);
+  const [section2Prediction, setSection2Prediction] = useState(null);
+  const [section3Data, setSection3Data] = useState(null);
   const [section4Data, setSection4Data] = useState(null);
   const [waterDetailInfo, setWaterDetailInfo] = useState(null);
 
@@ -19,53 +21,56 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     options.sort((a, b) => a.value.localeCompare(b.value)); // value기준 오름차순 정렬
     // console.log("🌊 [DashBoard] options :", options);
-  },[options]);
+  }, [options]);
 
-  useEffect(()=>{
+  useEffect(() => {
     // console.log("🌊 [DashBoard] selected :", selected);
-    if(!selected)  return;
-    if(!waterDetailInfo)  return;
+    if (!selected) return;
+    if (!waterDetailInfo) return;
     setSection2Data(waterDetailInfo[selected.value]);
-  },[selected]);
+  }, [selected]);
 
-  useEffect(()=>{
-    if(!waterDetailInfo) return;
+  useEffect(() => {
+    if (!waterDetailInfo) return;
     // console.log("🌊 [DashBoard] waterDetailInfo :", waterDetailInfo);
     // console.log("🌊 [DashBoard] selected :", selected.value);
     setSection2Data(waterDetailInfo[selected.value]);
-  },[waterDetailInfo]);
+  }, [waterDetailInfo]);
 
 
   // section2Data 확인용
-  useEffect(()=>{
-    console.log("🌊 [DashBoard] section2Data :",section2Data);
-  },[section2Data]);
+  // useEffect(()=>{
+  //   console.log("🌊 [DashBoard] section2Data :",section2Data);
+  // },[section2Data]);
 
   const fetchData = async () => {
     const date = new Date();
-    const url = `http://10.125.121.226:8080/api/reservoirdata/2023-10-21T${date.getHours()}:00`;
+    const hours = String(date.getHours()).padStart(2, "0");
+    // const hours = "14";
+    const url = `http://10.125.121.226:8080/api/reservoirdata/2023-10-21T${hours}:00`;
     const resp = await fetch(url);
     const data = await resp.json();
-    console.log("🌊 [DashBoard] 수위 데이터 :", data);
+    // console.log("🌊 [DashBoard] 수위 데이터 :", data);
 
     const section1_data = [];
     const ops = [];
     const detailInfo = {};
 
-    data.map((item)=>{
+    data.map((item) => {
       section1_data.push({
-        id : item.reservoirId.name,
-        percentage : (item.height / item.reservoirId.height * 100).toFixed(1)
+        id: item.reservoirId.name,
+        percentage: (item.height / item.reservoirId.height * 100).toFixed(1)
       });
-      ops.push({value:(item.reservoirId.name).toUpperCase(), label:(item.reservoirId.name).toUpperCase() + " 배수지"});
+      ops.push({ value: (item.reservoirId.name).toUpperCase(), label: (item.reservoirId.name).toUpperCase() + " 배수지" });
       detailInfo[(item.reservoirId.name).toUpperCase()] = {
-        crtWaterHeight : item.height,
-        height : item.reservoirId.height,
-        capacity : item.reservoirId.capacity,
-        waterVol : item.height * item.reservoirId.area
+        crtWaterHeight: item.height,
+        height: item.reservoirId.height,
+        capacity: item.reservoirId.capacity,
+        waterVol: item.height * item.reservoirId.area,
+        input: item.input,
         // ========= 예상치도 필요해요 ================
       };
     });
@@ -76,11 +81,19 @@ export default function Dashboard() {
     setOptions(ops);
     setWaterDetailInfo(detailInfo);
 
-    const url2 = `http://10.125.121.226:8080/api/predict/2023-10-21T${date.getHours()}:00:00`;
+    const url2 = `http://10.125.121.226:8080/api/predict/2023-10-21T${hours}:00:00`;
     const resp2 = await fetch(url2);
     const data2 = await resp2.json();
-    // console.log("🌊 [DashBoard] 예측 데이터 :", data2);
+    // console.log("🌊 [DashBoard] 예측 데이터 :", );
     setSection4Data(data2);
+    // console.log("🌊 [DashBoard] 예측 데이터 :", data2.prediction[0]);
+    setSection2Prediction({ hour: hours, data: data2.prediction[0] });
+
+    const url3 = `http://10.125.121.226:8080/api/reservoirdata/j/2023-10-21T${hours}:00:00`;
+    const resp3 = await fetch(url3);
+    const data3 = await resp3.json();
+    console.log("🌊 [DashBoard] 이전 데이터 :", data3);
+    setSection3Data(data3);
   }
 
   // useEffect(()=>{
@@ -95,7 +108,7 @@ export default function Dashboard() {
           {/* 텍스트 */}
           <div className="w-full  flex justify-between items-end text-[#333333]">
             <h1 className="text-4xl font-medium text-[#333]">실시간 모니터링</h1>
-            <CustomSelectBox options={options} selectLabel={selected.label} selectedOption={selected} setSelectedOption={setSelected}/>
+            <CustomSelectBox options={options} selectLabel={selected.label} selectedOption={selected} setSelectedOption={setSelected} />
 
           </div>
 
@@ -112,13 +125,13 @@ export default function Dashboard() {
               </section>
 
               <section className="w-1/4 rounded-lg">
-                <DashWaterInfo data={section2Data} />
+                <DashWaterInfo data={section2Data} predictionData={section2Prediction} />
               </section>
             </div>
 
             <div className="h-1/2 w-full flex pt-4 gap-4">
               <section className="w-1/2 bg-white rounded-lg">
-                <DashOutput />
+                <DashOutput data={section3Data}/>
               </section>
 
               <section className="w-1/2 bg-white rounded-lg">

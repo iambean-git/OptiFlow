@@ -4,7 +4,7 @@ export default function NormalNode({ data }) {
     return (
         <>
             <div className='flex bg-[#e6f4f1] rounded-sm justify-center items-center 
-                            text-sm font-semibold px-4 py-2 text-[#333333]'>
+                            text-sm font-semibold px-4 py-2 text-[#333333] !z-0 relative'>
                 {data.label}
             </div>
 

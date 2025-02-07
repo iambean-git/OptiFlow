@@ -204,7 +204,18 @@ export default function Regions() {
                   graphData ?
                     <WaterOutFlowGraph graphTitle={graphTitle} data={graphData} datepickerOption={dateOption && dateOption.option} />
                     :
-                    <div className="text-gray-500"> 날짜를 선택하세요 </div>
+                    <div
+                      style={{
+                        backgroundImage: "url('/images/graph_capture_01.png')",
+                        backgroundColor: "rgba(255, 255, 255, 0.78)", // 검은색 반투명 배경
+                        backgroundBlendMode: "overlay", // 배경 이미지와 색상을 블렌딩
+                      }}
+                      className="bg-contain bg-center h-64 w-[90%] flex items-center justify-center
+                                text-gray-600 text-lg
+                                  "
+                    >
+                      <span className="bg-white bg-opacity-80 rounded-lg ">날짜를 선택하세요</span>
+                    </div>
                 }
               </div>
             </section>

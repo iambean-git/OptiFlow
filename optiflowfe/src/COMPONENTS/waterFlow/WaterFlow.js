@@ -11,7 +11,6 @@ import DrainageNode from './DrainageNode';
 import InterSectionNode from './InterSectionNode';
 import NormalNode from './NormalNode';
 import FlowEdge from './FlowEdge';
-import Modal from '../modal/Modal';
 
 const nodeTypes = { drain: DrainageNode, intersection: InterSectionNode, normal: NormalNode };
 const edgeTypes = { flowEdge: FlowEdge };
@@ -72,7 +71,7 @@ const LayoutFlow = ({ nodes, edges, onNodeClick }) => {
         <ReactFlow
             nodes={nodes}
             edges={edges}
-            onNodeClick={onNodeClick}
+            // onNodeClick={onNodeClick}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
             fitView
@@ -85,15 +84,6 @@ const LayoutFlow = ({ nodes, edges, onNodeClick }) => {
 function WaterFlowComponent({ waterLevel }) {
     const [nodes, setNodes] = useState([]);
     const [edges, setEdges] = useState(initialEdges);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [modalData, setModalData] = useState('');
-
-    const closeModal = () => setModalOpen(false);
-    const onNodeClick = (event, node) => {
-        if (node.type !== "drain") return;
-        setModalData(node);
-        setModalOpen(true);
-    };
 
     useEffect(() => {
         // console.log("[WaterFlow] waterLevel 변경 감지", waterLevel);
@@ -254,8 +244,7 @@ function WaterFlowComponent({ waterLevel }) {
 
     return (
         <div className="w-full h-full rounded-lg bg-white" style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}>
-            <LayoutFlow nodes={nodes} edges={edges} onNodeClick={onNodeClick} />
-            <Modal open={modalOpen} close={closeModal} data={modalData} />
+            <LayoutFlow nodes={nodes} edges={edges}/>
         </div>
     );
 }
