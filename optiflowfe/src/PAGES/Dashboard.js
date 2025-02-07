@@ -13,6 +13,7 @@ export default function Dashboard() {
   const [section1Data, setSection1Data] = useState(null);
   const [section2Data, setSection2Data] = useState(null);
   const [section2Prediction, setSection2Prediction] = useState(null);
+  const [section3Data, setSection3Data] = useState(null);
   const [section4Data, setSection4Data] = useState(null);
   const [waterDetailInfo, setWaterDetailInfo] = useState(null);
 
@@ -52,7 +53,7 @@ export default function Dashboard() {
     const url = `http://10.125.121.226:8080/api/reservoirdata/2023-10-21T${hours}:00`;
     const resp = await fetch(url);
     const data = await resp.json();
-    console.log("🌊 [DashBoard] 수위 데이터 :", data);
+    // console.log("🌊 [DashBoard] 수위 데이터 :", data);
 
     const section1_data = [];
     const ops = [];
@@ -80,18 +81,19 @@ export default function Dashboard() {
     setOptions(ops);
     setWaterDetailInfo(detailInfo);
 
-    const url2 = `http://10.125.121.226:8080/api/predict/2023-10-21T${hours}:00:00`;
-    const resp2 = await fetch(url2);
-    const data2 = await resp2.json();
-    // console.log("🌊 [DashBoard] 예측 데이터 :", );
-    setSection4Data(data2);
-    console.log("🌊 [DashBoard] 예측 데이터 :", data2.prediction[0]);
-    setSection2Prediction({ hour: hours, data: data2.prediction[0] });
+    // const url2 = `http://10.125.121.226:8080/api/predict/2023-10-21T${hours}:00:00`;
+    // const resp2 = await fetch(url2);
+    // const data2 = await resp2.json();
+    // // console.log("🌊 [DashBoard] 예측 데이터 :", );
+    // setSection4Data(data2);
+    // // console.log("🌊 [DashBoard] 예측 데이터 :", data2.prediction[0]);
+    // setSection2Prediction({ hour: hours, data: data2.prediction[0] });
 
     const url3 = `http://10.125.121.226:8080/api/reservoirdata/j/2023-10-21T${hours}:00:00`;
     const resp3 = await fetch(url3);
     const data3 = await resp3.json();
     console.log("🌊 [DashBoard] 이전 데이터 :", data3);
+    setSection3Data(data3);
   }
 
   // useEffect(()=>{
@@ -129,7 +131,7 @@ export default function Dashboard() {
 
             <div className="h-1/2 w-full flex pt-4 gap-4">
               <section className="w-1/2 bg-white rounded-lg">
-                <DashOutput />
+                <DashOutput data={section3Data}/>
               </section>
 
               <section className="w-1/2 bg-white rounded-lg">
