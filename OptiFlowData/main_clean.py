@@ -15,7 +15,7 @@ print(f'다음 기기로 학습 : {device}')
 
 try:
   data = pd.read_csv('./data/j_weather_data_v3.csv')
-  data['datetime'] = pd.to_datetime(data['datetime'])  # 'datetime' 컬럼을 datetime 객체로 변환
+  data['datetime'] = pd.to_datetime(data['datetime'])
 except FileNotFoundError:
   print("Error: j_weather_data_v3.csv 파일을 찾을 수 없습니다.")
   exit()
@@ -53,28 +53,24 @@ with open('scaler_feature_lstm_250206.pkl', 'rb') as f:
 with open('scaler_target_lstm_250206.pkl', 'rb') as f:
   loaded_scaler_target = pickle.load(f)
 
-def predict(dt, model):  # dt는 datetime 객체
+def predict(dt, model):
   model.eval()
   
-  # dt를 기준으로 이전 168개의 데이터 가져오기
   past_data = data[data['datetime'] < dt].tail(168)
   start_time = past_data.iloc[-1]['datetime'] + timedelta(hours=1)
-  print(dt, start_time)
+
   if len(past_data) != 168:
     raise ValueError("이전 168개의 데이터를 찾을 수 없습니다.")
 
-  # 과거 데이터를 numpy array로 변환하고, float32 타입으로 변경
   input_data = past_data.drop('datetime', axis=1).values.astype(np.float32)
   scaled_input_data = loaded_scaler_feature.transform(input_data)
 
-  # 데이터를 PyTorch Tensor로 변환하고, 모델에 입력할 수 있도록 reshape
   input_tensor = torch.tensor(scaled_input_data).unsqueeze(0).to(device) # (batch_size, sequence_length, input_size)
 
   with torch.no_grad():
     predicted = model(input_tensor)
 
   predicted = predicted.cpu().numpy()
-
   predicted_original = loaded_scaler_target.inverse_transform(predicted)
 
   pred_arr = []
@@ -85,12 +81,7 @@ def predict(dt, model):  # dt는 datetime 객체
     dic["value"] = float(value)
     pred_arr.append(dic)
 
-  # print(pred_arr)
-
   return pred_arr
-
-# test = predict('2024-10-01T00:00', model)
-# print(test)
 
 from fastapi import FastAPI, Request, HTTPException
 import requests
@@ -114,7 +105,7 @@ app.add_middleware(
   allow_headers=["*"],  # 모든 헤더 허용
 )
 
-SPRINGBOOT_URL = os.environ.get("SPRINGBOOT_URL", "http://10.125.121.226:8080/api/save")  # Spring Boot 엔드포인트
+# SPRINGBOOT_URL = os.environ.get("SPRINGBOOT_URL", "http://10.125.121.226:8080/api/save")  # Spring Boot 엔드포인트
 
 class InputData(BaseModel):
   datetime: str  # datetime 객체를 받도록 수정
@@ -123,7 +114,7 @@ class InputData(BaseModel):
 @app.post("/api/predict")
 async def predict_data(request: Request, input_data: InputData):
   logger.info(f"Request: {request.method} {request.url}")
-  # logger.info(f"Response status code: {input_data.status_code}")
+
   try:
     prediction = predict(input_data.datetime, model)
   except ValueError as e:
@@ -132,13 +123,4 @@ async def predict_data(request: Request, input_data: InputData):
     raise HTTPException(status_code=500, detail=str(e))
 
   result = {"prediction" : prediction}
-  print(result, type(result))
   return result
-  # try:
-  #   spring_response = requests.post(SPRINGBOOT_URL, json=result)
-  #   spring_response.raise_for_status()
-  # except requests.exceptions.RequestException as e:
-  #   raise HTTPException(status_code=500, detail=f"Failed to communicate with Spring Boot: {str(e)}")
-
-  # final_result = spring_response.json()
-  # return final_result
