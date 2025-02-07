@@ -81,13 +81,13 @@ export default function Dashboard() {
     setOptions(ops);
     setWaterDetailInfo(detailInfo);
 
-    // const url2 = `http://10.125.121.226:8080/api/predict/2023-10-21T${hours}:00:00`;
-    // const resp2 = await fetch(url2);
-    // const data2 = await resp2.json();
-    // // console.log("🌊 [DashBoard] 예측 데이터 :", );
-    // setSection4Data(data2);
-    // // console.log("🌊 [DashBoard] 예측 데이터 :", data2.prediction[0]);
-    // setSection2Prediction({ hour: hours, data: data2.prediction[0] });
+    const url2 = `http://10.125.121.226:8080/api/predict/2023-10-21T${hours}:00:00`;
+    const resp2 = await fetch(url2);
+    const data2 = await resp2.json();
+    // console.log("🌊 [DashBoard] 예측 데이터 :", );
+    setSection4Data(data2);
+    // console.log("🌊 [DashBoard] 예측 데이터 :", data2.prediction[0]);
+    setSection2Prediction({ hour: hours, data: data2.prediction[0] });
 
     const url3 = `http://10.125.121.226:8080/api/reservoirdata/j/2023-10-21T${hours}:00:00`;
     const resp3 = await fetch(url3);

@@ -134,8 +134,8 @@ export default function DashOutput({ data }) {
 
             {/* 제목 */}
             <div className='w-full flex justify-between items-end '>
-                <span>이전 유출량</span>
-                <span className='text-sm text-gray-500'>정각 기준, 향후 1시간 동안 예상되는 유출량 (m³)</span>
+                <span>이전 유입량 및 유출량</span>
+                <span className='text-sm text-gray-500'>설명</span>
             </div>
 
             {/* 그래프 */}
