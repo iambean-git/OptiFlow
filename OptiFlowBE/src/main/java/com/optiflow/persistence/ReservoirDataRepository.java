@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.optiflow.domain.Reservoir;
 import com.optiflow.domain.ReservoirData;
 import com.optiflow.domain.ReservoirDataId;
 
@@ -15,7 +16,7 @@ import com.optiflow.domain.ReservoirDataId;
 public interface ReservoirDataRepository extends JpaRepository<ReservoirData,ReservoirDataId> {
 	
 	List<ReservoirData> findByObservationTime(LocalDateTime observationTime);
-	
+	List<ReservoirData> findByReservoirIdAndObservationTimeBetween(Reservoir reservoirId, LocalDateTime startTime, LocalDateTime endTime);
 	@Query(value = "SELECT " +
             "DATE_FORMAT(rd.observation_time, '%Y-%m-%d') AS observationTime, " +
             "r.reservoir_id AS reservoirId, " +
