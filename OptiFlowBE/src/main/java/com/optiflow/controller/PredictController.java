@@ -22,7 +22,7 @@ import com.optiflow.service.PredictService;
 @RequestMapping("/api")
 public class PredictController {
 	
-	private static final Logger log = LoggerFactory.getLogger(PredictController.class); // Logger 추가
+	private static final Logger log = LoggerFactory.getLogger(PredictController.class);
 	
 	@Autowired
 	private PredictService predictService;
@@ -41,10 +41,10 @@ public class PredictController {
 		return ResponseEntity.ok(predictList);
 	}
 	
-	@GetMapping("/predict/{datetime}") // 예측 요청 API 엔드포인트 추가
+	@GetMapping("/predict/{datetime}")
     public ResponseEntity<PredictResponseDto> getPrediction(@PathVariable String datetime) {
-		log.info("Received prediction request with datetime: {}", datetime); // 요청 로깅 (datetime 포함)
-        PredictRequestDto requestDto = new PredictRequestDto(); // PredictRequestDto 객체 생성
+		log.info("Received prediction request with datetime: {}", datetime);
+        PredictRequestDto requestDto = new PredictRequestDto(); 
         requestDto.setDatetime(datetime); // PathVariable 로 받은 datetime 값을 DTO 에 설정
         PredictResponseDto responseDto = predictService.getPrediction(requestDto);
         return ResponseEntity.ok(responseDto); // 예측 결과 응답 DTO 반환

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.optiflow.domain.Reservoir;
 import com.optiflow.domain.ReservoirData;
 import com.optiflow.dto.ReservoirStats;
 import com.optiflow.persistence.ReservoirDataRepository;
@@ -25,6 +26,9 @@ public class ReservoirDataService {
 	@Autowired
 	private ReservoirDataRepository reservoirDataRepo;
 	
+	public List<ReservoirData> findByObservationTimeRange(Reservoir reservoir, LocalDateTime startTime, LocalDateTime endTime){
+		 return reservoirDataRepo.findByReservoirIdAndObservationTimeBetween(reservoir, startTime, endTime);
+	}
 	public List<ReservoirData> findByObservationTime(LocalDateTime observationTime){
 		return reservoirDataRepo.findByObservationTime(observationTime);
 	}
