@@ -1,7 +1,11 @@
 package com.optiflow.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,42 @@ public class ReservoirDataController {
 	@Autowired
 	private ReservoirRepository reservoirRepo;
 	
+	@GetMapping("/{reservoirName}/{datetime}")
+	public ResponseEntity<?> findByObservationTime(@PathVariable String reservoirName,
+			@PathVariable String datetime) {
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
+		if (!reservoirOptional.isPresent()) { // 없을 경우 404 에러 반환
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		Reservoir reservoir = reservoirOptional.get();
+		LocalDateTime localDateTime = LocalDateTime.parse(datetime);
+		LocalDateTime startTime = localDateTime.minusHours(24);
+		LocalDateTime endTime = localDateTime.minusHours(1); // 요청된 시간까지 포함 (요청 시간 포함 여부에 따라 조정 가능)
+
+		// 서비스 메서드 호출 변경: 배수지명, 시작 시간, 종료 시간을 파라미터로 전달
+		List<ReservoirData> datas = reservoirDataService.findByObservationTimeRange(reservoir, startTime, endTime);
+		if (datas.isEmpty()) {
+	        return ResponseEntity.ok(Collections.emptyMap()); // 데이터가 없을 경우 빈 JSON 객체 반환 또는 다른 처리
+	    }
+
+	    // 프론트엔드에서 원하는 JSON 형태로 데이터 가공
+	    Map<String, List<?>> responseMap = new HashMap<>();
+	    List<String> timeList = new ArrayList<>();
+	    List<Float> inputList = new ArrayList<>();
+	    List<Float> outputList = new ArrayList<>();
+
+	    for (ReservoirData data : datas) {
+	        timeList.add(data.getObservationTime().toString()); // LocalDateTime을 String으로 변환
+	        inputList.add(data.getInput());
+	        outputList.add(data.getOutput());
+	    }
+
+	    responseMap.put("time", timeList);
+	    responseMap.put("input", inputList);
+	    responseMap.put("output", outputList);
+
+	    return ResponseEntity.ok(responseMap);
+	}
 	@GetMapping("/{datetime}")
 	public ResponseEntity<List<ReservoirData>> findByObservationTime(@PathVariable String datetime){
 		LocalDateTime localDateTime = LocalDateTime.parse(datetime);

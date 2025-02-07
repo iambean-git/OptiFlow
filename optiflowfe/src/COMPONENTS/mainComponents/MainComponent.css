@@ -1,0 +1,44 @@
+.main-component-container {
+  position: relative; /* 컨테이너를 relative로 설정 */
+  width: 100vw; /* 뷰포트 너비에 맞게 조정 */
+  height: 100vh; /* 뷰포트 높이에 맞게 조정 */
+  overflow: hidden; /* 비디오가 컨테이너 밖으로 나가지 않도록 숨김 */
+}
+
+.background-video {
+  position: absolute; /* 비디오를 absolute로 설정 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비디오 비율 유지하며 컨테이너 꽉 채우기 */
+  z-index: -1; /* 비디오를 다른 콘텐츠보다 뒤에 배치 */
+}
+
+.content-overlay {
+  position: relative; /* 콘텐츠 오버레이를 relative로 설정 (z-index 기준점) */
+  width: 100%;
+  height: 100%;
+  display: flex; /* 내부 콘텐츠 flexbox 레이아웃 사용 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  /* 필요한 경우 배경색 추가 (반투명 검정색 등) */
+  /* background-color: rgba(0, 0, 0, 0.5); */
+}
+
+.scorlldown.inner.flex-col {
+  /* 기존 .scorlldown.inner.flex-col 스타일 유지 또는 필요에 따라 조정 */
+  text-align: center; /* 텍스트 중앙 정렬 (필요한 경우) */
+  color: white; /* 텍스트 색상 (필요한 경우) */
+  /* ... 기타 스타일 ... */
+}
+
+.arrowSpan {
+  /* 기존 .arrowSpan 스타일 유지 또는 필요에 따라 조정 */
+  /* ... */
+}
+
+.size-96 {
+  /* 기존 .size-96 스타일 유지 또는 필요에 따라 조정 */
+  /* ... */
+}
