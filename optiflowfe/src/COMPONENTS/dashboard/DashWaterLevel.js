@@ -87,8 +87,8 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
     };
 
     return (
-        <div className='w-full h-full rounded-lg bg-white p-2 flex flex-col items-center justify-center'>
-            <div className='w-full h-9 flex justify-between items-center px-4 py-2 mb-2'>
+        <div className='w-full h-full rounded-lg p-6 flex flex-col'>
+            <div className='w-full flex justify-between items-center'>
                 <span className="text-lg h-full">
                     배수지별 현재 저수량
                 </span>
@@ -103,7 +103,7 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
 
                 </div>
             </div>
-            <div className='grid grid-cols-6 gap-2 w-[95%]'>
+            <div className='w-full flex-grow grid grid-cols-6 gap-2 items-center'>
                 {
                     isSet ?
                         <>

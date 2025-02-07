@@ -33,8 +33,12 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
                 enabled: false
             },
             toolbar: {
+                show:true,
                 tools: {
                     download: false,
+                    zoom: true, // 줌 버튼 활성화
+                    zoomin: true,  // 줌인 버튼 활성화 (선택 사항)
+                    zoomout: true, // 줌아웃 버튼 활성화 (선택 사항)
                 },
             },
         },

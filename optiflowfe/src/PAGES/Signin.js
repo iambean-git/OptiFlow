@@ -13,8 +13,8 @@ export default function Signin() {
   const passwordRef = useRef();
 
   useEffect(() => {
-    console.log("username : ", username);
-    console.log("pwd : ", pwd);
+    // console.log("username : ", username);
+    // console.log("pwd : ", pwd);
     if (username.length > 0 && pwd.length > 0) setBtnDisabled(false);
     else setBtnDisabled(true);
   }, [username, pwd]);
