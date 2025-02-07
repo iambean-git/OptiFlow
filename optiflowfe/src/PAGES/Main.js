@@ -105,7 +105,10 @@ export default function Main() {
   return (
     <>
       <button
-        className="absolute border border-gray-400 rounded-md px-6 py-2 right-6 top-4 z-10"
+        className={`absolute px-6 py-2 right-6 top-4 z-10 
+                    border-2  bg-white bg-opacity-50 rounded-md text-gray-900
+                    ${currentPage==3? "border-gray-500": "border-white"}`
+                  }
         onClick={() => {
           navigate("/login");
         }}

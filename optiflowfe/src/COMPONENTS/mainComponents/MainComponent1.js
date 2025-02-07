@@ -16,7 +16,7 @@ export default function MainComponent1() {
         {" "}
         {/* 콘텐츠 오버레이 div 추가 */}
         <div className="scorlldown inner flex-col">
-          <img src="/images/logo_square.png" className="size-96" alt="logo" />
+          <img src="/images/logo_square_white.png" className="size-96 animatedLogo" alt="logo" />
           {/* <section className="text-center">
               <p>
                   배수지의 수요 예측을 통해 심야 가동을 통해 전기료를 절약하고
