@@ -12,14 +12,10 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class ReservoirDataId implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Integer reservoirId;
     private LocalDateTime observationTime;
 
-    // 기본 생성자 필요 (JPA 요구 사항)
     public ReservoirDataId() {}
 
     public ReservoirDataId(Integer reservoirId, LocalDateTime observationTime) {

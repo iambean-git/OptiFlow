@@ -38,7 +38,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 		}
 
 		String jwtToken = srcToken.replace("Bearer ", "");
-		
 		String username = JWT.require(Algorithm.HMAC256("com.optiflow.jwt")).build().verify(jwtToken).getClaim("username")
 				.asString();
 
@@ -50,13 +49,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 		}
 		
 		Member findmember = opt.get();
-		
 		User user = new User(findmember.getUsername(), findmember.getPassword(),
 						AuthorityUtils.createAuthorityList(findmember.getRole().toString()));
 		
 		Authentication auth = new UsernamePasswordAuthenticationToken
 				(user, null, user.getAuthorities());
-		
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		
 		filterChain.doFilter(request, response);
