@@ -3,8 +3,6 @@ package com.optiflow.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -15,50 +13,57 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optiflow.domain.Predict;
+import com.optiflow.domain.Reservoir;
 import com.optiflow.dto.PredictRequestDto;
 import com.optiflow.dto.PredictResponseDto;
 import com.optiflow.dto.PredictionItemDto;
 import com.optiflow.persistence.PredictRepository;
+import com.optiflow.persistence.ReservoirRepository;
 
 @Service
 public class PredictService {
-
-	private static final Logger log = LoggerFactory.getLogger(PredictService.class); // Logger 추가
 
 	@Value("${fastapi.url}")
 	private String fastapiUrl;
 	
 	@Autowired
 	private PredictRepository predictRepo;
+	
+	@Autowired
+	private ReservoirRepository reservoirRepo;
 
 	public List<Predict> getAllPredicts() {
 		return predictRepo.findAll();
 	}
 	
-	public Predict savePredict(String datetime, List<PredictionItemDto> list) {
+	public Predict savePredict(String name, String datetime, List<PredictionItemDto> prediction, List<PredictionItemDto> optiflow) {
 		Predict predict = new Predict();
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(name);
+		int reservoirId = reservoirOptional.get().getReservoirId();
+		Optional<Reservoir> reservoirEntity = reservoirRepo.findById(reservoirId);
+		
+		predict.setReservoirId(reservoirEntity.get());
 		predict.setDatetime(datetime);
-		predict.setResult(list);
+		predict.setPrediction(prediction);
+		predict.setOptiflow(optiflow);
 		return predictRepo.save(predict);
 	}
 	
 	public PredictResponseDto getPrediction(PredictRequestDto requestDto) {
-        log.info("PredictService.getPrediction called with request: {}", requestDto);
 
         String datetime = requestDto.getDatetime();
-
-        // 1. DB에서 datetime으로 기존 예측 데이터 조회
+        String name = requestDto.getName();
+        // DB에서 datetime으로 기존 예측 데이터 조회
         Optional<Predict> existingPrediction = predictRepo.findByDatetime(datetime);
 
         if (existingPrediction.isPresent()) {
-            // 2. DB에 데이터가 존재하면 DB 데이터 반환
-            log.info("Prediction found in DB for datetime: {}", datetime);
+            // DB에 데이터가 존재하면 DB 데이터 반환
             PredictResponseDto responseDto = new PredictResponseDto();
-            responseDto.setPrediction(existingPrediction.get().getResult()); // Prediction 엔티티에서 예측값을 가져오는 메서드 (예시)
+            responseDto.setPrediction(existingPrediction.get().getPrediction());
+            responseDto.setOptiflow(existingPrediction.get().getOptiflow());
             return responseDto;
         } else {
-            // 3. DB에 데이터가 없으면 FastAPI 호출 및 DB 저장
-            log.info("No prediction found in DB, calling FastAPI...");
+            // DB에 데이터가 없으면 FastAPI 호출 및 DB 저장
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -74,16 +79,13 @@ public class PredictService {
                 );
 
                 if (responseDto == null) {
-                    log.error("FastAPI prediction failed or returned null response.");
                     return new PredictResponseDto(); // 빈 결과 반환
                 } else {
-                    log.info("FastAPI prediction successful. Response: {}", responseDto);
-                    savePredict(datetime, responseDto.getPrediction());
+                    savePredict(name, datetime, responseDto.getPrediction(), responseDto.getOptiflow());
                     return responseDto;
                 }
 
             } catch (Exception e) {
-                log.error("Error while calling FastAPI for prediction: ", e);
                 return new PredictResponseDto(); // 예외 발생 시 빈 결과 반환
             }
         }

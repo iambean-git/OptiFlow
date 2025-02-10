@@ -10,5 +10,5 @@ import com.optiflow.domain.Reservoir;
 @Repository
 public interface ReservoirRepository extends JpaRepository<Reservoir, Integer>{
 	
-	Optional<Reservoir> findByName(String name); // 배수지 이름으로 찾는 메소드 추가
+	Optional<Reservoir> findByName(String name);
 }

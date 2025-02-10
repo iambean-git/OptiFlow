@@ -13,7 +13,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -38,12 +40,17 @@ public class Predict {
     @Column(name = "datetime")
     private String datetime;
     
-    @Column(name = "result")
+    @Column(name = "prediction")
     @Lob // Large Object (TEXT, BLOB 등) 타입 지정
-    @JdbcTypeCode(SqlTypes.JSON) // JSON 타입으로 지정 (MySQL 8+ 또는 PostgreSQL)
-    private List<PredictionItemDto> result;
+    @JdbcTypeCode(SqlTypes.JSON) // JSON 타입으로 지정
+    private List<PredictionItemDto> prediction;
     
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at")
-	private Date createdDate = new Date();
+    @Column(name = "optiflow")
+    @Lob // Large Object (TEXT, BLOB 등) 타입 지정
+    @JdbcTypeCode(SqlTypes.JSON) // JSON 타입으로 지정
+    private List<PredictionItemDto> optiflow;
+    
+	@ManyToOne
+	@JoinColumn(name = "reservoir_id", insertable = false, updatable = false)
+	private Reservoir reservoirId;
 }

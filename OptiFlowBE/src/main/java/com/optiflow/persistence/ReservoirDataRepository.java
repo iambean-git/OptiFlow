@@ -2,6 +2,7 @@ package com.optiflow.persistence;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,12 @@ import com.optiflow.domain.ReservoirDataId;
 @Repository
 public interface ReservoirDataRepository extends JpaRepository<ReservoirData,ReservoirDataId> {
 	
+	// 특정 복합키로 height 값만 가져오기
+    @Query("SELECT r.height FROM ReservoirData r WHERE r.reservoirId.id = :reservoirId AND r.observationTime = :observationTime")
+    Float findHeightByReservoirIdAndObservationTime(
+            @Param("reservoirId") Integer reservoirId,
+            @Param("observationTime") LocalDateTime observationTime);
+    
 	List<ReservoirData> findByObservationTime(LocalDateTime observationTime);
 	List<ReservoirData> findByReservoirIdAndObservationTimeBetween(Reservoir reservoirId, LocalDateTime startTime, LocalDateTime endTime);
 	@Query(value = "SELECT " +

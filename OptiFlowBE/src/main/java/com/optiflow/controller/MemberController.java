@@ -22,21 +22,18 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 	
-	// Create or Update a Member
     @PostMapping
     public ResponseEntity<Member> createOrUpdateMember(@RequestBody Member member) {
         Member savedMember = memberService.saveMember(member);
         return ResponseEntity.ok(savedMember);
     }
 
-    // Get all Members
     @GetMapping
     public ResponseEntity<List<Member>> getAllMembers() {
         List<Member> members = memberService.getAllMembers();
         return ResponseEntity.ok(members);
     }
 
-    // Get a Member by username
     @GetMapping("/{username}")
     public ResponseEntity<Member> getMemberByUsername(@PathVariable String username) {
         return memberService.getMemberByUsername(username)
@@ -44,7 +41,6 @@ public class MemberController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Delete a Member
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteMember(@PathVariable String username) {
         memberService.deleteMember(username);

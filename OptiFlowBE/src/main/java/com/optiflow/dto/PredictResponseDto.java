@@ -13,10 +13,14 @@ import lombok.Setter;
 public class PredictResponseDto {
 	
 	@JsonProperty("prediction") // JSON 키 "prediction" 과 매핑
-	private List<PredictionItemDto> prediction; // List<PredictionItemDto> 로 변경
+	private List<PredictionItemDto> prediction;
+	
+	@JsonProperty("optiflow")
+	private List<PredictionItemDto> optiflow;
 
 	public PredictResponseDto() {
 		this.prediction = java.util.Collections.emptyList();
+		this.optiflow = java.util.Collections.emptyList();
 	}
 	
 }
