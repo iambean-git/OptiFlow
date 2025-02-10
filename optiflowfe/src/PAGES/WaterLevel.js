@@ -5,36 +5,28 @@ import React, { useEffect, useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 import DateNTime from "../components/datepicker/DateNTime";
+import {formatDate} from "../utils/dateUtils";
+
+import { maxDate10am } from "../recoil/DateAtom";
+import { useRecoilValue } from "recoil";
 
 export default function WaterLevel() {
-    const [selectedDate, setSelectedDate] = useState(() => {
-        return new Date(2023, 9, 21, 10, 0, 0);  // 2023년 10월 21일 10:00:00
-    });
-    const [textDate, setTextDate] = useState("");
+    const defaultDate = useRecoilValue(maxDate10am);
+    const [selectedDate, setSelectedDate] = useState(defaultDate);
     const [waterFlowTag, setWaterFlowTag] = useState(<div>로딩중</div>);
 
     const [waterLevel, setWaterLevel] = useState('');
 
     useEffect(() => {
-        // console.log("[WaterLevel] 날짜 및 시간 선택 : ", selectedDate);
-        const year = selectedDate.getFullYear();
-        const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
-        const day = String(selectedDate.getDate()).padStart(2, "0");
-        const hours = String(selectedDate.getHours()).padStart(2, "0");
-        const minutes = String(selectedDate.getMinutes()).padStart(2, "0");
-
-        setTextDate(`${year}-${month}-${day}T${hours}:${minutes}`);
-    }, [selectedDate]);
-
-    useEffect(() => {
-        if (!textDate) return;
-
+        if (!selectedDate) return;
+        // console.log("💥 formatDate 확인 : ", formatDate(selectedDate));
         const fetchWaterLevelData = async () => {
-            const url = `http://10.125.121.226:8080/api/reservoirdata/${textDate}`;
+            const url = `http://10.125.121.226:8080/api/reservoirdata/${formatDate(selectedDate)}`;
             const resp = await fetch(url);
             const data = await resp.json();
 
             console.log("🌊 [WaterLevel] 수위 데이터 :", data);
+
             // 동일한 값이면 업데이트 방지
             if (JSON.stringify(data) === JSON.stringify(waterLevel)) {
                 console.log("⚠️ [WaterLevel] 동일한 수위 데이터, 업데이트 안함.");
@@ -44,7 +36,7 @@ export default function WaterLevel() {
         };
 
         fetchWaterLevelData();
-    }, [textDate]);
+    }, [selectedDate]);
 
 
     useEffect(() => {
@@ -61,7 +53,7 @@ export default function WaterLevel() {
                     {/* 텍스트 */}
                     <div className="w-2/5 h-full  flex flex-col justify-end text-[#333333]">
                         <h1 className="text-4xl ">타이틀</h1>
-                        <p className="mt-2">각 배수지를 클릭하면, <span className="whitespace-nowrap"> 세부 정보를 확인할 수 있습니다.</span></p>
+                        <p className="mt-2">각 배수지에 마우스를 올리면, <span className="whitespace-nowrap"> 세부 정보를 확인할 수 있습니다.</span></p>
                     </div>
 
                     {/* 달력 */}
@@ -69,7 +61,6 @@ export default function WaterLevel() {
                         <section className="absolute bottom-0 right-0 ">
                             <DateNTime selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
                         </section>
-
                     </div>
                 </div>
                 <section className="px-10 pb-10 pt-6 w-full h-full">

@@ -45,13 +45,13 @@
   /* ... 기타 스타일 ... */
 }
 
-.animation{
-  animation: 1s ease-in-out 0.5s 1 normal forwards running slideUp;
+.animationSlideUp p{
+  animation: slideUp 1s ease-in-out forwards;
 }
 
 @keyframes slideUp {
   0% {
-    transform: translate3d(0, 50px, 0);
+    transform: translate3d(0, 70px, 0);
     opacity: 0;
   }
   100% {
@@ -77,7 +77,7 @@
   }
 }
 
-.animatedLogo{
+.animatedLogo { 
   animation: fadeInScaleUp 3.5s ease-out forwards;
 }
 

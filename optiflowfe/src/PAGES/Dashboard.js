@@ -6,6 +6,10 @@ import DashWaterInfo from '../components/dashboard/DashWaterInfo';
 import DashOutputPrediction from '../components/dashboard/DashOutputPrediction';
 import DashOutput from '../components/dashboard/DashOutput';
 
+import { NowDate } from "../recoil/DateAtom";
+import { useRecoilValue } from "recoil";
+import {formatDate} from "../utils/dateUtils";
+
 export default function Dashboard() {
   const [selected, setSelected] = useState({ label: "J 배수지", value: "J" });
   const [options, setOptions] = useState([]);
@@ -17,8 +21,13 @@ export default function Dashboard() {
   const [section4Data, setSection4Data] = useState(null);
   const [waterDetailInfo, setWaterDetailInfo] = useState(null);
 
+  const todayDate = (useRecoilValue(NowDate));
   useEffect(() => {
-    fetchData();
+    fetchData(formatDate(todayDate));
+
+    // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
+    // const hours = "10";
+    // fetchData(`2023-10-21T${hours}:00`);
   }, []);
 
   useEffect(() => {
@@ -46,11 +55,13 @@ export default function Dashboard() {
   //   console.log("🌊 [DashBoard] section2Data :",section2Data);
   // },[section2Data]);
 
-  const fetchData = async () => {
-    const date = new Date();
-    const hours = String(date.getHours()).padStart(2, "0");
+  const fetchData = async (date) => {
+    // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
     // const hours = "14";
-    const url = `http://10.125.121.226:8080/api/reservoirdata/2023-10-21T${hours}:00`;
+    // const url = `http://10.125.121.226:8080/api/reservoirdata/2023-10-21T${hours}:00`;
+
+    const url = `http://10.125.121.226:8080/api/reservoirdata/${date}`;
+
     const resp = await fetch(url);
     const data = await resp.json();
     // console.log("🌊 [DashBoard] 수위 데이터 :", data);
@@ -71,7 +82,6 @@ export default function Dashboard() {
         capacity: item.reservoirId.capacity,
         waterVol: item.height * item.reservoirId.area,
         input: item.input,
-        // ========= 예상치도 필요해요 ================
       };
     });
     // console.log("section1_data : ", section1_data);
@@ -81,15 +91,17 @@ export default function Dashboard() {
     setOptions(ops);
     setWaterDetailInfo(detailInfo);
 
-    const url2 = `http://10.125.121.226:8080/api/predict/2023-10-21T${hours}:00:00`;
+    const url2 = `http://10.125.121.226:8080/api/predict/${date}`;
     const resp2 = await fetch(url2);
     const data2 = await resp2.json();
-    // console.log("🌊 [DashBoard] 예측 데이터 :", );
+    console.log("🌊 [DashBoard] 예측 데이터 :",data2 );
     setSection4Data(data2);
-    // console.log("🌊 [DashBoard] 예측 데이터 :", data2.prediction[0]);
+    console.log("🌊 [DashBoard] 예측 데이터 :", data2.prediction[0]);
+
+    const hours =  date.substr(11,2);
     setSection2Prediction({ hour: hours, data: data2.prediction[0] });
 
-    const url3 = `http://10.125.121.226:8080/api/reservoirdata/j/2023-10-21T${hours}:00:00`;
+    const url3 = `http://10.125.121.226:8080/api/reservoirdata/j/${date}`;
     const resp3 = await fetch(url3);
     const data3 = await resp3.json();
     console.log("🌊 [DashBoard] 이전 데이터 :", data3);
