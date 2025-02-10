@@ -23,11 +23,14 @@ export default function LocalTime() {
 
     return (
         <>
-            <div className="font-semibold"> 
-                {year}년 {month}월 {day}일</div>
-    
+            <div className="font-semibold">
+                {/* 오늘 날짜 */}
+                {/* {year}년 {month}월 {day}일 */}
+                2024년 10월 17일
+            </div>
+
             <div className="text-4xl font-bold">
-                {hours}:{minutes}:{seconds} 
+                {hours}:{minutes}:{seconds}
             </div>
         </>
 

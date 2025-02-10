@@ -1,4 +1,4 @@
-import "./MainComponent.css"; // CSS 파일 임포트 확인
+import "../../css/videoStyle.css"; 
 
 export default function MainComponent1() {
   return (
@@ -6,17 +6,17 @@ export default function MainComponent1() {
       {" "}
       {/* 컨테이너 div 추가 */}
       <video
-        src="/videos/fall.mp4"
+        src="/videos/waterfall.mp4"
         loop
         muted
         autoPlay
-        className="background-video" // 백그라운드 비디오 클래스 이름 변경
+        className="background-video" 
       />
       <div className="content-overlay">
         {" "}
         {/* 콘텐츠 오버레이 div 추가 */}
-        <div className="scorlldown inner flex-col">
-          <img src="/images/logo_square_white.png" className="size-96 animatedLogo" alt="logo" />
+        <div className="flex flex-col">
+          <img src="/images/logo_square_white.png" className="size-96 mb-16 animatedLogo" alt="logo" />
           {/* <section className="text-center">
               <p>
                   배수지의 수요 예측을 통해 심야 가동을 통해 전기료를 절약하고

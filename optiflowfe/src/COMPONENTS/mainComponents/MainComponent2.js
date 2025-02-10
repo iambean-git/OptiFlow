@@ -1,4 +1,4 @@
-import "./MainComponent.css";
+import "../../css/videoStyle.css"; 
 import { useEffect, useRef, useState } from "react";
 
 export default function MainComponent2({ isvisible }) {

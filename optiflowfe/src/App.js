@@ -15,6 +15,7 @@ import MapTest from "./mapTest/MapTest";
 
 import Signin from "./pages/Signin";
 import NotLogined from "./pages/NotLogined";
+import NotFound from "./pages/NotFound";
 import Main from "./pages/Main";
 import Dashboard from "./pages/Dashboard";
 import WaterLevel from "./pages/WaterLevel";
@@ -25,6 +26,8 @@ function App() {
     <BrowserRouter>
       <RecoilRoot>
         <Routes>
+          <Route path="/*" element={<NotFound />} />
+
           <Route path="/test" element={<Test />} />
           <Route path="/graph" element={<GraphTest />} />
 
@@ -33,8 +36,9 @@ function App() {
 
           <Route path="/login" element={<Signin />} />
           <Route path="/unauthorized" element={<NotLogined />} />
+
           <Route path="/" element={<Main />} />
-          
+
           {/* 🛑 로그인된 사용자만 접근 가능하게 설정 */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
