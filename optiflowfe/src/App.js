@@ -1,8 +1,7 @@
-// import logo from './logo.svg';
-// import './App.css';
-
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { RecoilRoot } from "recoil";
+
+import ProtectedRoute from "./components/ProtectedRoute"; // ProtectedRoute 추가
 
 import "./css/fonts/Freesentation.css";
 import "./css/fonts/Pretendard.css";
@@ -15,6 +14,7 @@ import FreeTest from "./test/FreeTest";
 import MapTest from "./mapTest/MapTest";
 
 import Signin from "./pages/Signin";
+import NotLogined from "./pages/NotLogined";
 import Main from "./pages/Main";
 import Dashboard from "./pages/Dashboard";
 import WaterLevel from "./pages/WaterLevel";
@@ -32,10 +32,15 @@ function App() {
           <Route path="/maptest" element={<MapTest />} />
 
           <Route path="/login" element={<Signin />} />
+          <Route path="/unauthorized" element={<NotLogined />} />
           <Route path="/" element={<Main />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/waterlevel" element={<WaterLevel />} />
-          <Route path="/regions" element={<Regions />} />
+          
+          {/* 🛑 로그인된 사용자만 접근 가능하게 설정 */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/waterlevel" element={<WaterLevel />} />
+            <Route path="/regions" element={<Regions />} />
+          </Route>
 
         </Routes>
       </RecoilRoot>

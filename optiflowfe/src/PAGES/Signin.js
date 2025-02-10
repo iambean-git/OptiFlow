@@ -53,7 +53,8 @@ export default function Signin() {
       if (token) {
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("username", userID);
-        navigate("/");
+        // console.log("login 성공");
+        navigate("/dashboard");
       } else {
         console.log("Authorization header not found");
         alert("로그인에 실패하였습니다. ID 또는 Password를 다시 확인해주세요.");

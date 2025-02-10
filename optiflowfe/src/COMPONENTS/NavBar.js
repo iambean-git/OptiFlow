@@ -7,11 +7,20 @@ import "./navBar/navbar.css";
 
 import LocalTime from "./navBar/LocalTime";
 
+import { loginToken, userName } from "../recoil/LoginAtom";
+import { useRecoilValue } from "recoil";
+import { useEffect } from "react";
 export default function NavBar() {
 
     const navigate = useNavigate();
+    const token = useRecoilValue(loginToken);
+    const username = useRecoilValue(userName);
 
-    const username = sessionStorage.getItem("username");
+    useEffect(()=>{
+        if(!token){
+            navigate("/unauthorized");
+        }
+    },[]);
 
     const handleLogout = () => {
         if (window.confirm("로그아웃 하시겠습니까?")) {
