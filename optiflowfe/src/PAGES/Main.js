@@ -16,6 +16,8 @@ export default function Main() {
   const outerRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [isVisiblePage2, setIsVisiblePage2] = useState(false);
+
   //토큰정보
   const token = sessionStorage.getItem("token");
 
@@ -44,6 +46,7 @@ export default function Main() {
             behavior: "smooth",
           });
           setCurrentPage(2);
+          setIsVisiblePage2(true);
         } else if (scrollTop >= pageHeight && scrollTop < pageHeight * 2) {
           //현재 2페이지
           // console.log("현재 2페이지, down");
@@ -121,7 +124,7 @@ export default function Main() {
         {/* <div className="inner bg-yellow-100">1</div> */}
         <MainComponent1 />
         <div className="divider"></div>
-        <MainComponent2 />
+        <MainComponent2 isvisible={isVisiblePage2}/>
         <div className="divider"></div>
         <MainComponent3 />
       </div>

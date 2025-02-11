@@ -9,6 +9,7 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
     // console.log("[WaterOutFlowGraph] 그래프타이틀 : ", graphTitle);
     // console.log("[WaterOutFlowGraph] datepickerOption : ", datepickerOption);
     const dateUnit = { hourly: "시", daily: "일", monthly: "월" };
+    const dateOption = { hourly: "시간별", daily: "일별", monthly: "월별" };
     const axisX = Object.keys(data);
     const data1 = Object.values(data);
     const data2 = Object.values(data);
@@ -130,7 +131,7 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
 
     return (
         <div className='w-full h-full  p-6 flex flex-col'>
-            <div className='w-full'>{graphTitle} 배수지 시간별 유출량 비교</div>
+            <div className='w-full'>{graphTitle} 배수지 {dateOption[datepickerOption]} 유출량 비교</div>
             <div className='w-full flex-grow  '>
                 <div id="chart" ref={chartRef} className=""></div>
             </div>

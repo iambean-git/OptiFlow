@@ -1,40 +1,39 @@
 import { RiResetLeftLine } from "react-icons/ri";
+import { LuDot } from "react-icons/lu";
+import { GoDotFill } from "react-icons/go";
+import { GoQuestion } from "react-icons/go";
 import React, { useEffect, useRef, useState } from 'react';
+import { Tooltip } from "react-tooltip";
 import Chart from "react-apexcharts";
 
 export default function DashOutputPrediction({ data }) {
 
     const [chartXaxis, setChartXaxis] = useState([]);
     const [chartValue, setChartValue] = useState([]);
+    const [chartValue2, setChartValue2] = useState([]);
     const [state, setState] = useState(null);
 
     useEffect(() => {
         if (!data) return;
-
-        const prediction = data.prediction;
-        // console.log("4️⃣ [DashOutputPrediction] prediction : ", prediction);
-
-        const timeArray = [];
-        const valueArray = [];
-
-        prediction.forEach(item => {
-            timeArray.push(item.time);
-            valueArray.push(item.value);
-        });
-
-        setChartXaxis(timeArray);
-        setChartValue(valueArray);
-
+        // console.log("data" , data);
+        setChartXaxis(data.time);
+        setChartValue(data.prediction);
+        setChartValue2(data.optiflow);
     }, [data]);
 
     useEffect(() => {
         if (!chartXaxis || !chartValue) return;
         const chartState = {
 
-            series: [{
-                name: "",
-                data: chartValue
-            },
+            series: [
+                {
+                    name: "유출량 예측값",
+                    data: chartValue
+                },
+                {
+                    name: "추천 유입량",
+                    data: chartValue2
+                },
             ],
             options: {
                 chart: {
@@ -64,7 +63,8 @@ export default function DashOutputPrediction({ data }) {
                 legend: {
                     // 툴팁 포매터 설정
                     tooltipHoverFormatter: function (val, opts) {
-                        return val + ' - <strong>' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + '</strong>'
+                        // return val + ' - <strong>' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + '</strong>'
+                        return val;
                     }
                 },
                 markers: {
@@ -112,19 +112,18 @@ export default function DashOutputPrediction({ data }) {
                         },
                     },
 
-                    y: [
-                        {
-                            title: {
-                                formatter: function (val) {
-                                    // return val + " (m³)"
-                                }
-                            },
-                            formatter: function (value) {
-                                return value.toFixed(2) + " m³";  // 툴팁에서는 소수점 2자리까지 유지
-                            },
+                    y:
+                    {
+                        title: {
+                            formatter: function (val) {
+                                return val + " (m³)"
+                            }
                         },
 
-                    ]
+                        formatter: function (value) {
+                            return value.toFixed(2) + " m³";  // 툴팁에서는 소수점 2자리까지 유지
+                        },
+                    },
                 },
                 grid: {
                     borderColor: '#f1f1f1',
@@ -134,6 +133,7 @@ export default function DashOutputPrediction({ data }) {
 
         setState(chartState);
 
+
     }, [chartXaxis, chartValue]);
 
 
@@ -141,9 +141,10 @@ export default function DashOutputPrediction({ data }) {
         <div className='w-full h-full p-6 flex flex-col'>
 
             {/* 제목 */}
-            <div className='w-full flex justify-between items-end '>
-                <span>유출량 예측값</span>
-                <span className='text-sm text-gray-500'>정각 기준, 향후 1시간 동안 예상되는 유출량 (m³)</span>
+            <div className='w-full flex justify-start items-center'>
+                <span className="mr-2">유출량 예측값 및 추천 유입량</span>
+                <GoQuestion className="text-gray-600" data-tooltip-id="detailtooltip" />
+                {/* <span className='text-sm text-gray-500'>정각 기준, 향후 1시간 동안 예상되는 유출량 (m³)</span> */}
             </div>
 
             {/* 그래프 */}
@@ -157,6 +158,25 @@ export default function DashOutputPrediction({ data }) {
             {/* <div className='w-full flex justify-end items-end '>
                 <span className='text-sm text-gray-500'>정각 기준, 향후 1시간 동안 예상되는 유출량 (m³)</span>
             </div> */}
+            <Tooltip
+                id="detailtooltip"
+                opacity={1}
+                // className="!bg-[#779974] !z-10 !py-4 !px-6"
+                className="!bg-gray-500 !z-10 !py-4 !px-6"
+
+                // place="top-start"
+                place="right"
+
+            >
+                <div className="flex flex-col mb-5 ">
+                    <span className="text-base flex items-center"> <GoDotFill className="text-xs mr-1" /> 유출량 예측값 ?</span>
+                    <span className="!text-sm ml-3"> 정각 기준, 향후 1시간 동안 예상되는 유출량 (m³)</span>
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-base flex items-center"> <GoDotFill className="text-xs mr-1" /> 추천 유입량 ?</span>
+                    <span className="!text-sm ml-3"> 설명 ??? </span>
+                </div>
+            </Tooltip>
         </div>
     )
 }

@@ -5,12 +5,14 @@ import DatePicker from "react-datepicker";
 import { ko } from 'date-fns/locale';
 import "react-datepicker/dist/react-datepicker.css";
 import "./datepickerwithoption.css"
+
+import { MaxDate } from "../../recoil/DateAtom";
+import { useRecoilValue } from "recoil";
+
 export default function DatePickerWithOption({setDateOption}) {
     const [option, setOption] = useState("daily"); // "daily", "monthly", "hourly"
     const [selectedDate, setSelectedDate] = useState(null);
-    const [maxDate, setMaxDate] = useState(() => {
-        return new Date(2024, 9, 16, 23, 59, 59);
-    });
+    const maxDate = useRecoilValue(MaxDate);
 
     function range(start, end, step = 1) {
         const result = [];

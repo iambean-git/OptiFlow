@@ -22,10 +22,10 @@ export default function Regions() {
   // 배수지별 유출량 데이터
   const fetchWaterOutFlowData = async (dateOption) => {
     const url = `http://10.125.121.226:8080/api/reservoirdata/${dateOption.option}/${dateOption.selectedValue}/${graphTitle.toLowerCase()}`;
-    console.log("🌊 [Regions] url : ", url);
+    // console.log("🌊 [Regions] url : ", url);
     const resp = await fetch(url);
     const data = await resp.json();
-    console.log("🌊 [Regions] 유출량 데이터 :", data);
+    // console.log("🌊 [Regions] 유출량 데이터 :", data);
 
     if (!data) return;
 

@@ -20,11 +20,10 @@ export default function DashWaterInfo({ data, predictionData }) {
         setWaterVol(`${data.waterVol.toFixed(1)} / ${data.capacity}`);
 
         if (!prediction) return;
-        const anticipated = data.waterVol + data.input - prediction.value;
+        const anticipated = data.waterVol + data.input - prediction;
         setAnticipated(`${(anticipated).toFixed(1)}`);
-
-        console.log("****** => ", data.waterVol + data.input - prediction.value);
-        console.log(`${data.waterVol}+${data.input}-${prediction.value} = ${data.waterVol + data.input - prediction.value}`);
+        // console.log("predictionData****** => ", prediction);
+        // console.log("****** => ", data.waterVol + data.input - prediction);
         setGap(`${(anticipated - data.waterVol.toFixed(1)) < 0 ? "▼" : "▲"}${(Math.abs(anticipated - data.waterVol.toFixed(1)).toFixed(1))}`)
         setPredictionHour(`${parseInt(predictionData.hour)+1}:00 기준 예측값`);
 
