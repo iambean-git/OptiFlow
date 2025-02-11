@@ -1,6 +1,9 @@
 package com.optiflow.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,7 @@ public class PredictService {
 		int reservoirId = reservoirOptional.get().getReservoirId();
 		Optional<Reservoir> reservoirEntity = reservoirRepo.findById(reservoirId);
 		
+		// Reservoir 테이블의 기본 키(primary key) 인 reservoirId 값이 외래 키(foreign key) 로 저장
 		predict.setReservoirId(reservoirEntity.get());
 		predict.setDatetime(datetime);
 		predict.setPrediction(prediction);
@@ -90,6 +94,47 @@ public class PredictService {
             }
         }
     }
+	
+	public Map<String, List<?>> convertToResponseMap(List<PredictResponseDto> datas) {
+	    Map<String, List<?>> responseMap = new HashMap<>();
+
+	    List<Double> predictionValueList = new ArrayList<>();
+	    List<Double> optiflowValueList = new ArrayList<>();
+	    List<String> timeList = new ArrayList<>();
+
+	    if (!datas.isEmpty() && datas.get(0) != null) { 
+	        PredictResponseDto data = datas.get(0);
+
+	        if (data.getPrediction() != null && !data.getPrediction().isEmpty()) {
+	        	
+	            for (PredictionItemDto item : data.getPrediction()) {
+	                if (item != null) {
+	                    predictionValueList.add(item.getValue());
+	                }
+	            }
+	            
+                for (PredictionItemDto item : data.getPrediction()) {
+                    if (item != null && item.getTime() != null) {
+                        timeList.add(item.getTime().toString());
+                    }
+                }
+	        }
+	        
+	        if (data.getOptiflow() != null && !data.getOptiflow().isEmpty()) {
+	            for (PredictionItemDto item : data.getOptiflow()) {
+	                if (item != null) {
+	                    optiflowValueList.add(item.getValue());
+	                }
+	            }
+	        }
+	    }
+	    
+        responseMap.put("prediction", predictionValueList);
+        responseMap.put("optiflow", optiflowValueList);
+	    responseMap.put("time", timeList);
+
+	    return responseMap;
+	}
 }
 //	public PredictResponseDto getPrediction(PredictRequestDto requestDto) {
 //	    log.info("PredictService.getPrediction called with request: {}", requestDto);

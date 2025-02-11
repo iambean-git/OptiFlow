@@ -1,7 +1,9 @@
 package com.optiflow.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -44,7 +46,7 @@ public class PredictController {
 	}
 	
 	@GetMapping("/predict/{reservoirName}/{datetime}")
-    public ResponseEntity<PredictResponseDto> getPrediction(@PathVariable String reservoirName, @PathVariable String datetime) {
+    public ResponseEntity<Map<String, List<?>>> getPrediction(@PathVariable String reservoirName, @PathVariable String datetime) {
 		log.info("Received prediction request with datetime: {}", datetime);
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
 		Float reservoirArea = reservoirOptional.get().getArea();
@@ -55,11 +57,16 @@ public class PredictController {
         PredictRequestDto requestDto = new PredictRequestDto(); 
 
         requestDto.setName(reservoirName);
-        requestDto.setDatetime(datetime); // PathVariable 로 받은 datetime 값을 DTO 에 설정
+        requestDto.setDatetime(datetime);
         requestDto.setWaterLevel(waterLevel);
         PredictResponseDto responseDto = predictService.getPrediction(requestDto);
-        return ResponseEntity.ok(responseDto); // 예측 결과 응답 DTO 반환
+        List<PredictResponseDto> datas = new ArrayList<>();
+        datas.add(responseDto);
+
+        Map<String, List<?>> responseMap = predictService.convertToResponseMap(datas);        
+        return ResponseEntity.ok(responseMap);
     }
+
 }
 
 //	@PostMapping("/save")
