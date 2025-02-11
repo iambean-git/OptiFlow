@@ -16,11 +16,11 @@ export default function NavBar() {
     const token = useRecoilValue(loginToken);
     const username = useRecoilValue(userName);
 
-    useEffect(()=>{
-        if(!token){
+    useEffect(() => {
+        if (!token) {
             navigate("/unauthorized");
         }
-    },[]);
+    }, []);
 
     const handleLogout = () => {
         if (window.confirm("로그아웃 하시겠습니까?")) {
@@ -68,6 +68,17 @@ export default function NavBar() {
                 <p>배수지별 통계 정보</p>
                 <FaChevronRight className="absolute right-2" />
             </div>
+
+            {
+                username == "opti1" ?
+                    <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
+                        onClick={() => navigate("/admin")}>
+                        <MdOutlineAutoGraph className="size-6 mr-2" />
+                        <p>이용 문의 관리</p>
+                        <FaChevronRight className="absolute right-2" />
+                    </div>
+                    : ""
+            }
 
             <img src="/images/logo_square_white.png" className="absolute bottom-6 left-0 px-12"></img>
         </div>

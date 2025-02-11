@@ -20,6 +20,7 @@ import Dashboard from "./pages/Dashboard";
 import WaterLevel from "./pages/WaterLevel";
 import Regions from "./pages/Regions";
 
+import Admin from "./pages/Admin";
 function App() {
   return (
     <BrowserRouter>
@@ -41,6 +42,9 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/waterlevel" element={<WaterLevel />} />
             <Route path="/regions" element={<Regions />} />
+
+            <Route path="/admin" element={<Admin />} />
+
           </Route>
 
         </Routes>
