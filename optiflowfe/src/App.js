@@ -11,7 +11,6 @@ import "./css/fonts/SUIT.css";
 import Test from "./Test";
 import GraphTest from "./test/GraphTest";
 import FreeTest from "./test/FreeTest";
-import MapTest from "./mapTest/MapTest";
 
 import Signin from "./pages/Signin";
 import NotLogined from "./pages/NotLogined";
@@ -30,9 +29,7 @@ function App() {
 
           <Route path="/test" element={<Test />} />
           <Route path="/graph" element={<GraphTest />} />
-
           <Route path="/free" element={<FreeTest />} />
-          <Route path="/maptest" element={<MapTest />} />
 
           <Route path="/login" element={<Signin />} />
           <Route path="/unauthorized" element={<NotLogined />} />
