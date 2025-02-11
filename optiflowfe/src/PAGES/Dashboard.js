@@ -5,7 +5,7 @@ import CustomSelectBox from '../components/CustomSelectBox';
 import DashWaterInfo from '../components/dashboard/DashWaterInfo';
 import DashOutputPrediction from '../components/dashboard/DashOutputPrediction';
 import DashOutput from '../components/dashboard/DashOutput';
-
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import FetchFailed from '../components/FetchFailed';
 import { NowDate } from "../recoil/DateAtom";
 import { useRecoilValue } from "recoil";
@@ -27,12 +27,13 @@ export default function Dashboard() {
 
   const [error, setError] = useState(null); // 에러 상태 저장
 
-  const loadingSpinner = <div className='w-full h-full flex justify-center items-center'><img className="size-[10vw]" src='/images/loadingSpinner.gif' /></div>
+  // const loadingSpinner = <div className='w-full h-full flex justify-center items-center'><img className="size-[10vw]" src='/images/loadingSpinner.gif' /></div>
   const todayDate = (useRecoilValue(NowDate));
   useEffect(() => {
     fetchData1st(formatDate(todayDate));
     fetchData2nd(formatDate(todayDate));
     fetchData3rd(formatDate(todayDate));
+    
     // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
     // const hours = "10";
     // fetchData(`2023-10-21T${hours}:00`);
@@ -142,7 +143,7 @@ export default function Dashboard() {
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
     try {
-      const url = `http://10.125.121.226:8080/api/predict/${date}`;
+      const url = `http://10.125.121.226:8080/api/predict/j/${date}`;
       const resp = await fetch(url, {
         signal: controller.signal,
       });
@@ -152,7 +153,7 @@ export default function Dashboard() {
       }
       const data = await resp.json();
       console.log("🌊 [DashBoard] 예측 데이터 :", data);
-      console.log("🌊 [DashBoard] 예측 데이터 :", data.prediction[0]);
+      // console.log("🌊 [DashBoard] 1시간 후 유출량 예측값 :", data.prediction[0]);
       setSection4Data(data); // 성공 시 실행
       const hours = date.substr(11, 2);
       setSection2Prediction({ hour: hours, data: data.prediction[0] });
@@ -178,7 +179,7 @@ export default function Dashboard() {
         </div>
         <section className="px-10 pb-10 pt-6 w-full h-full">
           {
-            loading ? loadingSpinner :
+            loading ? <LoadingSpinner/> :
               isfetchFailed ? <FetchFailed msg={"대시보드"} />
                 :
                 <div className="w-full h-full rounded-lg flex flex-col">
