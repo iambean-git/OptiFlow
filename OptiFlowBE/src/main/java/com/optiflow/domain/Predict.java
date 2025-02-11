@@ -51,6 +51,6 @@ public class Predict {
     private List<PredictionItemDto> optiflow;
     
 	@ManyToOne
-	@JoinColumn(name = "reservoir_id", insertable = false, updatable = false)
+	@JoinColumn(name = "reservoir_id")
 	private Reservoir reservoirId;
 }
