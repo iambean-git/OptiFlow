@@ -12,6 +12,12 @@ code {
     monospace;
 }
 
+.custom-progress-bar {
+  background-color: #3b82f6 !important; /* 파란색 */
+  height: 4px !important; /* 프로그레스 바 높이 */
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
