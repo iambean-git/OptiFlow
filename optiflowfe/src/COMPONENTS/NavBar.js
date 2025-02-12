@@ -2,6 +2,7 @@ import { FaChevronRight } from "react-icons/fa6";
 import { MdOutlineAutoGraph } from "react-icons/md";
 import { MdOutlineWaterDrop } from "react-icons/md";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { FiUserCheck } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import "./navBar/navbar.css";
 
@@ -38,9 +39,9 @@ export default function NavBar() {
 
             {/* 날짜 및 시간 */}
             <div className="w-full flex flex-col justify-center items-center 
-                            py-6 px-4">
+                            py-6 px-4 border-b border-b-white mb-8">
                 <LocalTime />
-                <div className="my-4"> 4℃ 맑음 </div>
+                {/* <div className="my-4"> 4℃ 맑음 </div> */}
 
             </div>
 
@@ -73,7 +74,7 @@ export default function NavBar() {
                 username == "opti1" ?
                     <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
                         onClick={() => navigate("/admin")}>
-                        <MdOutlineAutoGraph className="size-6 mr-2" />
+                        <FiUserCheck className="size-6 mr-2 ml-0.5" />
                         <p>이용 문의 관리</p>
                         <FaChevronRight className="absolute right-2" />
                     </div>
