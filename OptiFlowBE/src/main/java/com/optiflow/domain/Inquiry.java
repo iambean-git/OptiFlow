@@ -46,4 +46,7 @@ public class Inquiry {
 
     @Column(name = "staff_confirmed")
     private Boolean staffConfirmed = false;
+    
+    @Column(name = "approved")
+    private Boolean approved = false;
 }

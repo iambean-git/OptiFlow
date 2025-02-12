@@ -16,14 +16,18 @@ public class InquiryService {
 	private InquiryRepository inquiryRepo;
 	
 	public List<Inquiry> getAllInquirys(){
-		return inquiryRepo.findAll();
+		return inquiryRepo.findAllByOrderByInquiryIdDesc();
 	}
     public Inquiry saveInquiry(Inquiry inquiry) {
         return inquiryRepo.save(inquiry);
     }
     
+    public List<Inquiry> getUnapprovedInquiries() {
+        return inquiryRepo.findAllByApprovedIsFalseOrderByInquiryIdDesc();
+    }
+    
     public List<Inquiry> getUnconfirmedInquiries() {
-        return inquiryRepo.findAllByStaffConfirmedIsFalse();
+        return inquiryRepo.findAllByStaffConfirmedIsFalseOrderByInquiryIdDesc();
     }
     
     public Inquiry getInquiryById(Long inquiryId) {
