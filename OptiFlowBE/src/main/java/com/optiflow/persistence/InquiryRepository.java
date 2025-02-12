@@ -9,5 +9,8 @@ import com.optiflow.domain.Inquiry;
 
 @Repository
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
-	List<Inquiry> findAllByStaffConfirmedIsFalse();
+	List<Inquiry> findAllByOrderByInquiryIdDesc(); 
+	
+	List<Inquiry> findAllByApprovedIsFalseOrderByInquiryIdDesc();
+	List<Inquiry> findAllByStaffConfirmedIsFalseOrderByInquiryIdDesc();
 }

@@ -38,7 +38,6 @@ public class PredictController {
 	@Autowired
 	private ReservoirDataRepository reservoirDataRepo;
 
-	
 	@GetMapping("/results")
 	public ResponseEntity<List<Predict>> getAllPredicts(){
 		List<Predict> predictList = predictService.getAllPredicts();

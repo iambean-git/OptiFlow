@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.optiflow.domain.Inquiry;
 import com.optiflow.service.InquiryService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/inquiries")
+@Tag(name = "Inquiry API", description = "문의사항 관련 API")
 public class InquiryController {
 	
 	@Autowired
@@ -32,6 +35,12 @@ public class InquiryController {
     public ResponseEntity<List<Inquiry>> getAllInquirys(){
     	List<Inquiry> inquiries = inquiryService.getAllInquirys();
     	return new ResponseEntity<>(inquiries, HttpStatus.OK);
+    }
+    
+    @GetMapping("/unapproved") // staff_confirmed 가 false 인 문의 목록 조회 API
+    public ResponseEntity<List<Inquiry>> getUnapprovedInquiries() {
+        List<Inquiry> unapprovedInquiries = inquiryService.getUnapprovedInquiries();
+        return new ResponseEntity<>(unapprovedInquiries, HttpStatus.OK);
     }
     
     @GetMapping("/unconfirmed") // staff_confirmed 가 false 인 문의 목록 조회 API
