@@ -33,7 +33,7 @@ export default function MainComponent2({ isvisible }) {
           <p>배수지의 수요 예측 및 심야 가동을 통한 비용 절감</p>
         </div>
         <div className="mt-10">
-          <p>AI가 예측하고, 효율을 디자인하다</p>
+          <p>AI가 예측하고, 효율을 디자인하다.</p>
           {/* <p>효율을 디자인하다</p> */}
         </div>
       </section>
