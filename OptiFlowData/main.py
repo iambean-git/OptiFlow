@@ -298,7 +298,7 @@ class InputData(BaseModel):
   waterLevel: float
   name: str # 저수지명
 
-@app.post("/api/predict/LSTM")
+@app.post("/api/predict/lstm")
 async def predict_data(request: Request, input_data: InputData):
   logger.info(f"Request: {request.method} {request.url}")
   # logger.info(f"Response status code: {input_data.status_code}")
@@ -324,7 +324,7 @@ async def predict_data(request: Request, input_data: InputData):
   # final_result = spring_response.json()
   # return final_result
 
-@app.post("/api/predict/XGB")
+@app.post("/api/predict/xgb")
 async def predict_data(request: Request, input_data: InputData):
   logger.info(f"Request: {request.method} {request.url}")
   # logger.info(f"Response status code: {input_data.status_code}")
