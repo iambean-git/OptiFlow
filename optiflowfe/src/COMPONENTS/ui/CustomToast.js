@@ -10,8 +10,9 @@ export default function CustomToast({ type = "light", msg, closeToast }) {
             </div>
             <div className='flex flex-col items-start'>
                 {
-                    msg.map((item) => (
-                        <span className={`text-sm ${type === "dark" ? "text-white" : "text-[#333]" }`}>{item}</span>
+                    msg.map((item, idx) => (
+                        <span key={`toast-${idx}`}
+                        className={`text-sm ${type === "dark" ? "text-white" : "text-[#333]" }`}>{item}</span>
                     ))
                 }
             </div>

@@ -1,11 +1,12 @@
 import React from 'react';
 import emailjs from 'emailjs-com';
 
-export default function AdminModal({ data, close }) {
+export default function AdminModal({ data, close, updatedApproved }) {
     const handleAdmitClick = () => {
 
         const id = data.tmpid;
-        const pwd = "opti" + generateRandomNum();
+        // const pwd = "opti" + generateRandomNum();
+        const pwd = "1234";
 
         console.log("[승인]");
         console.log("[id] : ", id);
@@ -23,49 +24,43 @@ export default function AdminModal({ data, close }) {
             userPWD: pwd
         };
 
-        // emailjs.send(
-        //     'optiflow',  //service id
-        //     'template_approved', // 템플릿 ID
-        //     emailParams,
-        //     process.env.REACT_APP_EMAILJS_KEY
-        // ).then((response) => {
-        //     console.log('이메일이 성공적으로 보내졌습니다:', response);
-        //     fetchMakeNewMember(fetchParams);
-        //     // setIsEmailSent(true);
-        //     // 이메일 전송 성공 처리 로직 추가
-        // }).catch((error) => {
-        //     console.error('이메일 보내기 실패:', error);
-        //     // 이메일 전송 실패 처리 로직 추가
-        // });
+        emailjs.send(
+            'optiflow',  //service id
+            'template_approved', // 템플릿 ID
+            emailParams,
+            process.env.REACT_APP_EMAILJS_KEY
+        ).then((response) => {
+            console.log('이메일이 성공적으로 보내졌습니다:', response);
+            fetchMakeNewMember(fetchParams);
+            // setIsEmailSent(true);
+            // 이메일 전송 성공 처리 로직 추가
+        }).catch((error) => {
+            console.error('이메일 보내기 실패:', error);
+            // 이메일 전송 실패 처리 로직 추가
+        });
 
-        fetchMakeNewMember(fetchParams);
     };
 
     const fetchMakeNewMember = async(fetechData) => {
         try {
-            // const url = `http://10.125.121.226:8080/api/inquiries`;
-            // const postData = {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(fetechData)
-            // };
-            // const resp = await fetch(url, postData);
-            // if (!resp.ok) throw new Error(`HTTP error! Status: ${resp.status}`);
+            const url = `http://10.125.121.226:8080/api/members`;
+            const postData = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(fetechData)
+            };
+            const resp = await fetch(url, postData);
+            if (!resp.ok) throw new Error(`HTTP error! Status: ${resp.status}`);
 
-            // console.log("가입 성공 resp:", resp);
-            // 성공했다고 먼가 띄우고싶음
+            console.log("가입 성공 resp:", resp);
             close();
-            
-
 
         } catch (error) {
             console.error("❌ [Modal] fetchMakeNewMember 실패:", error);
         }
-
-        window.location.reload();
-        // alert("ddd");
+        updatedApproved(data.inquiryId);
     }
 
     const generateRandomNum = () => {
@@ -113,8 +108,11 @@ export default function AdminModal({ data, close }) {
                         </div>
                     </main>
                     <footer className="w-full pb-3 px-4 mb-6 text-center">
-                        <button className="w-11/12 py-2 bg-[#3b82f6] rounded-md text-white" onClick={handleAdmitClick}>
-                            승인하기
+                        <button className="w-11/12 py-2 bg-[#3b82f6] rounded-md text-white disabled:cursor-not-allowed disabled:opacity-55" 
+                        onClick={handleAdmitClick}
+                        disabled={data?.approved}
+                        >
+                            {data?.approved ? "승인 완료" : "승인하기"} 
                         </button>
                     </footer>
                 </>
