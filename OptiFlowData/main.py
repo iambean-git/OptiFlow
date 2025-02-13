@@ -6,6 +6,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from datetime import datetime, timedelta, time
+from sklearn.preprocessing import PolynomialFeatures
+import xgboost as xgb
 
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
@@ -13,24 +15,20 @@ USE_CUDA = torch.cuda.is_available()
 device = torch.device('cuda' if USE_CUDA else 'cpu')
 print(f'다음 기기로 학습 : {device}')
 
+# load data : model predict할 때 사용
 try:
-  data = pd.read_csv('./data/j_weather_data_v3.csv')
-  data['datetime'] = pd.to_datetime(data['datetime'])  # 'datetime' 컬럼을 datetime 객체로 변환
+  data_lstm = pd.read_csv('./data/j_weather_data_v4.csv')
+  data_lstm['datetime'] = pd.to_datetime(data_lstm['datetime'])  # 'datetime' 컬럼을 datetime 객체로 변환
+  data_xgb = pd.read_csv('./data/j_before_feature_importance_with_datetime_v2.csv')
+  data_xgb['datetime'] = pd.to_datetime(data_xgb['datetime'])
 except FileNotFoundError:
   print("Error: j_weather_data_v3.csv 파일을 찾을 수 없습니다.")
-  exit()
-  
-try:
-  data_height = pd.read_csv('./data/temp/j.csv')
-  data_height['observation_time'] = pd.to_datetime(data_height['observation_time'])
-except FileNotFoundError:
-  print("Error: j.csv 파일을 찾을 수 없습니다.")
   exit()
 
 def make_return_form(data, start_time):
   arr = []
 
-  for i, value in enumerate(flow):
+  for i, value in enumerate(data):
     dic = {}
     dic['time'] = start_time + timedelta(hours=i)
     dic['value'] = float(value)
@@ -55,10 +53,10 @@ hidden_size = 50
 output_size = 24
 
 try:
-  model = LSTMModel(input_size, hidden_size, output_size)
-  model.load_state_dict(torch.load('./model/best_lstm_checkpoint_250206.pt', map_location=device))
-  model.to(device)
-  model.eval()
+  model_lstm = LSTMModel(input_size, hidden_size, output_size)
+  model_lstm.load_state_dict(torch.load('./model/best_lstm_checkpoint_250211.pt', map_location=device))
+  model_lstm.to(device)
+  model_lstm.eval()
 except FileNotFoundError:
   print("Error: best_lstm_checkpoint_250206.pt 파일을 찾을 수 없습니다.")
   exit()
@@ -66,26 +64,34 @@ except Exception as e:
   print(f"Error loading model: {e}")
   exit()
 
-with open('./model/scaler_feature_lstm_250206.pkl', 'rb') as f:
+try:
+  model_xgb = xgb.Booster(model_file='./model/24hour_xgboost_all_features_model_250212_j.json')
+except FileNotFoundError:
+  print("Error: 24hour_xgboost_all_features_model_250212.json 파일을 찾을 수 없습니다.")
+  exit()
+except Exception as e:
+  print(f"Error loading model: {e}")
+  exit()
+
+with open('./model/scaler_feature_lstm_250211.pkl', 'rb') as f:
   loaded_scaler_feature = pickle.load(f)
-with open('./model/scaler_target_lstm_250206.pkl', 'rb') as f:
+with open('./model/scaler_target_lstm_250211.pkl', 'rb') as f:
   loaded_scaler_target = pickle.load(f)
 
-def predict(dt, model):  # dt는 datetime 객체
+with open('./model/best_polynomial_regression_model.pkl', 'rb') as f:
+  model_poly, poly = pickle.load(f)
+
+def predict_lstm(dt, model):  # dt는 datetime 객체
   model.eval()
   
-  # dt를 기준으로 이전 168개의 데이터 가져오기
-  past_data = data[data['datetime'] < dt].tail(168)
+  past_data = data_lstm[data_lstm['datetime'] < dt].tail(168)
   start_time = past_data.iloc[-1]['datetime'] + timedelta(hours=1)
-  print(dt, start_time)
   if len(past_data) != 168:
     raise ValueError("이전 168개의 데이터를 찾을 수 없습니다.")
 
-  # 과거 데이터를 numpy array로 변환하고, float32 타입으로 변경
   input_data = past_data.drop('datetime', axis=1).values.astype(np.float32)
   scaled_input_data = loaded_scaler_feature.transform(input_data)
 
-  # 데이터를 PyTorch Tensor로 변환하고, 모델에 입력할 수 있도록 reshape
   input_tensor = torch.tensor(scaled_input_data).unsqueeze(0).to(device) # (batch_size, sequence_length, input_size)
 
   with torch.no_grad():
@@ -99,9 +105,43 @@ def predict(dt, model):  # dt는 datetime 객체
 
   return pred_arr, predicted_original[0]
 
-# test = predict('2024-10-01T00:00', model)
-# print(test)
+def predict_xgb(dt, model):
+  past_data = data_xgb[data_xgb['datetime'] < dt].tail(168)
+  start_time = past_data.iloc[-1]['datetime'] + timedelta(hours=1)
 
+  if len(past_data) != 168:
+    raise ValueError("이전 168개의 데이터를 찾을 수 없습니다.")
+
+  input_data = past_data.drop('datetime', axis=1).values.astype(np.float32)
+  # print(input_data.shape)
+  dtest = xgb.DMatrix(input_data.reshape(1, -1))
+  pred = model.predict(dtest)
+  # print(pred)
+  result = make_return_form(pred[0], start_time)
+  return result, pred[0]
+
+# test_pred, test_out = predict_lstm('2024-10-01T00:00', model_lstm)
+# print(test_pred)
+test_pred_xgb, test_out_xgb = predict_xgb('2024-10-01T00:00', model_xgb)
+# print(test_pred_xgb)
+
+electricity_rates = {
+  'summer': {
+    'off_peak': 64.37,  # 경부하 요금 (원/kWh)
+    'mid_peak': 92.46,  # 중간부하 요금 (원/kWh)
+    'on_peak': 123.88   # 최대부하 요금 (원/kWh)
+  },
+  'spring_fall': {
+    'off_peak': 64.37,  # 경부하 요금 (원/kWh)
+    'mid_peak': 69.50,  # 중간부하 요금 (원/kWh)
+    'on_peak': 86.88    # 최대부하 요금 (원/kWh)
+  },
+  'winter': {
+    'off_peak': 71.88,  # 경부하 요금 (원/kWh)
+    'mid_peak': 90.80,  # 중간부하 요금 (원/kWh)
+    'on_peak': 116.47   # 최대부하 요금 (원/kWh)
+  }
+}
 time_periods = {
   'summer': {
     'off_peak': [(time(23, 0), time(9, 0))],
@@ -211,6 +251,24 @@ def optimize_pump_flow(data, outflow, v_initial, capacity, max_flow = 250):
 
   return opti_arr
 
+# test_flow = optimize_pump_flow(test_pred, test_out, 1419, 2000)
+# print(test_flow)
+
+def calculate_daily_cost_by_linear(data):
+  total_cost = 0
+  poly = PolynomialFeatures(3)
+  for row in data:
+    season, period = get_season_and_period(row['time'])
+    flux_poly = poly.fit_transform(np.array([[row['value']]]))
+    power_kW = model_poly.predict(flux_poly)[0]
+    cost_per_kWh = electricity_rates[season][period]
+    total_cost += power_kW * cost_per_kWh
+  return total_cost
+
+# test_charge = calculate_daily_cost_by_linear(test_flow)
+# test_charge_formatted = format(int(test_charge), ',')
+# print(test_charge_formatted)
+
 from fastapi import FastAPI, Request, HTTPException
 import requests
 from fastapi.middleware.cors import CORSMiddleware
@@ -237,24 +295,26 @@ SPRINGBOOT_URL = os.environ.get("SPRINGBOOT_URL", "http://10.125.121.226:8080/ap
 
 class InputData(BaseModel):
   datetime: str  # datetime 객체를 받도록 수정
-  waterlevel: float
+  waterLevel: float
   name: str # 저수지명
 
-@app.post("/api/predict")
+@app.post("/api/predict/LSTM")
 async def predict_data(request: Request, input_data: InputData):
   logger.info(f"Request: {request.method} {request.url}")
   # logger.info(f"Response status code: {input_data.status_code}")
   try:
-    prediction, outflow = predict(input_data.datetime, model)
+    prediction_lstm, outflow_lstm = predict_lstm(input_data.datetime, model_lstm)
   except ValueError as e:
     raise HTTPException(status_code=400, detail=str(e))
   except Exception as e:  # 예외 처리 추가
     raise HTTPException(status_code=500, detail=str(e))
 
-  optiflow = optimize_pump_flow(prediction, outflow, input_data.waterlevel, 2000)
-  result = {"prediction" : prediction, 'optiflow' : optiflow}
+  optiflow_lstm = optimize_pump_flow(prediction_lstm, outflow_lstm, input_data.waterLevel, 2000)
+
+  result = {"prediction" : prediction_lstm, 'optiflow' : optiflow_lstm}
   # print(result, type(result))
   return result
+
   # try:
   #   spring_response = requests.post(SPRINGBOOT_URL, json=result)
   #   spring_response.raise_for_status()
@@ -263,3 +323,20 @@ async def predict_data(request: Request, input_data: InputData):
 
   # final_result = spring_response.json()
   # return final_result
+
+@app.post("/api/predict/XGB")
+async def predict_data(request: Request, input_data: InputData):
+  logger.info(f"Request: {request.method} {request.url}")
+  # logger.info(f"Response status code: {input_data.status_code}")
+  try:
+    prediction_xgb, outflow_xgb = predict_xgb(input_data.datetime, model_xgb)
+  except ValueError as e:
+    raise HTTPException(status_code=400, detail=str(e))
+  except Exception as e:  # 예외 처리 추가
+    raise HTTPException(status_code=500, detail=str(e))
+
+  optiflow_xgb = optimize_pump_flow(prediction_xgb, outflow_xgb, input_data.waterLevel, 2000)
+
+  result = {"prediction" : prediction_xgb, 'optiflow' : optiflow_xgb}
+  # print(result, type(result))
+  return result
