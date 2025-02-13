@@ -39,7 +39,7 @@ public class PredictService {
 		return predictRepo.findAll();
 	}
 	
-	public Predict savePredict(String name, String datetime, List<PredictionItemDto> prediction, List<PredictionItemDto> optiflow) {
+	public Predict savePredict(String name, String modelName, String datetime, List<PredictionItemDto> prediction, List<PredictionItemDto> optiflow) {
 		Predict predict = new Predict();
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(name);
 		int reservoirId = reservoirOptional.get().getReservoirId();
@@ -48,6 +48,7 @@ public class PredictService {
 		// Reservoir 테이블의 기본 키(primary key) 인 reservoirId 값이 외래 키(foreign key) 로 저장
 		predict.setReservoirId(reservoirEntity.get());
 		predict.setDatetime(datetime);
+		predict.setUsedModel(modelName);
 		predict.setPrediction(prediction);
 		predict.setOptiflow(optiflow);
 		return predictRepo.save(predict);
@@ -57,8 +58,13 @@ public class PredictService {
 
         String datetime = requestDto.getDatetime();
         String name = requestDto.getName();
-        // DB에서 datetime으로 기존 예측 데이터 조회
-        Optional<Predict> existingPrediction = predictRepo.findByDatetime(datetime);
+        String modelName = requestDto.getModelName();
+        
+        Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(name);
+		int reservoirId = reservoirOptional.get().getReservoirId();
+		Optional<Reservoir> reservoirEntity = reservoirRepo.findById(reservoirId);
+        // DB에서 기존 예측 데이터 조회
+        Optional<Predict> existingPrediction = predictRepo.findByDatetimeAndReservoirIdAndUsedModel(datetime,reservoirEntity.get(), modelName);
 
         if (existingPrediction.isPresent()) {
             // DB에 데이터가 존재하면 DB 데이터 반환
@@ -77,20 +83,20 @@ public class PredictService {
                 HttpEntity<String> request = new HttpEntity<>(requestJson, headers);
 
                 PredictResponseDto responseDto = restTemplate.postForObject(
-                    fastapiUrl + "/api/predict",
+                    fastapiUrl + "/api/predict/" + modelName,
                     request,
                     PredictResponseDto.class
                 );
 
                 if (responseDto == null) {
-                    return new PredictResponseDto(); // 빈 결과 반환
+                    return new PredictResponseDto(); 
                 } else {
-                    savePredict(name, datetime, responseDto.getPrediction(), responseDto.getOptiflow());
+                    savePredict(name, modelName, datetime, responseDto.getPrediction(), responseDto.getOptiflow());
                     return responseDto;
                 }
 
             } catch (Exception e) {
-                return new PredictResponseDto(); // 예외 발생 시 빈 결과 반환
+                return new PredictResponseDto();
             }
         }
     }

@@ -87,8 +87,8 @@ public class ReservoirDataService {
                 .map(result -> new ReservoirStats(
                         (String) result[0], 				// observationTime
                         (int) result[1],            		// reservoirId
-                        ((Number) result[2]).doubleValue() / 60, // totalInput
-                        ((Number) result[3]).doubleValue() / 60, // totalOutput
+                        ((Number) result[2]).doubleValue(), // totalInput
+                        ((Number) result[3]).doubleValue(), // totalOutput
                         ((Number) result[4]).doubleValue()  // avgHeight
                 ))
                 .collect(Collectors.toList());

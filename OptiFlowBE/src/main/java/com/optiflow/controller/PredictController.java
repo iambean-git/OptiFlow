@@ -37,15 +37,15 @@ public class PredictController {
 	
 	@Autowired
 	private ReservoirDataRepository reservoirDataRepo;
-
+	
 	@GetMapping("/results")
 	public ResponseEntity<List<Predict>> getAllPredicts(){
 		List<Predict> predictList = predictService.getAllPredicts();
 		return ResponseEntity.ok(predictList);
 	}
 	
-	@GetMapping("/predict/{reservoirName}/{datetime}")
-    public ResponseEntity<Map<String, List<?>>> getPrediction(@PathVariable String reservoirName, @PathVariable String datetime) {
+	@GetMapping("/predict/{modelName}/{reservoirName}/{datetime}")
+    public ResponseEntity<Map<String, List<?>>> getPrediction(@PathVariable String modelName, @PathVariable String reservoirName, @PathVariable String datetime) {
 		log.info("Received prediction request with datetime: {}", datetime);
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
 		Float reservoirArea = reservoirOptional.get().getArea();
@@ -54,8 +54,9 @@ public class PredictController {
 		Float height = reservoirDataRepo.findHeightByReservoirIdAndObservationTime(reservoirId, localDateTime);
 		Float waterLevel = reservoirArea * height;
         PredictRequestDto requestDto = new PredictRequestDto(); 
-
+        
         requestDto.setName(reservoirName);
+        requestDto.setModelName(modelName);
         requestDto.setDatetime(datetime);
         requestDto.setWaterLevel(waterLevel);
         PredictResponseDto responseDto = predictService.getPrediction(requestDto);

@@ -13,36 +13,38 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "member")
 public class Member {
-	
-    @Id
-    @Column(name = "member_id")
-    private String username;
 
-    @Column(name = "password")
-    private String password;
+	@Id
+	@Column(name = "member_id")
+	private String username;
 
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.User;
+	@Column(name = "password")
+	private String password;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
-    
-    @Column(name = "reservoir_id")
-    private int reservoirId;
-    
-    @Builder
-    public Member(String username, String password, Role role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
-    
-    public enum Role {
-        Admin, Manager, User
-    }
+	@Enumerated(EnumType.STRING)
+	private Role role = Role.Role_User;
+
+	@Column(name = "created_at")
+	private LocalDateTime createdAt = LocalDateTime.now();
+
+	@Column(name = "reservoir_id")
+	private int reservoirId = 2;
+
+	@Builder
+	public Member(String username, String password, Role role) {
+		this.username = username;
+		this.password = password;
+		this.role = role;
+	}
+
+	public enum Role {
+		Role_Admin, Role_Manager, Role_User
+	}
 }
+
