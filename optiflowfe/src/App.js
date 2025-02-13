@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { RecoilRoot } from "recoil";
-import { toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer, Zoom } from "react-toastify";
 
 import ProtectedRoute from "./components/ProtectedRoute"; // ProtectedRoute 추가
 
@@ -31,8 +31,8 @@ function App() {
           toastClassName={() => "bg-transparent shadow-none p-0"}
           bodyClassName={() => "p-0 m-0"}
           closeButton={false} // 기본 닫기 버튼 제거 (커스텀 버튼만 남기기)
-          hideProgressBar={false} // 프로그레스 바 표시
-          progressClassName="custom-progress-bar"
+          hideProgressBar={true} // 프로그레스 바 표시
+          transition={Zoom}  //애니메이션 종류 : Bounce/Slide/Zoom/Flip
         />
 
         <Routes>
@@ -53,9 +53,13 @@ function App() {
             <Route path="/waterlevel" element={<WaterLevel />} />
             <Route path="/regions" element={<Regions />} />
 
-            <Route path="/admin" element={<Admin />} />
 
           </Route>
+
+          {/* 🛑 Admin 역할만 접근 가능하도록 설정 */}
+          {/* <Route element={<ProtectedRoute requiredRole="Role_Admin" />}> */}
+            <Route path="/admin" element={<Admin />} />
+          {/* </Route> */}
 
 
         </Routes>

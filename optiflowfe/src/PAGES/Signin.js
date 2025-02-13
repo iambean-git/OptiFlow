@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useSetRecoilState } from "recoil";
-import { loginToken, userName } from "../recoil/LoginAtom";
+import { loginToken, userName, userRole } from "../recoil/LoginAtom";
 
 export default function Signin() {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ export default function Signin() {
 
   const setToken = useSetRecoilState(loginToken);
   const setUser = useSetRecoilState(userName);
+  const setRole = useSetRecoilState(userRole);
 
   const [btnDisabled, setBtnDisabled] = useState(true);
 
@@ -64,17 +65,19 @@ export default function Signin() {
       // 응답 헤더에서 Authorization 값을 추출
       const token = resp.headers.get("Authorization");
       const userID = resp.headers.get("username");
-      // const userRole = resp.headers.get("role");
+      const userRole = resp.headers.get("role");
       // console.log("authHeader : ", authHeader);
       // console.log("로그인된 아이디 :",userID);
-      // console.log("로그인된 userRole :",userID);
+      // console.log("로그인된 userRole :",userRole);
       if (token) {
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("username", userID);
+        sessionStorage.setItem("userRole", userRole);
 
         // **Recoil 상태 즉시 업데이트**
         setToken(token);
         setUser(userID);
+        setRole(userRole);
 
         // console.log("login 성공");
         navigate("/dashboard");
@@ -91,7 +94,6 @@ export default function Signin() {
   };
 
   return (
-
     <div className="main-component-container">
       <video
         src="/videos/waterdrop1.mp4"
