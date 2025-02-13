@@ -27,7 +27,6 @@ function App() {
     <BrowserRouter>
       <RecoilRoot>
         <ToastContainer
-          position="bottom-center"
           toastClassName={() => "bg-transparent shadow-none p-0"}
           bodyClassName={() => "p-0 m-0"}
           closeButton={false} // 기본 닫기 버튼 제거 (커스텀 버튼만 남기기)
@@ -57,9 +56,9 @@ function App() {
           </Route>
 
           {/* 🛑 Admin 역할만 접근 가능하도록 설정 */}
-          {/* <Route element={<ProtectedRoute requiredRole="Role_Admin" />}> */}
+          <Route element={<ProtectedRoute requiredRole="Role_Admin" />}>
             <Route path="/admin" element={<Admin />} />
-          {/* </Route> */}
+          </Route>
 
 
         </Routes>

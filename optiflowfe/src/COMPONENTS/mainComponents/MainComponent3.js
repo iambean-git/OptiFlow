@@ -1,39 +1,8 @@
 import "../../css/videoStyle.css";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { SlGraph } from "react-icons/sl";
-import { BsGraphUp } from "react-icons/bs";
-import { useState } from "react";
-import InquiryModal from "../modal/InquiryModal";
-import { ToastContainer, toast } from 'react-toastify';
-import CustomToast from "../ui/CustomToast";
 
 export default function MainComponent3() {
-  const [modalOpen, setModalOpen] = useState(false);
-  // const [modalData, setModalData] = useState('');
-
-  const notify = () => toast("Wow so easy!");
-
-  const openModal = () => {
-    // console.log("openModal");
-    // setModalData(data)
-    setModalOpen(true);
-  };
-  const closeModal = (isPosted = false) => {
-    setModalOpen(false);
-    if (isPosted) {
-      // toast.success("이용 문의 접수가 완료되었습니다. 승인 완료시, 이메일을 통해 확인하실 수 있습니다.",{
-      //   position: "bottom-center",
-      //   // hideProgressBar: false,
-      // });
-      // toast(<CustomToast msg="🎉 Tailwind 토스트 메시지!" />, { autoClose: false });
-      toast(<CustomToast msg={["이용 문의 접수가 완료되었습니다.", "승인 완료시, 이메일을 통해 확인하실 수 있습니다."]} />, {
-        // autoClose: 3000, // 3초 후 자동 닫힘
-        progressStyle: { backgroundColor: "#4caf50" }, // 초록색으로 변경 
-        progressClassName: " w-[300px]", // 프로그레스 바 색상 및 높이 조정
-      });
-    }
-  };
-
   return (
     <div className="main-component-container flex justify-center">
 
@@ -70,13 +39,13 @@ export default function MainComponent3() {
             </p>
             <div className="text-lg text-gray-500 mt-6">
               <p className="">
-                전체 배수지의 실시간 저수량 모니터링
+              실시간 배수지별 저수량 모니터링,
               </p>
               <p className="">
-                각 배수지의 지난 24시간 유입량 및 유출량 확인
+              과거 24시간 유입량과 유출량 정보,
               </p>
               <p className="">
-                미래 24시간 예상 유출량 및 최적 유입량
+              미래 24시간 예측 결과를 한 곳에서 볼 수 있습니다
               </p>
             </div>
 
@@ -104,27 +73,14 @@ export default function MainComponent3() {
               <p className="">
               전기 요금 절약을 위한 개선된 운영 계획을 제공합니다.
               </p>
-              {/* <p className="">
-                미래 24시간 예상 유출량 및 최적 유입량
-              </p> */}
             </div>
-
 
           </div>
           <img src="/images/mainImg/cap_graph.png" alt="dashboard"
             className="rounded-lg ml-12 h-4/5 shadow-xl" />
         </section>
 
-
       </div>
-      {/* <div className="w-3/5 h-full">
-        <button className="px-4 py-1 border rounded-md" onClick={openModal}>
-          이용 문의하기
-        </button>
-      </div> */}
-
-      <InquiryModal open={modalOpen} close={closeModal} />
-      {/* <ToastContainer /> */}
     </div>
   );
 }
