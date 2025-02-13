@@ -24,9 +24,10 @@ export default function MainComponent3() {
       //   // hideProgressBar: false,
       // });
       // toast(<CustomToast msg="🎉 Tailwind 토스트 메시지!" />, { autoClose: false });
-      toast(<CustomToast msg="🎉 완전히 커스텀된 토스트!" />, {
-        autoClose: 3000, // 3초 후 자동 닫힘
-        // progressClassName: "!bg-blue-500 h-1", // 프로그레스 바 색상 및 높이 조정
+      toast(<CustomToast msg={["이용 문의 접수가 완료되었습니다.","승인 완료시, 이메일을 통해 확인하실 수 있습니다."]} />, {
+        // autoClose: 3000, // 3초 후 자동 닫힘
+        progressStyle: { backgroundColor: "#4caf50" }, // 초록색으로 변경 
+        progressClassName: " w-[300px]", // 프로그레스 바 색상 및 높이 조정
       });
     }
   };

@@ -29,12 +29,12 @@ export default function MainComponent2({ isvisible }) {
         <p className="text-[#1D5673] font-semibold text">About OptiFlow</p>
 
         <div className={`text-2xl mt-3 font-semibold `}>
-          <p className={``}>최소한의 비용으로</p>
-          <p>효율적인 용수 공급을 위한 시스템을 제공합니다</p>
+          <p>어둠 속에서 빛나는 효율,</p>
+          <p>배수지의 수요 예측 및 심야 가동을 통한 비용 절감</p>
         </div>
         <div className="mt-10">
-          <p>주간 전기 요금 00원</p>
-          <p>야간 전기 요금 00원</p>
+          <p>AI가 예측하고, 효율을 디자인하다</p>
+          {/* <p>효율을 디자인하다</p> */}
         </div>
       </section>
       <div className="w-3/5 bg-red-50"></div>
