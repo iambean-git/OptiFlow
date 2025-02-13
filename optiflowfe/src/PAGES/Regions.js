@@ -22,7 +22,6 @@ export default function Regions() {
   // 배수지별 유출량 데이터
   const fetchWaterOutFlowData = async (dateOption) => {
     const url = `http://10.125.121.226:8080/api/reservoirdata/${dateOption.option}/${dateOption.selectedValue}/${graphTitle.toLowerCase()}`;
-    // console.log("🌊 [Regions] url : ", url);
     const resp = await fetch(url);
     const data = await resp.json();
     // console.log("🌊 [Regions] 유출량 데이터 :", data);
@@ -105,7 +104,6 @@ export default function Regions() {
 
       marker.setMap(map);
 
-
       // 글자
       const blueIwContent = `<div id=${m.label} class="pointer-events-none text-white relative bottom-10 right-[6px] font-bold" >${m.label}</div>`;
       const redIwContent = `<div class="px-4 py-1 text-xs relative top-3 left-[-3px] bg-white rounded-md ">${m.label}</div>`;
@@ -182,10 +180,10 @@ export default function Regions() {
         <section className="w-full h-[160px] px-10 flex justify-between items-end">
           {/* 텍스트 */}
           <div className="w-2/5 h-full  flex flex-col justify-end text-[#333333]">
-            <h1 className="text-4xl ">타이틀</h1>
-            <p className="mt-2">각 배수지를 클릭하면, <span className="whitespace-nowrap"> 세부 정보를 확인할 수 있습니다. **멘트수정필요**</span></p>
+            <h1 className="text-4xl font-medium">배수지별 통계 정보</h1>
+            <p className="mt-2">기간별 유출량 및 전기 요금의 실측값, 예측값 데이터를 비교할 수 있습니다.</p>
           </div>
-          <button onClick={getMapInfo} className="bg-blue-300 font-Freesentation font-light">지도정보보기</button>
+          {/* <button onClick={getMapInfo} className="bg-blue-300 font-Freesentation font-light">지도정보보기</button> */}
           <DatePickerWithOption setDateOption={setDateOption} />
         </section>
 

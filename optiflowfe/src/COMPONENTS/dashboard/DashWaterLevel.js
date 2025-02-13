@@ -1,10 +1,10 @@
 import { FaArrowRightLong } from "react-icons/fa6";
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from "react-router-dom";
 import Chart from "react-apexcharts";
 import "./dashboard.css";
 
 export default function DashWaterLevel({ data, selected, setSelected }) {
-    const [isSet, setIsSet] = useState(false);
     const [state, setState] = useState(null);
 
     useEffect(() => {
@@ -33,13 +33,8 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
                                 // background: '#249efa',
                             },
                             dataLabels: {
-                                name: {
-                                    offsetY: -5
-                                },
-                                value: {
-                                    offsetY: 2
-                                },
-
+                                name: {offsetY: -5},
+                                value: {offsetY: 2},
                             },
                         },
                     },
@@ -77,7 +72,6 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
         console.log("🔥[DashWaterLevel] radialOptions : ", radialOptions);
 
         setState(radialOptions);
-        setIsSet(true);
     }, [data]);
 
     useEffect(() => {
@@ -98,9 +92,9 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
                 </span>
 
                 <div className="flex items-center hover:border-b ">
-                    <span className="text-sm text-gray-400">
-                        자세히 보기
-                    </span>
+                    <Link to="/waterlevel" className="text-sm text-gray-400">
+                        이전 저수량 보기
+                    </Link>
                     <span>
                         <FaArrowRightLong className="ml-2 text-gray-400" />
                     </span>
