@@ -64,8 +64,10 @@ export default function Signin() {
       // 응답 헤더에서 Authorization 값을 추출
       const token = resp.headers.get("Authorization");
       const userID = resp.headers.get("username");
+      // const userRole = resp.headers.get("role");
       // console.log("authHeader : ", authHeader);
       // console.log("로그인된 아이디 :",userID);
+      // console.log("로그인된 userRole :",userID);
       if (token) {
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("username", userID);

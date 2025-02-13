@@ -1,48 +1,104 @@
-import {useState} from 'react'
-import AnimatedInput from '../components/ui/AnimatedInput';
+import { useState } from 'react'
 export default function FreeTest() {
-  const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
-  const [email, setEmail] = useState("");
-  const [location, setLocation] = useState("");
-  const [question, setQuestion] = useState("");
+
 
   return (
-    <div className='w-full h-full flex flex-col items-center'>
-      <header className='w-full py-5 flex justify-center border-b'>
-        <img src='/images/logo_text_blue.png' alt="logo"
-          className='h-14' />
-      </header>
-      <main className='w-10/12 bg-red-50 flex flex-col justify-center items-center pt-10'>
-        <AnimatedInput
-          type={"text"} label={"이름"} value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <AnimatedInput
-          type={"text"} label={"연락처"} value={contact}
-          onChange={(e) => setContact(e.target.value)}
-        />
-        <AnimatedInput
-          type={"text"} label={"메일"} value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <AnimatedInput
-          type={"text"} label={"이용 희망 지역"} value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          detail={"서비스를 이용하실 지역을 입력해주세요."}
-        />
-        <AnimatedInput
-          type={"text"} label={"이용 희망 지역"} value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          detail={"서비스를 이용하실 지역을 입력해주세요."}
-        />
-        <AnimatedInput
-          type={"text"} label={"기타 문의사항"} value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          textarea={true}
-        />
-      </main>
-
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 ">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              번호
+            </th>
+            <th scope="col" class="px-6 py-3">
+              이름
+            </th>
+            <th scope="col" class="px-6 py-3">
+              지역
+            </th>
+            <th scope="col" class="px-6 py-3">
+              메일
+            </th>
+            <th scope="col" class="px-6 py-3">
+              일시
+            </th>
+            <th scope="col" class="px-6 py-3">
+              문의사항
+            </th>
+            <th scope="col" class="px-6 py-3">
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-white border-b  border-gray-200 hover:bg-gray-50  font-semibold">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
+              1
+            </th>
+            <td class="px-6 py-4">
+              조은빈
+            </td>
+            <td class="px-6 py-4">
+              부산
+            </td>
+            <td class="px-6 py-4">
+              abcd1234@gmail.com
+            </td>
+            <td class="px-6 py-4">
+              2025-02-12 09:47
+            </td>
+            <td class="px-6 py-4">
+              없습니다.
+            </td>
+            <td class="px-6 py-4">
+              <span className="border rounded-md px-2 py-1">new</span>
+            </td>
+          </tr>
+          <tr class="bg-white border-b  border-gray-200 hover:bg-gray-50 ">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
+              1
+            </th>
+            <td class="px-6 py-4">
+              조은빈
+            </td>
+            <td class="px-6 py-4">
+              부산
+            </td>
+            <td class="px-6 py-4">
+              abcd1234@gmail.com
+            </td>
+            <td class="px-6 py-4">
+              2025-02-12 09:47
+            </td>
+            <td class="px-6 py-4">
+              없습니다.
+            </td>
+            <td class="px-6 py-4">
+            </td>
+          </tr>
+          <tr class="bg-white border-b  border-gray-200 hover:bg-gray-50 ">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
+              1
+            </th>
+            <td class="px-6 py-4">
+              조은빈
+            </td>
+            <td class="px-6 py-4">
+              부산
+            </td>
+            <td class="px-6 py-4">
+              abcd1234@gmail.com
+            </td>
+            <td class="px-6 py-4">
+              2025-02-12 09:47
+            </td>
+            <td class="px-6 py-4">
+              없습니다.
+            </td>
+            <td class="px-6 py-4">
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   )
 }

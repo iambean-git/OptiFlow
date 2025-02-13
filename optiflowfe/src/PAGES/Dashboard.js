@@ -33,7 +33,7 @@ export default function Dashboard() {
     fetchData1st(formatDate(todayDate));
     fetchData2nd(formatDate(todayDate));
     fetchData3rd(formatDate(todayDate));
-    
+
     // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
     // const hours = "10";
     // fetchData(`2023-10-21T${hours}:00`);
@@ -60,12 +60,14 @@ export default function Dashboard() {
 
 
   const fetchData1st = async (date) => {
+    console.log("🌊 [DashBoard] fetchData1st 실행 :");
     setLoading(true);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
     try {
       const url = `http://10.125.121.226:8080/api/reservoirdata/${date}`;
+      console.log("🌊 [DashBoard] fetch :");
       const response = await fetch(url, {
         signal: controller.signal,
       });
@@ -77,7 +79,7 @@ export default function Dashboard() {
       }
 
       const data = await response.json();
-      // console.log("🌊 [DashBoard] 수위 데이터 :", data);
+      console.log("🌊 [DashBoard] 수위 데이터 :", data);
 
       const section1_data = [];
       const ops = [];
@@ -98,6 +100,8 @@ export default function Dashboard() {
         };
       });
 
+      console.log("🌊 [DashBoard] section1_data 데이터 :", section1_data);
+
       setSection1Data(section1_data);
       setOptions(ops);
       setWaterDetailInfo(detailInfo);
@@ -110,6 +114,9 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+  useEffect(()=>{
+    console.log("🌊 [DashBoard] section1Data 데이터 :", section1Data);
+  },[section1Data]);
 
   const fetchData2nd = async (date) => {
     const controller = new AbortController();
@@ -161,7 +168,7 @@ export default function Dashboard() {
     } catch (error) {
       console.error("❌ [DashBoard] fetchData3rd(예측 데이터) 실패:", error);
       setError(error.message);
-      setSection4Data(null); 
+      setSection4Data(null);
     }
   }
 
@@ -179,7 +186,7 @@ export default function Dashboard() {
         </div>
         <section className="px-10 pb-10 pt-6 w-full h-full">
           {
-            loading ? <LoadingSpinner/> :
+            loading ? <LoadingSpinner /> :
               isfetchFailed ? <FetchFailed msg={"대시보드"} />
                 :
                 <div className="w-full h-full rounded-lg flex flex-col">

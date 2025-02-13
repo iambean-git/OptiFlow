@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import AnimatedInput from "../ui/AnimatedInput";
 import AnimatedTextarea from "../ui/AnimatedTextArea";
 
-export default function Modal({ open, close, data }) {
+export default function InquiryModal({ open, close, data, isAdmin = false }) {
     const [name, setName] = useState("");
     const [contact, setContact] = useState("");
     const [email, setEmail] = useState("");
@@ -23,7 +23,8 @@ export default function Modal({ open, close, data }) {
     }
 
     const handleSubmit = () => {
-        fetchPost();
+        // fetchPost();
+        close(true);
     }
 
     const fetchPost = async () => {
@@ -49,6 +50,7 @@ export default function Modal({ open, close, data }) {
             // console.log("resp:", resp);
             // 성공했다고 먼가 띄우고싶음
             handleClose();
+            close(true);
 
         } catch (error) {
             console.error("❌ [Modal] fetchPost 실패:", error);
@@ -104,7 +106,10 @@ export default function Modal({ open, close, data }) {
 
                     </main>
                     <footer className="pb-3 px-4 mb-6 text-center">
-                        <button className="w-[300px] py-2 bg-[#3b82f6] rounded-md text-white" onClick={handleSubmit}>
+                        <button className="w-[300px] py-2 bg-[#3b82f6] rounded-md text-white
+                                            disabled:cursor-not-allowed disabled:opacity-45"
+                            // disabled={!name || !email || !tmpid}
+                            onClick={handleSubmit}>
                             제 출
                         </button>
                     </footer>

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 import DateNTime from "../components/datepicker/DateNTime";
-import {formatDate} from "../utils/dateUtils";
+import { formatDate } from "../utils/dateUtils";
 
 import { maxDate10am } from "../recoil/DateAtom";
 import { useRecoilValue } from "recoil";
@@ -16,6 +16,7 @@ export default function WaterLevel() {
     const [waterFlowTag, setWaterFlowTag] = useState(<div>로딩중</div>);
 
     const [waterLevel, setWaterLevel] = useState('');
+    console.log("🔥[DashWaterInfo] 렌더링 : ");
 
     useEffect(() => {
         if (!selectedDate) return;
@@ -24,7 +25,7 @@ export default function WaterLevel() {
             const url = `http://10.125.121.226:8080/api/reservoirdata/${formatDate(selectedDate)}`;
             const resp = await fetch(url);
             const data = await resp.json();
-
+            console.log("🌊 [WaterLevel] 수위 데이터resp :", resp);
             console.log("🌊 [WaterLevel] 수위 데이터 :", data);
 
             // 동일한 값이면 업데이트 방지

@@ -1,20 +1,34 @@
 import "../../css/videoStyle.css";
 
 import { useState } from "react";
-import Modal from "../modal/Modal";
-
+import InquiryModal from "../modal/InquiryModal";
+import { ToastContainer, toast } from 'react-toastify';
+import CustomToast from "../ui/CustomToast";
 
 export default function MainComponent3() {
   const [modalOpen, setModalOpen] = useState(false);
   // const [modalData, setModalData] = useState('');
+
+  const notify = () => toast("Wow so easy!");
 
   const openModal = () => {
     // console.log("openModal");
     // setModalData(data)
     setModalOpen(true);
   };
-  const closeModal = () => {
+  const closeModal = (isPosted = false) => {
     setModalOpen(false);
+    if (isPosted) {
+      // toast.success("이용 문의 접수가 완료되었습니다. 승인 완료시, 이메일을 통해 확인하실 수 있습니다.",{
+      //   position: "bottom-center",
+      //   // hideProgressBar: false,
+      // });
+      // toast(<CustomToast msg="🎉 Tailwind 토스트 메시지!" />, { autoClose: false });
+      toast(<CustomToast msg="🎉 완전히 커스텀된 토스트!" />, {
+        autoClose: 3000, // 3초 후 자동 닫힘
+        // progressClassName: "!bg-blue-500 h-1", // 프로그레스 바 색상 및 높이 조정
+      });
+    }
   };
 
   return (
@@ -38,7 +52,8 @@ export default function MainComponent3() {
         </button>
       </div>
 
-      <Modal open={modalOpen} close={closeModal} />
+      <InquiryModal open={modalOpen} close={closeModal} />
+      {/* <ToastContainer /> */}
     </div>
   );
 }

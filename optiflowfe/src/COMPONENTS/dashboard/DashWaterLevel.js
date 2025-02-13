@@ -9,7 +9,7 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
 
     useEffect(() => {
         if (!data) return;
-        // console.log("🔥[DashWaterLevel] 렌더링 : ", data);
+        console.log("🔥[DashWaterLevel] 렌더링 : ", data);
 
         const radialOptions = {};
         data.map((item) => {
@@ -74,12 +74,16 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
             }
         });
 
-        // console.log("🔥[DashWaterLevel] radialOptions : ", radialOptions);
+        console.log("🔥[DashWaterLevel] radialOptions : ", radialOptions);
 
         setState(radialOptions);
         setIsSet(true);
     }, [data]);
 
+    useEffect(() => {
+        if (!state) return;
+        console.log("🔥[DashWaterLevel] state : ", state);
+    }, [state]);
 
     const handleClick = (event) => {
         console.log(" 차트 클릭 : ", event.currentTarget.id);
@@ -105,7 +109,7 @@ export default function DashWaterLevel({ data, selected, setSelected }) {
             </div>
             <div className='w-full flex-grow grid grid-cols-6 gap-2 items-center'>
                 {
-                    isSet ?
+                    state ?
                         <>
                             <Chart id="A" options={state.A.options} series={state.A.series} type="radialBar" width={"100%"}
                                 className={`${selected.value == "A" ? " selectedChart" : "unselectedChart"} radialChart `}

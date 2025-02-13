@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { RecoilRoot } from "recoil";
+import { toast, ToastContainer } from "react-toastify";
 
 import ProtectedRoute from "./components/ProtectedRoute"; // ProtectedRoute 추가
 
@@ -25,6 +26,15 @@ function App() {
   return (
     <BrowserRouter>
       <RecoilRoot>
+        <ToastContainer
+          position="bottom-center"
+          toastClassName={() => "bg-transparent shadow-none p-0"}
+          bodyClassName={() => "p-0 m-0"}
+          closeButton={false} // 기본 닫기 버튼 제거 (커스텀 버튼만 남기기)
+          hideProgressBar={false} // 프로그레스 바 표시
+          progressClassName="custom-progress-bar"
+        />
+
         <Routes>
           <Route path="/*" element={<NotFound />} />
 
@@ -46,6 +56,7 @@ function App() {
             <Route path="/admin" element={<Admin />} />
 
           </Route>
+
 
         </Routes>
       </RecoilRoot>
