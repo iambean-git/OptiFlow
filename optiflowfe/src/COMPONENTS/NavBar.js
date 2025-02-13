@@ -8,7 +8,7 @@ import "./navBar/navbar.css";
 
 import LocalTime from "./navBar/LocalTime";
 
-import { loginToken, userName } from "../recoil/LoginAtom";
+import { loginToken, userName, userRole } from "../recoil/LoginAtom";
 import { useRecoilValue } from "recoil";
 import { useEffect } from "react";
 export default function NavBar() {
@@ -16,12 +16,8 @@ export default function NavBar() {
     const navigate = useNavigate();
     const token = useRecoilValue(loginToken);
     const username = useRecoilValue(userName);
+    const role = useRecoilValue(userRole);
 
-    useEffect(() => {
-        if (!token) {
-            navigate("/unauthorized");
-        }
-    }, []);
 
     const handleLogout = () => {
         if (window.confirm("로그아웃 하시겠습니까?")) {
@@ -71,7 +67,7 @@ export default function NavBar() {
             </div>
 
             {
-                username == "opti1" ?
+                role == "Role_Admin" ?
                     <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
                         onClick={() => navigate("/admin")}>
                         <FiUserCheck className="size-6 mr-2 ml-0.5" />

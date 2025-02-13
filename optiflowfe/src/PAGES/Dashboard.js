@@ -150,7 +150,7 @@ export default function Dashboard() {
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
     try {
-      const url = `http://10.125.121.226:8080/api/predict/j/${date}`;
+      const url = `http://10.125.121.226:8080/api/predict/lstm/j/${date}`;
       const resp = await fetch(url, {
         signal: controller.signal,
       });

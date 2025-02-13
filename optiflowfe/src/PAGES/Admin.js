@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { formatTableDate } from "../utils/dateUtils";
-import InquiryModal from "../components/modal/InquiryModal";
 import AdminModal from "../components/modal/AdminModal";
+import { toast } from 'react-toastify';
+import CustomToast from "../components/ui/CustomToast";
+
+import { userRole } from "../recoil/LoginAtom";
+import { useRecoilValue } from "recoil";
 
 export default function Admin() {
+    const role = useRecoilValue(userRole);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null); // 에러 상태 저장
     const [inquiriesList, setInquiriesList] = useState([]);
-    const [trs, setTrs] = useState("");
     const [selectedData, setSelectedData] = useState(null);
 
+    const state_new = <span className="border rounded-md px-5 py-1 border-[#e53870] text-[#e53870]">new</span>;
+    const state_read = <span className="border rounded-md px-2 py-1 border-[#3a93ee] text-[#3a93ee]">승인 대기</span>;
+    const state_approved = <span className="border rounded-md px-2 py-1 border-[#4ba650] text-[#4ba650]">승인 완료</span>;
+
     const [modalOpen, setModalOpen] = useState(false);
-    // const [modalData, setModalData] = useState('');
-
-    const openModal = () => {
-        // console.log("openModal");
-        // setModalData(data)
-        setModalOpen(true);
-    };
-    const closeModal = () => {
-        setModalOpen(false);
-    };
-
 
     useEffect(() => {
-        console.log("💌[Admin] 렌더링 : ");
+        if (role !== "Role_Admin") {
 
+        }
+        console.log("💌[Admin] 렌더링 : ");
         fetchData();
     }, []);
 
@@ -44,15 +43,13 @@ export default function Admin() {
 
             clearTimeout(timeoutId); // 응답이 오면 타이머 제거
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
+            if (!response.ok)   throw new Error(`HTTP error! Status: ${response.status}`);
+            
             const data = await response.json();
             console.log("💌[Admin] 이용문의 확인 : ", data);
             setInquiriesList(data);
         } catch (err) {
-            console.error("❌ [DashBoard] fetchData1st 실패:", err);
+            console.error("❌[Admin] fetchData 실패:", err);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -70,10 +67,8 @@ export default function Admin() {
                 ? { ...inquiry, staffConfirmed: true }
                 : inquiry
         );
-
         // 상태 업데이트
         setInquiriesList(updatedList);
-
         // 서버에 업데이트 요청
         updateInquiryConfirmed(selectedInquiry.inquiryId);
     }
@@ -87,14 +82,43 @@ export default function Admin() {
                 }
             });
 
-            if (!response.ok) {
-                throw new Error(`서버 업데이트 실패! 상태 코드: ${response.status}`);
-            }
-
-            console.log(`✅ 문의 ${inquiryId} 상태 업데이트 완료`);
+            if (!response.ok)   throw new Error(`updateInquiryConfirmed 실패! 상태 코드: ${response.status}`);
+            console.log(`✅ 문의 ${inquiryId}번 confirmed 업데이트 완료`);
         } catch (err) {
-            console.error("❌ 상태 업데이트 중 오류 발생:", err);
+            console.error("❌ updateInquiryConfirmed 중 오류 발생:", err);
         }
+    }
+
+    const updateInquiryApproved = async (inquiryId) => {
+        // 이미 승인된 상태면 패스
+        if (selectedData.approved) return;
+        // 서버에 업데이트 요청
+        try {
+            const response = await fetch(`http://10.125.121.226:8080/api/inquiries/approve/${inquiryId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            if (!response.ok)   throw new Error(`updateInquiryApproved 실패! 상태 코드: ${response.status}`);
+
+            console.log(`✅ 문의 ${inquiryId}번 approved 업데이트 완료`);
+        } catch (err) {
+            console.error("❌ updateInquiryApproved 중 오류 발생:", err);
+        }
+
+        // 화면 상태 업데이트
+        setInquiriesList((prevList) =>
+            prevList.map((inquiry) =>
+                inquiry.inquiryId === inquiryId ? { ...inquiry, approved: true } : inquiry
+            )
+        );
+
+        console.log(`✅ 문의 ${inquiryId} 승인 완료`);
+        toast(<CustomToast msg={[`${selectedData.name}님 승인 완료!`]} type={"dark"} />, {
+            autoClose: 2000, // 2초 후 자동 닫힘
+        });
     }
 
     return (
@@ -104,8 +128,8 @@ export default function Admin() {
                 <div className="w-full h-[160px] px-10 flex justify-between">
                     {/* 텍스트 */}
                     <div className="w-2/5 h-full  flex flex-col justify-end text-[#333333]">
-                        <h1 className="text-4xl ">어드민</h1>
-                        <p className="mt-2">각 배수지에 마우스를 올리면, <span className="whitespace-nowrap"> 세부 정보를 확인할 수 있습니다.</span></p>
+                        <h1 className="text-4xl font-medium ">이용 문의 관리</h1>
+                        <p className="mt-2">항목을 클릭하여, <span className="whitespace-nowrap"> 세부 정보를 확인 및 승인 처리할 수 있습니다.</span></p>
                     </div>
 
                 </div>
@@ -113,7 +137,7 @@ export default function Admin() {
                     {/* 테이블 */}
                     <div className="flex-grow pr-4 ">
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 shadow-md rounded-lg">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
                                     <th scope="col" className="w-10 py-3 text-center">
                                         번호
@@ -138,36 +162,13 @@ export default function Admin() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* <tr className="bg-white border-b  border-gray-200 hover:bg-gray-50  font-semibold">
-                                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                                        1
-                                    </th>
-                                    <td className="px-6 py-4">
-                                        조은빈
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        부산
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        abcd1234@gmail.com
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        2025-02-12 09:47
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        없습니다.
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="border rounded-md px-2 py-1">new</span>
-                                    </td>
-                                </tr> */}
-                                {/* {trs} */}
+
                                 {inquiriesList.map((i, idx) => (
                                     <tr
                                         key={i.inquiryId}
                                         className={` border-b border-gray-200  hover:cursor-pointer
                                             ${selectedData && selectedData.inquiryId == i.inquiryId ? " bg-blue-100" : "bg-white hover:bg-gray-50"}
-                                            ${i.staffConfirmed ? "" : "font-semibold"}`}
+                                            ${i.staffConfirmed ? "" : "font-semibold text-[#333]"}`}
                                         onClick={() => { handleClickRow(i) }}
                                     >
                                         <td className="w-[3%] min-w-10 py-3 text-center">{idx + 1}</td>
@@ -175,9 +176,11 @@ export default function Admin() {
                                         <td className="w-[10%] min-w-20 text-center py-4">{i.location}</td>
                                         <td className="px-6 py-4">{i.email}</td>
                                         <td className="px-6 py-4">{formatTableDate(i.createdDt)}</td>
-                                        <td className="px-6 py-4">{i.inquiryDetails}</td>
-                                        <td className="w-[8%] text-center py-4">
-                                            {i.staffConfirmed ? "" : <span className="border rounded-md px-2 py-1">new</span>}
+                                        <td className="px-6 py-4">
+                                            {modalOpen || i.inquiryDetails.length > 50 ? i.inquiryDetails.substr(0, 30) + "..." : i.inquiryDetails}
+                                        </td>
+                                        <td className="w-[12%] pr-6 text-right py-4">
+                                            {i.staffConfirmed ? i.approved ? state_approved : state_read : state_new}
                                         </td>
                                     </tr>
                                 ))}
@@ -189,12 +192,11 @@ export default function Admin() {
                     {/* 문의 상세 보기 */}
                     <div className={`bg-white h-full w-1/4 shadow-md rounded-lg ${selectedData ? "block" : "hidden"}`}>
                         <div className="w-full h-full rounded-lg">
-                            <AdminModal data={selectedData} close={() => setSelectedData(null)} />
+                            <AdminModal data={selectedData} close={() => setSelectedData(null)} updatedApproved={updateInquiryApproved} />
                         </div>
                     </div>
                 </section>
             </div>
-            <InquiryModal open={modalOpen} close={closeModal} />
         </div>
     );
 }

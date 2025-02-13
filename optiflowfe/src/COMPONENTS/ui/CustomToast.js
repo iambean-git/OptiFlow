@@ -1,14 +1,27 @@
+import { BsEnvelopeCheck } from "react-icons/bs";
 import React from 'react'
 
-export default function CustomToast({ msg, closeToast }) {
+export default function CustomToast({ type = "light", msg, closeToast }) {
     return (
-        <div className="flex items-center justify-between bg-white text-black p-4 rounded-lg  border shadow-md max-w-xs">
-            <span className="text-sm">{msg}</span>
+        <div className={`flex items-center w-full justify-between text-black p-4 rounded-lg  shadow-md
+                        ${type === "dark" ? "bg-[#4ba650]" : "bg-[#f0f9f2]"}`}>
+            <div className={`text-4xl mr-4 ${type === "dark" ? "text-white" : "text-green-600"}`}>
+                <BsEnvelopeCheck />
+            </div>
+            <div className='flex flex-col items-start'>
+                {
+                    msg.map((item, idx) => (
+                        <span key={`toast-${idx}`}
+                        className={`text-sm ${type === "dark" ? "text-white" : "text-[#333]" }`}>{item}</span>
+                    ))
+                }
+            </div>
+
             <button
                 onClick={closeToast}
-                className="ml-4 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs"
+                className={`ml-6 ${type === "dark" ? "text-white" : "text-gray-400 hover:text-gray-600" }`}
             >
-                닫기
+                X
             </button>
         </div>
     );

@@ -11,7 +11,6 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
     const [location, setLocation] = useState("");
     const [inquiry, setInquiry] = useState("");
 
-    // console.log("modal data : ", data);
     const handleClose = () => {
         setName("");
         setContact("");
@@ -23,8 +22,7 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
     }
 
     const handleSubmit = () => {
-        // fetchPost();
-        close(true);
+        fetchPost();
     }
 
     const fetchPost = async () => {
@@ -46,17 +44,14 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
             };
             const resp = await fetch(url, postData);
             if (!resp.ok) throw new Error(`HTTP error! Status: ${resp.status}`);
-
-            // console.log("resp:", resp);
-            // 성공했다고 먼가 띄우고싶음
             handleClose();
             close(true);
 
         } catch (error) {
             console.error("❌ [Modal] fetchPost 실패:", error);
+            close(false);
         }
     };
-
 
     return (
         <div className={open ? 'openModal modal' : 'modal'}>
@@ -72,10 +67,11 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
                         <div className='w-[450px] h-16 flex justify-center items-center text-2xl font-bold text-[#3b82f6] '>
                             OPTIFLOW 이용 문의
                         </div>
-                        <div id="map" className='h-5/6  w-[450px] flex flex-col justify-center items-center'>
+                        <div id="map" className='h-5/6 w-[450px] flex flex-col justify-center items-center'>
                             <AnimatedInput
                                 type={"text"} label={"이름"} value={name}
                                 onChange={(e) => setName(e.target.value)}
+                                required={true}
                             />
                             <AnimatedInput
                                 type={"text"} label={"연락처"} value={contact}
@@ -84,6 +80,7 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
                             <AnimatedInput
                                 type={"text"} label={"메일"} value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                required={true}
                             />
                             <AnimatedInput
                                 type={"text"} label={"이용 희망 지역"} value={location}
@@ -94,6 +91,7 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
                                 type={"text"} label={"희망 아이디"} value={tmpid}
                                 onChange={(e) => setTmpid(e.target.value)}
                                 detail={"이용 승인시, 희망하는 아이디를 입력해주세요."}
+                                required={true}
                             />
                             <AnimatedTextarea
                                 label={"기타 문의사항"} value={inquiry}
@@ -108,7 +106,7 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
                     <footer className="pb-3 px-4 mb-6 text-center">
                         <button className="w-[300px] py-2 bg-[#3b82f6] rounded-md text-white
                                             disabled:cursor-not-allowed disabled:opacity-45"
-                            // disabled={!name || !email || !tmpid}
+                            disabled={!name || !email || !tmpid}
                             onClick={handleSubmit}>
                             제 출
                         </button>

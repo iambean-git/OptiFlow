@@ -52,9 +52,10 @@ export default function WaterLevel() {
             <div className="w-full h-screen pl-[260px] flex flex-col">
                 <div className="w-full h-[160px] px-10 flex justify-between">
                     {/* 텍스트 */}
-                    <div className="w-2/5 h-full  flex flex-col justify-end text-[#333333]">
-                        <h1 className="text-4xl ">타이틀</h1>
-                        <p className="mt-2">각 배수지에 마우스를 올리면, <span className="whitespace-nowrap"> 세부 정보를 확인할 수 있습니다.</span></p>
+                    <div className="w-4/5 h-full  flex flex-col justify-end text-[#333333]">
+                        <h1 className="text-4xl font-medium">지난 수위 정보</h1>
+                        <p className="mt-2">날짜를 변경하세요. <span className="whitespace-nowrap"> 각 배수지에 마우스를 올리면, 세부 정보도 확인할 수 있습니다.</span> </p>
+                        <p className=""></p>
                     </div>
 
                     {/* 달력 */}

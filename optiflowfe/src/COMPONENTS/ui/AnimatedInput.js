@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function AnimatedInput({ type, label, value, onChange, detail }) {
+export default function AnimatedInput({ type, label, value, onChange, detail, required=false }) {
   const [isFocused, setIsFocused] = useState(false);
   const inputId = `input-${label.replace(/\s+/g, "-").toLowerCase()}`; // 고유한 ID 생성
 
@@ -14,7 +14,7 @@ export default function AnimatedInput({ type, label, value, onChange, detail }) 
           ${isFocused ? "text-blue-500" : "text-gray-400"}
         `}
       >
-        {label}
+        {label}{required  ? <span className="text-red-600 ml-1">*</span> :""}
       </label>
 
       {/* 입력 필드 */}

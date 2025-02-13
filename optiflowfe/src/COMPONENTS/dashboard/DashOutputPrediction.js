@@ -174,7 +174,7 @@ export default function DashOutputPrediction({ data }) {
                 </div>
                 <div className="flex flex-col">
                     <span className="text-base flex items-center"> <GoDotFill className="text-xs mr-1" /> 추천 유입량 ?</span>
-                    <span className="!text-sm ml-3"> 설명 ??? </span>
+                    <span className="!text-sm ml-3"> 안정 수위 유지와 전기 요금 절감을 위한 추천 유입량 (m³) </span>
                 </div>
             </Tooltip>
         </div>
