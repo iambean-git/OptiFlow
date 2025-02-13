@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter @Setter
 public class PredictRequestDto {
 	private String name;
+	private String modelName;
     private String datetime;
     private Float waterLevel;
 }

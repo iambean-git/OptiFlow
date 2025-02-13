@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,17 +50,21 @@ public class InquiryController {
         return new ResponseEntity<>(unconfirmedInquiries, HttpStatus.OK);
     }
     
-    @GetMapping("/{inquiryId}") // 특정 문의 ID 조회 및 staff_confirmed 업데이트 API
-    public ResponseEntity<Inquiry> getInquiryById(@PathVariable Long inquiryId) {
+    @PutMapping("/confirm/{inquiryId}") // 특정 문의 ID 조회 및 staff_confirmed 업데이트 API
+    public void confirmStaff(@PathVariable Long inquiryId) {
         Inquiry inquiry = inquiryService.getInquiryById(inquiryId);
-        if (inquiry == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
         if (!inquiry.getStaffConfirmed()) {
             inquiry.setStaffConfirmed(true);
             inquiryService.saveInquiry(inquiry);
         }
-        return new ResponseEntity<>(inquiry, HttpStatus.OK);
+    }
+    
+    @PutMapping("/approve/{inquiryId}") // 특정 문의 ID 조회 및 staff_confirmed 업데이트 API
+    public void approved(@PathVariable Long inquiryId) {
+        Inquiry inquiry = inquiryService.getInquiryById(inquiryId);
+        if (!inquiry.getApproved()) {
+            inquiry.setApproved(true);
+            inquiryService.saveInquiry(inquiry);
+        }
     }
 }

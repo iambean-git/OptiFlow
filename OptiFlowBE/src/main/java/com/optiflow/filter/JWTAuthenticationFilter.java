@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -53,9 +54,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	protected void successfulAuthentication(HttpServletRequest request,
 			HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		 // 자격 증명이 성공하면 loadUserByUsername에서 만든 객체가 authResult에 담겨져 있다.
+		// 자격 증명이 성공하면 loadUserByUsername에서 만든 객체가 authResult 있음
 		User user = (User) authResult.getPrincipal();
-		System.out.println("auth:" + user); // user 객체를 콘솔에 출력해서 확인
+		System.out.println("auth:" + user); 
+		
+		String roles = authResult.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("ROLE_User");
 		
 		String token = JWT.create().withExpiresAt(new Date
 				(System.currentTimeMillis() + 1000 * 60 * 100))
@@ -63,6 +69,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.sign(Algorithm.HMAC256("com.optiflow.jwt"));
 		
 		response.addHeader("username", user.getUsername());
+		response.addHeader("role", roles);
 		response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 		response.setStatus(HttpStatus.OK.value());
 	}

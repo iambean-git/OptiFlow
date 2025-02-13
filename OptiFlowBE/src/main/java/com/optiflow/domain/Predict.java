@@ -1,6 +1,5 @@
 package com.optiflow.domain;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,8 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +36,9 @@ public class Predict {
 
     @Column(name = "datetime")
     private String datetime;
+    
+    @Column(name = "used_model")
+    private String usedModel;
     
     @Column(name = "prediction")
     @Lob // Large Object (TEXT, BLOB 등) 타입 지정

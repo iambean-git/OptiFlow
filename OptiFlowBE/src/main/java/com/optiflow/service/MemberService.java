@@ -24,7 +24,7 @@ public class MemberService {
     	Member memberRegi = Member.builder()
                 .username(member.getUsername())
                 .password(encoder.encode(member.getPassword()))
-                .role(Member.Role.User)
+                .role(Member.Role.Role_User)
                 .build();
 		
 		return memberRepo.save(memberRegi);
