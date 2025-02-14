@@ -21,43 +21,43 @@ try:
   data_lstm_j = pd.read_csv('./data/j_lstm_data_v4.csv')
   data_lstm_j['datetime'] = pd.to_datetime(data_lstm_j['datetime'])  # 'datetime' 컬럼을 datetime 객체로 변환
 except FileNotFoundError:
-  print('Error: j_lstm_data_v4.csv 파일을 찾을 수 없습니다.')
+  print("Error: j_lstm_data_v4.csv 파일을 찾을 수 없습니다.")
   exit()
 try:
   data_lstm_d = pd.read_csv('./data/d_lstm_data_v4.csv')
   data_lstm_d['datetime'] = pd.to_datetime(data_lstm_d['datetime'])  # 'datetime' 컬럼을 datetime 객체로 변환
 except FileNotFoundError:
-  print('Error: d_lstm_data_v4.csv 파일을 찾을 수 없습니다.')
+  print("Error: d_lstm_data_v4.csv 파일을 찾을 수 없습니다.")
   exit()
 try:
   data_lstm_l = pd.read_csv('./data/l_lstm_data_v4.csv')
   data_lstm_l['datetime'] = pd.to_datetime(data_lstm_l['datetime'])  # 'datetime' 컬럼을 datetime 객체로 변환
 except FileNotFoundError:
-  print('Error: l_lstm_data_v4.csv 파일을 찾을 수 없습니다.')
+  print("Error: l_lstm_data_v4.csv 파일을 찾을 수 없습니다.")
   exit()
 try:
   data_xgb_j = pd.read_csv('./data/j_before_feature_importance_with_datetime_v3.csv')
   data_xgb_j['datetime'] = pd.to_datetime(data_xgb_j['datetime'])
 except FileNotFoundError:
-  print('Error: j_before_feature_importance_with_datetime_v3.csv 파일을 찾을 수 없습니다.')
+  print("Error: j_before_feature_importance_with_datetime_v3.csv 파일을 찾을 수 없습니다.")
   exit()
 try:
   data_xgb_d = pd.read_csv('./data/d_before_feature_importance_with_datetime_v3.csv')
   data_xgb_d['datetime'] = pd.to_datetime(data_xgb_d['datetime'])
 except FileNotFoundError:
-  print('Error: d_before_feature_importance_with_datetime_v3.csv 파일을 찾을 수 없습니다.')
+  print("Error: d_before_feature_importance_with_datetime_v3.csv 파일을 찾을 수 없습니다.")
   exit()
 try:
   data_xgb_l = pd.read_csv('./data/l_before_feature_importance_with_datetime_v3.csv')
   data_xgb_l['datetime'] = pd.to_datetime(data_xgb_l['datetime'])
 except FileNotFoundError:
-  print('Error: l_before_feature_importance_with_datetime_v3.csv 파일을 찾을 수 없습니다.')
+  print("Error: l_before_feature_importance_with_datetime_v3.csv 파일을 찾을 수 없습니다.")
   exit()
 try:
   data_djl = pd.read_csv('./data/reservoir_djl_hourly.csv')
   data_djl['observation_time'] = pd.to_datetime(data_djl['observation_time'])
 except FileNotFoundError:
-  print('Error: reservoir_djl_hourly.csv 파일을 찾을 수 없습니다.')
+  print("Error: reservoir_djl_hourly.csv 파일을 찾을 수 없습니다.")
   exit()
 
 def make_return_form(data, start_time):
@@ -67,18 +67,6 @@ def make_return_form(data, start_time):
     dic = {}
     dic['time'] = start_time + timedelta(hours=i)
     dic['value'] = float(value)
-    arr.append(dic)
-  
-  return arr
-
-def make_return_form_with_height(data, percentage, start_time):
-  arr = []
-
-  for i, value in enumerate(data):
-    dic = {}
-    dic['time'] = start_time + timedelta(hours=i)
-    dic['value'] = float(value)
-    dic['height'] = float(percentage[i])
     arr.append(dic)
   
   return arr
@@ -105,10 +93,10 @@ try:
   model_lstm_j.to(device)
   model_lstm_j.eval()
 except FileNotFoundError:
-  print('Error: best_lstm_checkpoint_j.pt 파일을 찾을 수 없습니다.')
+  print("Error: best_lstm_checkpoint_j.pt 파일을 찾을 수 없습니다.")
   exit()
 except Exception as e:
-  print(f'Error loading model: {e}')
+  print(f"Error loading model: {e}")
   exit()
 try:
   model_lstm_d = LSTMModel(input_size, hidden_size, output_size)
@@ -116,10 +104,10 @@ try:
   model_lstm_d.to(device)
   model_lstm_d.eval()
 except FileNotFoundError:
-  print('Error: best_lstm_checkpoint_d.pt 파일을 찾을 수 없습니다.')
+  print("Error: best_lstm_checkpoint_d.pt 파일을 찾을 수 없습니다.")
   exit()
 except Exception as e:
-  print(f'Error loading model: {e}')
+  print(f"Error loading model: {e}")
   exit()
 try:
   model_lstm_l = LSTMModel(input_size, hidden_size, output_size)
@@ -127,37 +115,37 @@ try:
   model_lstm_l.to(device)
   model_lstm_l.eval()
 except FileNotFoundError:
-  print('Error: best_lstm_checkpoint_l.pt 파일을 찾을 수 없습니다.')
+  print("Error: best_lstm_checkpoint_l.pt 파일을 찾을 수 없습니다.")
   exit()
 except Exception as e:
-  print(f'Error loading model: {e}')
+  print(f"Error loading model: {e}")
   exit()
 
 try:
   model_xgb_j = xgb.Booster(model_file='./model/24hour_xgboost_all_features_model_250212_j.json')
 except FileNotFoundError:
-  print('Error: 24hour_xgboost_all_features_model_250212.json 파일을 찾을 수 없습니다.')
+  print("Error: 24hour_xgboost_all_features_model_250212.json 파일을 찾을 수 없습니다.")
   exit()
 except Exception as e:
-  print(f'Error loading model: {e}')
+  print(f"Error loading model: {e}")
   exit()
 
 try:
   model_xgb_d = xgb.Booster(model_file='./model/24hour_xgboost_all_features_model_250212_d.json')
 except FileNotFoundError:
-  print('Error: 24hour_xgboost_all_features_model_250212.json 파일을 찾을 수 없습니다.')
+  print("Error: 24hour_xgboost_all_features_model_250212.json 파일을 찾을 수 없습니다.")
   exit()
 except Exception as e:
-  print(f'Error loading model: {e}')
+  print(f"Error loading model: {e}")
   exit()
 
 try:
   model_xgb_l = xgb.Booster(model_file='./model/24hour_xgboost_all_features_model_l.json')
 except FileNotFoundError:
-  print('Error: 24hour_xgboost_all_features_model_250212.json 파일을 찾을 수 없습니다.')
+  print("Error: 24hour_xgboost_all_features_model_250212.json 파일을 찾을 수 없습니다.")
   exit()
 except Exception as e:
-  print(f'Error loading model: {e}')
+  print(f"Error loading model: {e}")
   exit()
 
 
@@ -196,12 +184,12 @@ with open('./model/best_polynomial_regression_model.pkl', 'rb') as f:
 def predict_lstm(dt, name):  # dt는 datetime 객체
   print('lstm 실행')
   model, data_lstm, loaded_scaler_feature, loaded_scaler_target = get_lstm_model_data_and_scaler(name)
-  
+  print('lstm 실행')
   model.eval()
   past_data = data_lstm[data_lstm['datetime'] < dt].tail(168)
   start_time = past_data.iloc[-1]['datetime'] + timedelta(hours=1)
   if len(past_data) != 168:
-    raise ValueError('이전 168개의 데이터를 찾을 수 없습니다.')
+    raise ValueError("이전 168개의 데이터를 찾을 수 없습니다.")
 
   input_data = past_data.drop('datetime', axis=1).values.astype(np.float32)
   scaled_input_data = loaded_scaler_feature.transform(input_data)
@@ -216,7 +204,7 @@ def predict_lstm(dt, name):  # dt는 datetime 객체
   predicted_original = loaded_scaler_target.inverse_transform(predicted)
 
   pred_arr = make_return_form(predicted_original[0], start_time)
-  print(pred_arr)
+
   return pred_arr, predicted_original[0]
 
 def predict_xgb(dt, model, data):
@@ -224,7 +212,7 @@ def predict_xgb(dt, model, data):
   start_time = past_data.iloc[-1]['datetime'] + timedelta(hours=1)
 
   if len(past_data) != 168:
-    raise ValueError('이전 168개의 데이터를 찾을 수 없습니다.')
+    raise ValueError("이전 168개의 데이터를 찾을 수 없습니다.")
 
   input_data = past_data.drop('datetime', axis=1).values.astype(np.float32)
   # print(input_data.shape)
@@ -298,8 +286,7 @@ def optimize_pump_flow(data, outflow, v_initial, capacity, max_flow = 250):
   over_flow = np.zeros(minutes)  # 넘으면 저장
   lower_flow = np.zeros(minutes)  # 모자라면 저장
   storage = v_initial  # 초기 배수지 저장량
-  storage_arr = []
-  v_min, v_max = capacity * 0.55, capacity * 0.9 # 1% 보수적 한계
+  v_min, v_max = capacity * 0.31, capacity * 0.94 # 1% 보수적 한계
   
   hourly_flow = 0
 
@@ -331,7 +318,6 @@ def optimize_pump_flow(data, outflow, v_initial, capacity, max_flow = 250):
     pump_flow[minute] = hourly_flow
     
     storage += (pump_flow[minute] - outflow[minute // 60]) / 60
-    storage_arr.append(storage)
 
     if (storage > v_max):
       over_flow[minute] = storage - v_max
@@ -355,12 +341,7 @@ def optimize_pump_flow(data, outflow, v_initial, capacity, max_flow = 250):
       if hourly_lower_amount[h] < lower_flow[idx]:
         hourly_lower_amount[h] = lower_flow[idx]
 
-  adjustment = [hourly_over_amount[i] + hourly_lower_amount[i] for i in range(24)]
-  print(len(adjustment))
-
-  water_level = storage_arr[::60]
-  water_level = [adjustment[i] + water_level[i] for i in range(24)]
-  water_percentage = [(level / capacity) * 100 for level in water_level]
+  adjustment = hourly_over_amount + hourly_lower_amount
 
   for i, value in enumerate(adjustment):
     if value == 0: continue
@@ -369,9 +350,8 @@ def optimize_pump_flow(data, outflow, v_initial, capacity, max_flow = 250):
 
   flow = pump_flow[::60]
   opti_arr = make_return_form(flow, start_time)
-  final_result = make_return_form_with_height(flow, water_percentage, start_time)
 
-  return opti_arr, final_result
+  return opti_arr
 
 # test_flow = optimize_pump_flow(test_pred, test_out, 1419, 2000)
 # print(test_flow)
@@ -384,88 +364,56 @@ def calculate_daily_cost_by_linear(data):
     flux_poly = poly.fit_transform(np.array([[row['value']]]))
     power_kW = model_poly.predict(flux_poly)[0]
     cost_per_kWh = electricity_rates[season][period]
-    total_cost.append(int(power_kW * cost_per_kWh))
+    total_cost.append(power_kW * cost_per_kWh)
   return total_cost
 
 # test_charge = calculate_daily_cost_by_linear(test_flow)
 # test_charge_formatted = format(int(test_charge), ',')
 # print(test_charge_formatted)
 
+from fastapi import FastAPI, Request, HTTPException
 import requests
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import os
 import logging
-from fastapi import FastAPI, Request, HTTPException, status
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request
 
 # 로거 설정
-# logging.basicConfig(level=logging.INFO)
-# logger = logging.getLogger(__name__)
-logger = logging.getLogger('uvicorn.error')  
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=['http://10.125.121.219:3000', 'http://10.125.121.226:8080'],
+  allow_origins=["http://10.125.121.219:3000", "http://10.125.121.226:8080"],
   allow_credentials=True,
-  allow_methods=['*'],  # 모든 HTTP 메서드 허용
-  allow_headers=['*'],  # 모든 헤더 허용
+  allow_methods=["*"],  # 모든 HTTP 메서드 허용
+  allow_headers=["*"],  # 모든 헤더 허용
 )
 
-# --- 요청 로깅 미들웨어 ---
-@app.middleware('http')
-async def log_requests(request: Request, call_next):
-  logger.info(f'Request: {request.method} {request.url} - Headers: {request.headers}')
-  try:
-    response = await call_next(request)
-  except Exception as e:
-    logger.exception(f'Request failed: {e}')  # 예외 발생 시 스택 트레이스
-    raise
-  logger.info(f'Response status code: {response.status_code}')
-  return response
-
-# --- Exception handling (HTTPException 및 일반 Exception) ---
-@app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
-  logger.error(f'HTTPException: {exc.status_code} - {exc.detail}')
-  return JSONResponse(
-    status_code=exc.status_code,
-    content={'message': exc.detail},
-  )
-
-@app.exception_handler(Exception)
-async def general_exception_handler(request: Request, exc: Exception):
-  logger.exception(f'Unhandled exception: {exc}')
-  return JSONResponse(
-    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    content={'message': 'Internal Server Error'},
-  )
-
-SPRINGBOOT_URL = os.environ.get('SPRINGBOOT_URL', 'http://10.125.121.226:8080/api/save')  # Spring Boot 엔드포인트
+SPRINGBOOT_URL = os.environ.get("SPRINGBOOT_URL", "http://10.125.121.226:8080/api/save")  # Spring Boot 엔드포인트
 
 class InputData(BaseModel):
-  datetime: str  # datetime 객체를 받도록 수정
+  dt: str  # datetime 객체를 받도록 수정
   waterLevel: float
   name: str # 저수지명
 
-@app.post('/api/predict/lstm')
+@app.post("/api/predict/lstm")
 async def predict_data_lstm(request: Request, input_data: InputData):
-  print('lstm 요청')
-  logger.info(f'Request: {request.method} {request.url}')
-  # logger.info(f'Response status code: {input_data.status_code}')
+  logger.info(f"Request: {request.method} {request.url}")
+  # logger.info(f"Response status code: {input_data.status_code}")
   try:
-    prediction_lstm, outflow_lstm = predict_lstm(input_data.datetime, input_data.name)
+    prediction_lstm, outflow_lstm = predict_lstm(input_data.dt, input_data.name)
   except ValueError as e:
     raise HTTPException(status_code=400, detail=str(e))
   except Exception as e:  # 예외 처리 추가
     raise HTTPException(status_code=500, detail=str(e))
-  
-  capacity = {'d' : 1000, 'j' : 2000, 'l' : 1200}
-  _, optiflow_lstm = optimize_pump_flow(prediction_lstm, outflow_lstm, input_data.waterLevel, capacity[input_data.name])
-  print(optiflow_lstm)
-  result = {'prediction' : prediction_lstm, 'optiflow' : optiflow_lstm}
+
+  optiflow_lstm = optimize_pump_flow(prediction_lstm, outflow_lstm, input_data.waterLevel, 2000)
+
+  result = {"prediction" : prediction_lstm, 'optiflow' : optiflow_lstm}
   # print(result, type(result))
   return result
 
@@ -473,64 +421,54 @@ async def predict_data_lstm(request: Request, input_data: InputData):
   #   spring_response = requests.post(SPRINGBOOT_URL, json=result)
   #   spring_response.raise_for_status()
   # except requests.exceptions.RequestException as e:
-  #   raise HTTPException(status_code=500, detail=f'Failed to communicate with Spring Boot: {str(e)}')
+  #   raise HTTPException(status_code=500, detail=f"Failed to communicate with Spring Boot: {str(e)}")
 
   # final_result = spring_response.json()
   # return final_result
 
-@app.post('/api/predict/xgb')
+@app.post("/api/predict/xgb")
 async def predict_data_xgb(request: Request, input_data: InputData):
-  logger.info(f'Request: {request.method} {request.url}')
-  # logger.info(f'Response status code: {input_data.status_code}')
+  logger.info(f"Request: {request.method} {request.url}")
+  # logger.info(f"Response status code: {input_data.status_code}")
   model, data = get_xgb_model_and_data(input_data.name)
   try:
-    prediction_xgb, outflow_xgb = predict_xgb(input_data.datetime, model, data)
+    prediction_xgb, outflow_xgb = predict_xgb(input_data.dt, model, data)
   except ValueError as e:
     raise HTTPException(status_code=400, detail=str(e))
   except Exception as e:  # 예외 처리 추가
     raise HTTPException(status_code=500, detail=str(e))
 
-  capacity = {'d' : 1000, 'j' : 2000, 'l' : 1200}
-  _, optiflow_xgb = optimize_pump_flow(prediction_xgb, outflow_xgb, input_data.waterLevel, capacity[input_data.name])
+  optiflow_xgb = optimize_pump_flow(prediction_xgb, outflow_xgb, input_data.waterLevel, 2000)
 
-  result = {'prediction' : prediction_xgb, 'optiflow' : optiflow_xgb}
+  result = {"prediction" : prediction_xgb, 'optiflow' : optiflow_xgb}
   # print(result, type(result))
   return result
 
-@app.post('/api/cost')
+@app.post("/api/cost")
 async def calculate_cost(request: Request, input_data: InputData):
-  logger.info(f'Request: {request.method} {request.url}')
+  logger.info(f"Request: {request.method} {request.url}")
   model, data = get_xgb_model_and_data(input_data.name)
   try:
-    prediction_xgb, outflow_xgb = predict_xgb(input_data.datetime, model, data)
+    prediction_xgb, outflow_xgb = predict_xgb(input_data.dt, model, data)
   except ValueError as e:
-    logger.error(f'ValueError in predict_xgb: {e}')
     raise HTTPException(status_code=400, detail=str(e))
   except Exception as e:
-    logger.exception(f'Exception in predict_xgb: {e}')
     raise HTTPException(status_code=500, detail=str(e))
 
   id = {'d' : 4, 'j' : 1, 'l' : 11}
 
-  future_data = data_djl[(data_djl['observation_time'] >= input_data.datetime) & (data_djl['reservoir_id'] == id[input_data.name])].head(24)
-  print(future_data.shape)
+  future_data = data_djl[data_djl['observation_time'] >= input_data.dt & data_djl['reservoir_id'] == id[input_data.name]].head(24)
   start_time = future_data.iloc[0]['observation_time']
-  print('start_time')
   if len(future_data) != 24:
-    logger.error(f'Not enough future data found. Length: {len(future_data)}')
-    raise ValueError('이후 24개의 데이터를 찾을 수 없습니다.')
+    raise ValueError("이후 24개의 데이터를 찾을 수 없습니다.")
 
-  capacity = {'d' : 1000, 'j' : 2000, 'l' : 1200}
-
-  flow_truth = make_return_form(future_data['input'], start_time)
-  cost_truth = calculate_daily_cost_by_linear(flow_truth)
-  flow_opti, _ = optimize_pump_flow(prediction_xgb, outflow_xgb, input_data.waterLevel, capacity[input_data.name])
+  flow_actual = make_return_form(future_data, start_time)
+  cost_actual = calculate_daily_cost_by_linear(flow_actual)
+  flow_opti = optimize_pump_flow(prediction_xgb, outflow_xgb, input_data.waterLevel, 2000)
   cost_opti = calculate_daily_cost_by_linear(flow_opti)
 
-  cost_truth_form = make_return_form(cost_truth, start_time)
-  cost_opti_form = make_return_form(cost_opti, start_time)
-  
-  result = {'truth' : cost_truth_form, 'optimization' : cost_opti_form}
-  print(result)
-  # result = {'truth' : [1, 2], 'optimization' : [3, 4]}
+  cost_actual = make_return_form(cost_actual)
+  cost_opti = make_return_form(cost_opti)
+
+  result = {'actual' : cost_actual, 'optimization' : cost_opti}
   return result
