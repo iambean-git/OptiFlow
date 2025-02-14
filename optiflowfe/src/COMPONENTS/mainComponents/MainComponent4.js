@@ -1,12 +1,22 @@
 import "../../css/videoStyle.css";
 import { BsDiagram3 } from "react-icons/bs";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import InquiryModal from "../modal/InquiryModal";
 import { toast } from 'react-toastify';
 import CustomToast from "../ui/CustomToast";
 
-export default function MainComponent4() {
+export default function MainComponent4({isvisible}) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [isAnimaged, setIsAnimated] = useState(false);
+
+  useEffect(() => {
+    if (isvisible) {
+      setTimeout(() => {
+        setIsAnimated(true);
+      }, 200); 
+    }
+  }, [isvisible]);
 
   const openModal = () => {
     // console.log("openModal");
@@ -25,10 +35,10 @@ export default function MainComponent4() {
     <div className="main-component-container flex justify-center">
       <div className="w-full h-full flex flex-col  justify-center items-center">
         {/* ==========  3번째 영역 [] ========== */}
-        <section className="w-[55%] grow flex justify-between items-center px-14">
+        <section className={`w-[55%] grow flex justify-between items-center px-14  ${isAnimaged ? "animationSlideUp" : "opacity-0"}`}>
           <img src="/images/mainImg/cap_waterflow.png" alt="dashboard"
             className="rounded-lg mr-12 h-1/2 shadow-xl border" />
-          <div className="flex flex-col justify-center">
+          <div className={`flex flex-col justify-center`}>
             <p className="text-lg text-blue-500 font-semibold flex items-center">
               <BsDiagram3 className="ml-0.5 mr-1.5" />
               FLOW

@@ -18,6 +18,9 @@ export default function Main() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [isVisiblePage2, setIsVisiblePage2] = useState(false);
+  const [isVisiblePage3, setIsVisiblePage3] = useState(false);
+  const [isVisiblePage4, setIsVisiblePage4] = useState(false);
+
 
   //토큰정보
   const token = sessionStorage.getItem("token");
@@ -55,6 +58,7 @@ export default function Main() {
             behavior: "smooth",
           });
           setCurrentPage(3);
+          setIsVisiblePage3(true);
         } else if (scrollTop >= pageHeight * 2 && scrollTop < pageHeight * 3) {
           // 현재 3페이지
           outerRef.current.scrollTo({
@@ -63,6 +67,7 @@ export default function Main() {
             behavior: "smooth",
           });
           setCurrentPage(4);
+          setIsVisiblePage4(true);
         } else {
           // 현재 4페이지 (마지막 페이지)
           outerRef.current.scrollTo({
@@ -138,8 +143,8 @@ export default function Main() {
         <div className="divider"></div>
         <MainComponent2 isvisible={isVisiblePage2}/>
         <div className="divider"></div>
-        <MainComponent3 />
-        <MainComponent4 />
+        <MainComponent3 isvisible={isVisiblePage3}/>
+        <MainComponent4 isvisible={isVisiblePage4}/>
       </div>
     </>
   );
