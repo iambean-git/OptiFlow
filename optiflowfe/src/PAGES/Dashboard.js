@@ -12,8 +12,8 @@ import { useRecoilValue } from "recoil";
 import { formatDate } from "../utils/dateUtils";
 
 export default function Dashboard() {
-  const [selected, setSelected] = useState({ label: "J 배수지", value: "J" });
-  const [selectedModel, setSelectedModel] = useState(null);
+  const [selected, setSelected] = useState({ label: "D 배수지", value: "D" });
+  const [selectedModel, setSelectedModel] = useState("xgb");
 
   const [options, setOptions] = useState([]);
 
@@ -43,26 +43,21 @@ export default function Dashboard() {
   }, []);
 
   useEffect(()=>{
+    // console.log("🌊 [DashBoard] selected :", selected.value);
     if(!selectedModel)  return;
+    fetchData2nd(formatDate(todayDate));
     fetchData3rd(formatDate(todayDate));
-  },[selectedModel]);
+  },[selectedModel, selected]);
 
   useEffect(() => {
     options.sort((a, b) => a.value.localeCompare(b.value)); // value기준 오름차순 정렬
     // console.log("🌊 [DashBoard] options :", options);
   }, [options]);
 
-  useEffect(() => {
-    // console.log("🌊 [DashBoard] selected :", selected);
-    if (!selected) return;
-    if (!waterDetailInfo) return;
-    setSection2Data(waterDetailInfo[selected.value]);
-  }, [selected]);
+
 
   useEffect(() => {
     if (!waterDetailInfo) return;
-    // console.log("🌊 [DashBoard] waterDetailInfo :", waterDetailInfo);
-    // console.log("🌊 [DashBoard] selected :", selected.value);
     setSection2Data(waterDetailInfo[selected.value]);
   }, [waterDetailInfo]);
 
@@ -82,9 +77,7 @@ export default function Dashboard() {
 
       clearTimeout(timeoutId); // 응답이 오면 타이머 제거
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
       console.log("🌊 [DashBoard] 수위 데이터 :", data);
@@ -122,9 +115,10 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
   useEffect(()=>{
-    console.log("🌊 [DashBoard] section1Data 데이터 :", section1Data);
-  },[section1Data]);
+    console.log("🌊 [DashBoard] section2Data 데이터 :", section2Data);
+  },[section2Data]);
 
   const fetchData2nd = async (date) => {
     const controller = new AbortController();
@@ -132,16 +126,14 @@ export default function Dashboard() {
 
     //이전 데이터
     try {
-      const url = `http://10.125.121.226:8080/api/reservoirdata/j/${date}`;
+      const url = `http://10.125.121.226:8080/api/reservoirdata/${selected.value.toLowerCase()}/${date}`;
       const resp = await fetch(url, {
         signal: controller.signal,
       });
       clearTimeout(timeoutId); // 응답이 오면 타이머 제거
 
-      if (!resp.ok) {
-        throw new Error(`HTTP error! Status: ${resp.status}`);
-      }
-
+      if (!resp.ok)   throw new Error(`HTTP error! Status: ${resp.status}`);
+      
       const data = await resp.json();
       console.log("🌊 [DashBoard] 이전 데이터 :", data);
       setSection3Data(data);
@@ -150,7 +142,6 @@ export default function Dashboard() {
       console.error("❌ [DashBoard] fetchData2nd(이전 데이터) 실패:", err);
       setError(err.message);
     }
-
   }
 
   const fetchData3rd = async (date) => {
@@ -158,7 +149,8 @@ export default function Dashboard() {
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
     try {
-      const url = `http://10.125.121.226:8080/api/predict/${selectedModel}/j/${date}`;
+      const url = `http://10.125.121.226:8080/api/predict/${selectedModel}/${selected.value.toLowerCase()}/${date}`;
+      console.log("예측 데이터 패치 url :", url);
       const resp = await fetch(url, {
         signal: controller.signal,
       });
@@ -214,14 +206,12 @@ export default function Dashboard() {
                     </section>
 
                     <section className="w-1/2 bg-white rounded-lg">
-                    <DashOutputPrediction data={section4Data} setModel={setSelectedModel} />
-
-                      {/* {
+                      {
                         section4Data ?
-                          <DashOutputPrediction data={section4Data} />
+                          <DashOutputPrediction data={section4Data} setModel={setSelectedModel} />
                           :
                           <FetchFailed msg={"예측"} />
-                      } */}
+                      }
                     </section>
                   </div>
                 </div>
