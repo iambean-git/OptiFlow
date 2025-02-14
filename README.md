@@ -15,8 +15,8 @@
 |이름|담당|GITHUB|
 |:------:|:---:|---|
 |조은빈|FRONT-END|[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/iambean-git)|
-|정원영|BACK-END||[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wonny725)|
-|윤찬희|DATA||[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chanheeYun)|
+|정원영|BACK-END|[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wonny725)|
+|윤찬희|DATA|[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chanheeYun)|
 
 
 <br/>
@@ -33,11 +33,12 @@
 |FRONT|BACK|DATA|COMMON|
 |:------:|:---:|:---:||:---:|
 |
-  <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"> 
-  <img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white"> 
-  <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> 
+![html](https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white) <br> 
+![css](https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white) <br> 
+![js](https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) <br> 
+![react](https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white) 
 |
-  
+![springboot](https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) <br> 
 |
 
 |
