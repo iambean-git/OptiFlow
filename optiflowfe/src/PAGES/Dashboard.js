@@ -13,6 +13,8 @@ import { formatDate } from "../utils/dateUtils";
 
 export default function Dashboard() {
   const [selected, setSelected] = useState({ label: "J 배수지", value: "J" });
+  const [selectedModel, setSelectedModel] = useState(null);
+
   const [options, setOptions] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -32,12 +34,18 @@ export default function Dashboard() {
   useEffect(() => {
     fetchData1st(formatDate(todayDate));
     fetchData2nd(formatDate(todayDate));
-    fetchData3rd(formatDate(todayDate));
+    // fetchData3rd(formatDate(todayDate));
+    setSelectedModel("xgb");
 
     // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
     // const hours = "10";
     // fetchData(`2023-10-21T${hours}:00`);
   }, []);
+
+  useEffect(()=>{
+    if(!selectedModel)  return;
+    fetchData3rd(formatDate(todayDate));
+  },[selectedModel]);
 
   useEffect(() => {
     options.sort((a, b) => a.value.localeCompare(b.value)); // value기준 오름차순 정렬
@@ -150,7 +158,7 @@ export default function Dashboard() {
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
     try {
-      const url = `http://10.125.121.226:8080/api/predict/lstm/j/${date}`;
+      const url = `http://10.125.121.226:8080/api/predict/${selectedModel}/j/${date}`;
       const resp = await fetch(url, {
         signal: controller.signal,
       });
@@ -206,12 +214,14 @@ export default function Dashboard() {
                     </section>
 
                     <section className="w-1/2 bg-white rounded-lg">
-                      {
+                    <DashOutputPrediction data={section4Data} setModel={setSelectedModel} />
+
+                      {/* {
                         section4Data ?
                           <DashOutputPrediction data={section4Data} />
                           :
                           <FetchFailed msg={"예측"} />
-                      }
+                      } */}
                     </section>
                   </div>
                 </div>

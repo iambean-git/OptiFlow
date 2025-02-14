@@ -1,17 +1,16 @@
-import { RiResetLeftLine } from "react-icons/ri";
-import { LuDot } from "react-icons/lu";
 import { GoDotFill } from "react-icons/go";
 import { GoQuestion } from "react-icons/go";
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tooltip } from "react-tooltip";
 import Chart from "react-apexcharts";
 
-export default function DashOutputPrediction({ data }) {
+export default function DashOutputPrediction({ data, setModel }) {
 
     const [chartXaxis, setChartXaxis] = useState([]);
     const [chartValue, setChartValue] = useState([]);
     const [chartValue2, setChartValue2] = useState([]);
     const [state, setState] = useState(null);
+    // const [selected, setSelected] = useState("xgb");
 
     useEffect(() => {
         if (!data) return;
@@ -21,6 +20,10 @@ export default function DashOutputPrediction({ data }) {
         setChartValue2(data.optiflow);
     }, [data]);
 
+    // useEffect(()=>{
+    //     console.log("옵션 변경 : ",selected);
+    // },[selected]);
+    
     useEffect(() => {
         if (!chartXaxis || !chartValue) return;
         const chartState = {
@@ -63,7 +66,6 @@ export default function DashOutputPrediction({ data }) {
                 legend: {
                     // 툴팁 포매터 설정
                     tooltipHoverFormatter: function (val, opts) {
-                        // return val + ' - <strong>' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + '</strong>'
                         return val;
                     }
                 },
@@ -141,11 +143,23 @@ export default function DashOutputPrediction({ data }) {
         <div className='w-full h-full p-6 flex flex-col'>
 
             {/* 제목 */}
-            <div className='w-full flex justify-start items-center'>
+            <div className='w-full flex justify-start items-center relative'>
                 <span className="mr-2">유출량 예측값 및 추천 유입량</span>
                 <GoQuestion className="text-gray-600" data-tooltip-id="detailtooltip" />
-                {/* <span className='text-sm text-gray-500'>정각 기준, 향후 1시간 동안 예상되는 유출량 (m³)</span> */}
+                <select className="absolute px-2 py-1 right-2 border border-[#5765b6] rounded-md text-sm text-[#5765b6] font-semibold focus:outline-none"
+                    onClick={(e)=>setModel(e.target.value)}
+                >
+                    <option value="xgb" className="text-sm text-[#333]">XG BOOST</option>
+                    <option value="lstm" className="text-sm text-[#333]">LSTM</option>
+                </select>
+                {/* <CustomSelectBox options={options}
+                    selectLabel={selected.label}
+                    setSelectedOption={setSelected}
+                    size={"w-1/3 "}
+                    className=""
+                /> */}
             </div>
+
 
             {/* 그래프 */}
             <div className='w-full flex-grow '>
@@ -155,9 +169,7 @@ export default function DashOutputPrediction({ data }) {
                         : <Chart options={state.options} series={state.series} type="line" height={"100%"} />
                 }
             </div>
-            {/* <div className='w-full flex justify-end items-end '>
-                <span className='text-sm text-gray-500'>정각 기준, 향후 1시간 동안 예상되는 유출량 (m³)</span>
-            </div> */}
+
             <Tooltip
                 id="detailtooltip"
                 opacity={1}
