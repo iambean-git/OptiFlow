@@ -15,57 +15,64 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.optiflow.domain.Predict;
+import com.optiflow.domain.WaterDemandPredict;
 import com.optiflow.domain.Reservoir;
-import com.optiflow.dto.PredictRequestDto;
-import com.optiflow.dto.PredictResponseDto;
+import com.optiflow.dto.WaterDemandPredictRequestDto;
+import com.optiflow.dto.WaterDemandPredictResponseDto;
 import com.optiflow.persistence.ReservoirDataRepository;
 import com.optiflow.persistence.ReservoirRepository;
-import com.optiflow.service.PredictService;
+import com.optiflow.service.WaterDemandPredictService;
 
 @RestController
 @RequestMapping("/api")
-public class PredictController {
-	
-	private static final Logger log = LoggerFactory.getLogger(PredictController.class);
-	
+public class WaterDemandPredictController {
+
+	private static final Logger log = LoggerFactory.getLogger(WaterDemandPredictController.class);
+
 	@Autowired
-	private PredictService predictService;
-	
+	private WaterDemandPredictService predictService;
+
 	@Autowired
 	private ReservoirRepository reservoirRepo;
-	
+
 	@Autowired
 	private ReservoirDataRepository reservoirDataRepo;
-	
+
 	@GetMapping("/results")
-	public ResponseEntity<List<Predict>> getAllPredicts(){
-		List<Predict> predictList = predictService.getAllPredicts();
+	public ResponseEntity<List<WaterDemandPredict>> getAllPredicts() {
+		List<WaterDemandPredict> predictList = predictService.getAllPredicts();
 		return ResponseEntity.ok(predictList);
 	}
-	
+
 	@GetMapping("/predict/{modelName}/{reservoirName}/{datetime}")
-    public ResponseEntity<Map<String, List<?>>> getPrediction(@PathVariable String modelName, @PathVariable String reservoirName, @PathVariable String datetime) {
+	public ResponseEntity<Map<String, List<?>>> getPrediction(@PathVariable String modelName,
+			@PathVariable String reservoirName, @PathVariable String datetime) {
 		log.info("Received prediction request with datetime: {}", datetime);
+		
+		if (!reservoirName.equalsIgnoreCase("j") && !reservoirName.equalsIgnoreCase("d")
+				&& !reservoirName.equalsIgnoreCase("l")) {
+			reservoirName = "j";
+		}
+		
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
 		Float reservoirArea = reservoirOptional.get().getArea();
 		LocalDateTime localDateTime = LocalDateTime.parse(datetime);
 		int reservoirId = reservoirOptional.get().getReservoirId();
 		Float height = reservoirDataRepo.findHeightByReservoirIdAndObservationTime(reservoirId, localDateTime);
 		Float waterLevel = reservoirArea * height;
-        PredictRequestDto requestDto = new PredictRequestDto(); 
-        
-        requestDto.setName(reservoirName);
-        requestDto.setModelName(modelName);
-        requestDto.setDatetime(datetime);
-        requestDto.setWaterLevel(waterLevel);
-        PredictResponseDto responseDto = predictService.getPrediction(requestDto);
-        List<PredictResponseDto> datas = new ArrayList<>();
-        datas.add(responseDto);
+		WaterDemandPredictRequestDto requestDto = new WaterDemandPredictRequestDto();
 
-        Map<String, List<?>> responseMap = predictService.convertToResponseMap(datas);        
-        return ResponseEntity.ok(responseMap);
-    }
+		requestDto.setName(reservoirName);
+		requestDto.setModelName(modelName);
+		requestDto.setDatetime(datetime);
+		requestDto.setWaterLevel(waterLevel);
+		WaterDemandPredictResponseDto responseDto = predictService.getPrediction(requestDto);
+		List<WaterDemandPredictResponseDto> datas = new ArrayList<>();
+		datas.add(responseDto);
+
+		Map<String, List<?>> responseMap = predictService.convertToResponseMap(datas);
+		return ResponseEntity.ok(responseMap);
+	}
 
 }
 

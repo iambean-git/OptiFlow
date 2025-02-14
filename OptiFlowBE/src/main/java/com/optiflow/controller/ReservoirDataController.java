@@ -43,7 +43,7 @@ public class ReservoirDataController {
 		LocalDateTime localDateTime = LocalDateTime.parse(datetime);
 		LocalDateTime startTime = localDateTime.minusHours(24);
 		LocalDateTime endTime = localDateTime.minusHours(1); // 요청된 시간까지 포함
-
+		
 		List<ReservoirData> datas = reservoirDataService.findByObservationTimeRange(reservoir, startTime, endTime);
 		if (datas.isEmpty()) {
 	        return ResponseEntity.ok(Collections.emptyMap()); // 데이터가 없을 경우 빈 JSON 객체 반환 또는 다른 처리
@@ -53,16 +53,19 @@ public class ReservoirDataController {
 	    List<String> timeList = new ArrayList<>();
 	    List<Float> inputList = new ArrayList<>();
 	    List<Float> outputList = new ArrayList<>();
+	    List<Float> heightList = new ArrayList<>();
 
 	    for (ReservoirData data : datas) {
-	        timeList.add(data.getObservationTime().toString()); // LocalDateTime을 String으로 변환
+	        timeList.add(data.getObservationTime().toString());
 	        inputList.add(data.getInput());
 	        outputList.add(data.getOutput());
+	        heightList.add(data.getHeight() / reservoir.getHeight() * 100);
 	    }
 
 	    responseMap.put("time", timeList);
 	    responseMap.put("input", inputList);
 	    responseMap.put("output", outputList);
+	    responseMap.put("height", heightList);
 
 	    return ResponseEntity.ok(responseMap);
 	}
