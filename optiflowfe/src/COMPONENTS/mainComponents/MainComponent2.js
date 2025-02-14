@@ -8,7 +8,7 @@ export default function MainComponent2({ isvisible }) {
     if (isvisible) {
       setTimeout(() => {
         setIsAnimated(true);
-      }, 200); // 300ms(0.3초) 후 애니메이션 실행
+      }, 200); // 200ms(0.2초) 후 애니메이션 실행
     } 
   }, [isvisible]);
 
@@ -23,7 +23,7 @@ export default function MainComponent2({ isvisible }) {
       />
       <section
         className={`w-2/5 h-full bg-slate-50 flex flex-col justify-center px-16 
-          ${isAnimaged ? "animationSlideUp animationPadein" : "opacity-0"}
+          ${isAnimaged ? "animationSlideUp" : "opacity-0"}
         `}
       >
         <p className="text-[#1D5673] font-semibold text">About OptiFlow</p>

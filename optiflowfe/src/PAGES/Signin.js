@@ -140,8 +140,7 @@ export default function Signin() {
             onClick={handleClick}
             disabled={btnDisabled}
           >
-            {" "}
-            LOGIN{" "}
+            LOGIN
           </button>
         </div>
       </div>

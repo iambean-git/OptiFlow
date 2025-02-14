@@ -2,7 +2,8 @@ import { FaChevronRight } from "react-icons/fa6";
 import { MdOutlineAutoGraph } from "react-icons/md";
 import { MdOutlineWaterDrop } from "react-icons/md";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
-import { FiUserCheck } from "react-icons/fi";
+import { LuUserPen } from "react-icons/lu";
+import { MdOutlineChecklist } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import "./navBar/navbar.css";
 
@@ -66,11 +67,18 @@ export default function NavBar() {
                 <FaChevronRight className="absolute right-2" />
             </div>
 
+            <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
+                onClick={() => navigate("/mypage")}>
+                <LuUserPen className="size-6 mr-2" />
+                <p>내 계정 관리</p>
+                <FaChevronRight className="absolute right-2" />
+            </div>
+
             {
                 role == "Role_Admin" ?
                     <div className="w-[230px] h-[50px] flex items-center relative hover:cursor-pointer"
                         onClick={() => navigate("/admin")}>
-                        <FiUserCheck className="size-6 mr-2 ml-0.5" />
+                        <MdOutlineChecklist className="size-6 mr-2" />
                         <p>이용 문의 관리</p>
                         <FaChevronRight className="absolute right-2" />
                     </div>

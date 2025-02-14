@@ -22,6 +22,7 @@ import WaterLevel from "./pages/WaterLevel";
 import Regions from "./pages/Regions";
 
 import Admin from "./pages/Admin";
+import MyPage from "./pages/MyPage";
 function App() {
   return (
     <BrowserRouter>
@@ -51,8 +52,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/waterlevel" element={<WaterLevel />} />
             <Route path="/regions" element={<Regions />} />
-
-
+            <Route path="/mypage" element={<MyPage />} />
           </Route>
 
           {/* 🛑 Admin 역할만 접근 가능하도록 설정 */}

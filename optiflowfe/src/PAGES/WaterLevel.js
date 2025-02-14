@@ -9,11 +9,11 @@ import { formatDate } from "../utils/dateUtils";
 
 import { maxDate10am } from "../recoil/DateAtom";
 import { useRecoilValue } from "recoil";
-
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 export default function WaterLevel() {
     const defaultDate = useRecoilValue(maxDate10am);
     const [selectedDate, setSelectedDate] = useState(defaultDate);
-    const [waterFlowTag, setWaterFlowTag] = useState(<div>로딩중</div>);
+    const [waterFlowTag, setWaterFlowTag] = useState(LoadingSpinner);
 
     const [waterLevel, setWaterLevel] = useState('');
     console.log("🔥[DashWaterInfo] 렌더링 : ");
