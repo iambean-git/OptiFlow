@@ -9,15 +9,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class PredictionItemDto {
+public class WaterDemandPredictionItemDto {
 
     @JsonProperty("time") // JSON 키 "time" 과 매핑
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime time; // LocalDateTime 타입으로 변경
+    private LocalDateTime time;
 
-    @JsonProperty("value") // JSON 키 "value" 와 매핑
+    @JsonProperty("value")
     private Double value;
     
-    public PredictionItemDto() {
+    @JsonProperty("height")
+    private Double height;
+    
+    public WaterDemandPredictionItemDto() {
     }
 }
