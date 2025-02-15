@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from datetime import datetime, timedelta, time
 from sklearn.preprocessing import PolynomialFeatures
 import xgboost as xgb
+import pulp as pl
 
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 # J:1, D:4, L:11
@@ -15,6 +16,8 @@ import xgboost as xgb
 USE_CUDA = torch.cuda.is_available()
 device = torch.device('cuda' if USE_CUDA else 'cpu')
 print(f'다음 기기로 학습 : {device}')
+
+capacity_global = {'d' : 1000, 'j' : 2000, 'l' : 1200}
 
 # load data : model predict할 때 사용
 try:
@@ -174,6 +177,9 @@ with open('./model/scaler_feature_lstm_l.pkl', 'rb') as f:
 with open('./model/scaler_target_lstm_l.pkl', 'rb') as f:
   loaded_scaler_target_l = pickle.load(f)
 
+with open('./model/best_polynomial_regression_model.pkl', 'rb') as f:
+  model_poly, poly = pickle.load(f)
+
 def get_xgb_model_and_data(name):
   if (name == 'j'):
     return model_xgb_j, data_xgb_j
@@ -189,9 +195,6 @@ def get_lstm_model_data_and_scaler(name):
     return model_lstm_d, data_lstm_d, loaded_scaler_feature_d, loaded_scaler_target_d
   elif (name == 'l'):
     return model_lstm_l, data_lstm_l, loaded_scaler_feature_l, loaded_scaler_target_l
-
-with open('./model/best_polynomial_regression_model.pkl', 'rb') as f:
-  model_poly, poly = pickle.load(f)
 
 def predict_lstm(dt, name):  # dt는 datetime 객체
   print('lstm 실행')
@@ -234,47 +237,36 @@ def predict_xgb(dt, model, data):
   result = make_return_form(pred[0], start_time)
   return result, pred[0]
 
-# test_pred, test_out = predict_lstm('2024-10-01T00:00', model_lstm)
-# print(test_pred)
-# test_pred_xgb, test_out_xgb = predict_xgb('2024-10-01T00:00', model_xgb)
-# print(test_pred_xgb)
-
 electricity_rates = {
   'summer': {
-    'off_peak1': 64.37,  # 경부하 요금 (원/kWh)
-    'off_peak2': 64.37,  # 경부하 요금 (원/kWh)
+    'off_peak': 64.37,  # 경부하 요금 (원/kWh)
     'mid_peak': 92.46,  # 중간부하 요금 (원/kWh)
     'on_peak': 123.88   # 최대부하 요금 (원/kWh)
   },
   'spring_fall': {
-    'off_peak1': 64.37,  # 경부하 요금 (원/kWh)
-    'off_peak2': 64.37,  # 경부하 요금 (원/kWh)
+    'off_peak': 64.37,  # 경부하 요금 (원/kWh)
     'mid_peak': 69.50,  # 중간부하 요금 (원/kWh)
     'on_peak': 86.88    # 최대부하 요금 (원/kWh)
   },
   'winter': {
-    'off_peak1': 71.88,  # 경부하 요금 (원/kWh)
-    'off_peak2': 71.88,  # 경부하 요금 (원/kWh)
+    'off_peak': 71.88,  # 경부하 요금 (원/kWh)
     'mid_peak': 90.80,  # 중간부하 요금 (원/kWh)
     'on_peak': 116.47   # 최대부하 요금 (원/kWh)
   }
 }
 time_periods = {
   'summer': {
-    'off_peak1': [(time(23, 0), time(4, 0))],
-    'off_peak2': [(time(4, 0), time(9, 0))],
+    'off_peak': [(time(23, 0), time(9, 0))],
     'mid_peak': [(time(9, 0), time(11, 0)), (time(12, 0), time(13, 0)), (time(17, 0), time(23, 0))],
     'on_peak': [(time(11, 0), time(12, 0)), (time(13, 0), time(17, 0))]
   },
   'spring_fall': {
-    'off_peak1': [(time(23, 0), time(5, 0))],
-    'off_peak2': [(time(5, 0), time(9, 0))],
+    'off_peak': [(time(23, 0), time(9, 0))],
     'mid_peak': [(time(9, 0), time(11, 0)), (time(12, 0), time(13, 0)), (time(17, 0), time(23, 0))],
     'on_peak': [(time(11, 0), time(12, 0)), (time(13, 0), time(17, 0))]
   },
   'winter': {
-    'off_peak1': [(time(23, 0), time(4, 0))],
-    'off_peak2': [(time(4, 0), time(9, 0))],
+    'off_peak': [(time(23, 0), time(9, 0))],
     'mid_peak': [(time(9, 0), time(10, 0)), (time(12, 0), time(17, 0)), (time(20, 0), time(22, 0))],
     'on_peak': [(time(10, 0), time(12, 0)), (time(17, 0), time(20, 0)), (time(22, 0), time(23, 0))]
   }
@@ -301,108 +293,97 @@ def get_season_and_period(dt):
           return season, period
   return season, 'off_peak'
 
-def optimize_pump_flow(data, outflow, v_initial, capacity, max_flow = 250):
-  start_time = data[0]['time']
-  minutes = len(data) * 60
-  pump_flow = np.zeros(minutes)  # 각 분당 펌프 유량 설정
-  over_flow = np.zeros(minutes)  # 넘으면 저장
-  lower_flow = np.zeros(minutes)  # 모자라면 저장
-  storage = v_initial  # 초기 배수지 저장량
-  storage_arr = []
-  v_min, v_max = capacity * 0.55, capacity * 0.9 # 1% 보수적 한계
-  
-  hourly_flow = 0
+def get_hourly_rates(start_datetime):
+  """주어진 시작 시간부터 24시간 동안의 시간별 전기 요금을 반환합니다."""
+  hourly_rates = []
+  for hour in range(24):
+    current_dt = start_datetime.replace(hour=(start_datetime.hour + hour) % 24)
+    season, period = get_season_and_period(current_dt)
+    hourly_rates.append(electricity_rates[season][period])
+  return hourly_rates
 
-  for minute in range(minutes):
-    if minute % 60 == 0:  # 1시간 마다 유량 조정
-      
-      t = minute // 60 
-      current_time = start_time + timedelta(hours=t)
-      season, period = get_season_and_period(current_time)
-
-      start_idx = minute
-      end_idx = start_idx + 60
-      # print(outflow.shape)
-      expected_outflow = np.sum(outflow[:]) / 60
-
-      # 저장량을 유지하기 위한 기본 필요 유입량
-      hourly_flow = expected_outflow
-      
-      # 심야 시간 요금 절약을 위해 조정 (추가적인 충전 고려)
-      if period == 'off_peak1' and storage + hourly_flow - expected_outflow <= v_max:
-        hourly_flow += max((v_max - (storage - expected_outflow)) * 0.15, 0) # 추가 충전
-      if period == 'off_peak2' and storage + hourly_flow - expected_outflow <= v_max:
-        hourly_flow += max((v_max - (storage - expected_outflow)) * 0.40, 0) # 추가 충전
-      elif period == 'mid_peak' and storage + hourly_flow - expected_outflow <= v_max:
-        hourly_flow += max((v_max - (storage - expected_outflow)) * 0.05, 0) # 추가 충전
-      if period == 'on_peak' and storage + hourly_flow - expected_outflow >= v_min:
-        hourly_flow -= max(((storage - expected_outflow) - v_min) * 0.01, 0) # 절감 충전
-
-      hourly_flow = max(hourly_flow, 0)
-      hourly_flow = min(hourly_flow, max_flow)
-
-    pump_flow[minute] = hourly_flow
-    
-    storage += (pump_flow[minute] - outflow[minute // 60]) / 60
-    storage_arr.append(storage)
-
-    if (storage > v_max):
-      over_flow[minute] = storage - v_max
-    elif (storage < v_min):
-      lower_flow[minute] = v_min - storage
-
-  over_non_zero_indices =  np.nonzero(over_flow)
-  lower_non_zero_indices = np.nonzero(lower_flow)
-
-  hourly_over_amount = np.zeros(24)
-  hourly_lower_amount = np.zeros(24)
-  
-  if len(over_non_zero_indices[0]) != 0:
-    for idx in over_non_zero_indices[0]:
-      h = idx // 60
-      if hourly_over_amount[h] > (-1) * over_flow[idx]:
-        hourly_over_amount[h] = (-1) * over_flow[idx]
-  if len(lower_non_zero_indices[0]) != 0:
-    for idx in lower_non_zero_indices[0]:
-      h = idx // 60
-      if hourly_lower_amount[h] < lower_flow[idx]:
-        hourly_lower_amount[h] = lower_flow[idx]
-
-  adjustment = [hourly_over_amount[i] + hourly_lower_amount[i] for i in range(24)]
-  print(len(adjustment))
-
-  water_level = storage_arr[::60]
-  water_level = [adjustment[i] + water_level[i] for i in range(24)]
-  water_percentage = [(level / capacity) * 100 for level in water_level]
-
-  for i, value in enumerate(adjustment):
-    if value == 0: continue
-    else:
-      pump_flow[i * 60 : (i + 1) * 60] += (value / 60)
-
-  flow = pump_flow[::60]
-  opti_arr = make_return_form(flow, start_time)
-  final_result = make_return_form_with_height(flow, water_percentage, start_time)
-
-  return opti_arr, final_result
-
-# test_flow = optimize_pump_flow(test_pred, test_out, 1419, 2000)
-# print(test_flow)
-
-def calculate_daily_cost_by_linear(data):
+def calculate_total_cost(inflow, start_datetime):
   total_cost = []
-  poly = PolynomialFeatures(3)
-  for row in data:
-    season, period = get_season_and_period(row['time'])
-    flux_poly = poly.fit_transform(np.array([[row['value']]]))
+
+  for h in range(24):
+    current_dt = start_datetime.replace(hour=(start_datetime.hour + h) % 24)
+    season, period = get_season_and_period(current_dt)
+    
+    flux_poly = poly.transform(np.array([[inflow[h]]]))
     power_kW = model_poly.predict(flux_poly)[0]
     cost_per_kWh = electricity_rates[season][period]
-    total_cost.append(int(power_kW * cost_per_kWh))
+    
+    hourly_cost = power_kW * cost_per_kWh
+    total_cost.append(hourly_cost)
+  
   return total_cost
 
-# test_charge = calculate_daily_cost_by_linear(test_flow)
-# test_charge_formatted = format(int(test_charge), ',')
-# print(test_charge_formatted)
+def simulate_water_levels(water_level, capacity, inflow, outflow):
+  levels = [water_level]
+  percentage = [round((water_level / capacity) * 100, 3)]
+
+  for h in range(24):
+    new_level = levels[-1] + inflow[h] - outflow[h]
+    levels.append(new_level)
+    percentage.append(round((new_level / capacity) * 100, 3))
+    
+  return percentage[:-1]
+
+def optimize_inflow(water_level, capacity, outflow, start_datetime, min_flow=25, max_flow=380, smoothness_weight=0.1):
+    """
+    배수지 유입량 최적화 (유입량 최소/최대 제약, 스무딩)
+
+    Args:
+        water_level: 현재 저수량
+        capacity: 최대 저수량
+        outflow: 시간당 유출량
+        start_datetime: 시작 날짜/시간
+        min_flow: 최소 유입량 (기본값: 0)
+        max_flow: 최대 유입량 (기본값: 380)
+        smoothness_weight: 유입량 변화 스무딩 가중치 (기본값: 0)
+
+    Returns:
+        optimal_inflow: 최적 유입량
+    """
+    min_safe_level = capacity * 0.55
+    max_safe_level = capacity * 0.9
+    hourly_rates = get_hourly_rates(start_datetime)
+
+    prob = pl.LpProblem("Reservoir_Inflow_Optimization", pl.LpMinimize)
+    
+    # 유입량 변수 정의: 최소/최대 유입량 제약 반영
+    inflow = [pl.LpVariable(f"inflow_{h}", lowBound=min_flow, upBound=max_flow) for h in range(24)]
+
+    # 목적 함수: 전기 요금 + 유입량 변화량 페널티
+    prob += pl.lpSum([inflow[h] * hourly_rates[h] for h in range(24)])  # 전기 요금
+
+    # 유입량 변화량 (L1 norm) 최소화 -> 스무딩 효과 (smoothness_weight > 0 인 경우)
+    if smoothness_weight > 0:
+        for h in range(23):
+            prob += pl.lpSum([smoothness_weight * (inflow[h+1] - inflow[h])])
+            prob += pl.lpSum([smoothness_weight * (inflow[h] - inflow[h+1])])
+    
+    # 제약 조건 1: 저수량 안전 범위 (강제)
+    current_level = water_level
+    for h in range(24):
+        current_level += inflow[h] - outflow[h]
+        prob += current_level >= min_safe_level
+        prob += current_level <= max_safe_level
+
+    # 제약 조건 2: 오전 9시 저수량 (소프트 제약)
+    target_hour = 9
+    hours_to_target = (target_hour - start_datetime.hour) % 24
+    level_at_9am = water_level + pl.lpSum([inflow[h] - outflow[h] for h in range(hours_to_target)])
+    deviation_9am = pl.LpVariable("deviation_9am", lowBound=0)
+    prob += level_at_9am + deviation_9am >= max_safe_level  # max_safe_level 보다 크거나 같도록
+    prob += level_at_9am - deviation_9am <= max_safe_level  # max_safe_level 보다 작거나 같도록
+    penalty_weight_9am = 1000  # 9시 페널티
+    prob += penalty_weight_9am * deviation_9am
+
+    prob.solve(pl.PULP_CBC_CMD(msg=False))
+    optimal_inflow = [inflow[h].value() for h in range(24)]
+
+    return optimal_inflow
 
 import requests
 from fastapi.middleware.cors import CORSMiddleware
@@ -456,8 +437,6 @@ async def general_exception_handler(request: Request, exc: Exception):
     content={'message': 'Internal Server Error'},
   )
 
-SPRINGBOOT_URL = os.environ.get('SPRINGBOOT_URL', 'http://10.125.121.226:8080/api/save')  # Spring Boot 엔드포인트
-
 class InputData(BaseModel):
   datetime: str  # datetime 객체를 받도록 수정
   waterLevel: float
@@ -475,9 +454,12 @@ async def predict_data_lstm(request: Request, input_data: InputData):
   except Exception as e:  # 예외 처리 추가
     raise HTTPException(status_code=500, detail=str(e))
   
-  capacity = {'d' : 1000, 'j' : 2000, 'l' : 1200}
-  _, optiflow_lstm = optimize_pump_flow(prediction_lstm, outflow_lstm, input_data.waterLevel, capacity[input_data.name])
-  print(optiflow_lstm)
+  start_datetime = prediction_lstm[0]['time']
+  
+  opti_inflow = optimize_inflow(input_data.waterLevel, capacity_global[input_data.name], outflow_lstm, start_datetime, max_flow=250)
+  final_levels = simulate_water_levels(input_data.waterLevel, capacity_global[input_data.name], opti_inflow, outflow_lstm)
+  optiflow_lstm = make_return_form_with_height(opti_inflow, final_levels, start_datetime)
+
   result = {'prediction' : prediction_lstm, 'optiflow' : optiflow_lstm}
   # print(result, type(result))
   return result
@@ -503,8 +485,11 @@ async def predict_data_xgb(request: Request, input_data: InputData):
   except Exception as e:  # 예외 처리 추가
     raise HTTPException(status_code=500, detail=str(e))
 
-  capacity = {'d' : 1000, 'j' : 2000, 'l' : 1200}
-  _, optiflow_xgb = optimize_pump_flow(prediction_xgb, outflow_xgb, input_data.waterLevel, capacity[input_data.name])
+  start_datetime = prediction_xgb[0]['time']
+
+  opti_inflow = optimize_inflow(input_data.waterLevel, capacity_global[input_data.name], outflow_xgb, start_datetime, max_flow=250)
+  final_levels = simulate_water_levels(input_data.waterLevel, capacity_global[input_data.name], opti_inflow, outflow_xgb)
+  optiflow_xgb = make_return_form_with_height(opti_inflow, final_levels, start_datetime)
 
   result = {'prediction' : prediction_xgb, 'optiflow' : optiflow_xgb}
   # print(result, type(result))
@@ -524,24 +509,21 @@ async def calculate_cost(request: Request, input_data: InputData):
     raise HTTPException(status_code=500, detail=str(e))
 
   id = {'d' : 4, 'j' : 1, 'l' : 11}
-
   future_data = data_djl[(data_djl['observation_time'] >= input_data.datetime) & (data_djl['reservoir_id'] == id[input_data.name])].head(24)
-  print(future_data.shape)
-  start_time = future_data.iloc[0]['observation_time']
-  print('start_time')
+
+  start_datetime = future_data.iloc[0]['observation_time']
+
   if len(future_data) != 24:
     logger.error(f'Not enough future data found. Length: {len(future_data)}')
     raise ValueError('이후 24개의 데이터를 찾을 수 없습니다.')
 
-  capacity = {'d' : 1000, 'j' : 2000, 'l' : 1200}
+  truth_inflow = future_data['input']
+  cost_truth = calculate_total_cost(truth_inflow, start_datetime)
+  opti_inflow = optimize_inflow(input_data.waterLevel, capacity_global[input_data.name], outflow_xgb, start_datetime, max_flow=250)
+  cost_opti = calculate_total_cost(opti_inflow, start_datetime)
 
-  flow_truth = make_return_form(future_data['input'], start_time)
-  cost_truth = calculate_daily_cost_by_linear(flow_truth)
-  flow_opti, _ = optimize_pump_flow(prediction_xgb, outflow_xgb, input_data.waterLevel, capacity[input_data.name])
-  cost_opti = calculate_daily_cost_by_linear(flow_opti)
-
-  cost_truth_form = make_return_form(cost_truth, start_time)
-  cost_opti_form = make_return_form(cost_opti, start_time)
+  cost_truth_form = make_return_form(cost_truth, start_datetime)
+  cost_opti_form = make_return_form(cost_opti, start_datetime)
   
   result = {'truth' : cost_truth_form, 'optimization' : cost_opti_form}
   print(result)
