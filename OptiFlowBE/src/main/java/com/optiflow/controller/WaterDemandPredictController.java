@@ -30,7 +30,7 @@ public class WaterDemandPredictController {
 	private static final Logger log = LoggerFactory.getLogger(WaterDemandPredictController.class);
 
 	@Autowired
-	private WaterDemandPredictService predictService;
+	private WaterDemandPredictService waterService;
 
 	@Autowired
 	private ReservoirRepository reservoirRepo;
@@ -40,7 +40,7 @@ public class WaterDemandPredictController {
 
 	@GetMapping("/results")
 	public ResponseEntity<List<WaterDemandPredict>> getAllPredicts() {
-		List<WaterDemandPredict> predictList = predictService.getAllPredicts();
+		List<WaterDemandPredict> predictList = waterService.getAllPredicts();
 		return ResponseEntity.ok(predictList);
 	}
 
@@ -66,13 +66,29 @@ public class WaterDemandPredictController {
 		requestDto.setModelName(modelName);
 		requestDto.setDatetime(datetime);
 		requestDto.setWaterLevel(waterLevel);
-		WaterDemandPredictResponseDto responseDto = predictService.getPrediction(requestDto);
+		WaterDemandPredictResponseDto responseDto = waterService.getPrediction(requestDto);
 		List<WaterDemandPredictResponseDto> datas = new ArrayList<>();
 		datas.add(responseDto);
 
-		Map<String, List<?>> responseMap = predictService.convertToResponseMap(datas);
+		Map<String, List<?>> responseMap = waterService.convertToResponseMap(datas);
 		return ResponseEntity.ok(responseMap);
 	}
+	
+	@GetMapping("/dailywater/{name}/{datetime}")
+    public ResponseEntity<Map<String, List<?>>> getDailyCost(
+            @PathVariable String name,
+            @PathVariable String datetime) {
+        Map<String, List<?>> responseMap = waterService.getDailyCostData(name, datetime);
+        return ResponseEntity.ok(responseMap);
+    }
+	
+	@GetMapping("/monthlywater/{name}/{datetime}")
+    public ResponseEntity<Map<String, List<?>>> getMonthlyCost(
+            @PathVariable String name,
+            @PathVariable String datetime) {
+        Map<String, List<?>> responseMap = waterService.getMonthlyCostData(name, datetime);
+        return ResponseEntity.ok(responseMap);
+    }
 
 }
 

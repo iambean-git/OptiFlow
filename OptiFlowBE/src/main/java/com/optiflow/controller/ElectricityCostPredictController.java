@@ -37,7 +37,7 @@ public class ElectricityCostPredictController {
 	@Autowired
 	private ElectricityCostPredictService costService;
 	
-	@GetMapping("/costpredict/{reservoirName}/{datetime}")
+	@GetMapping("/hourlycost/{reservoirName}/{datetime}")
     public ResponseEntity<Map<String, List<?>>> getPrediction(@PathVariable String reservoirName, @PathVariable String datetime) {
 		log.info("Received prediction request with datetime: {}", datetime);
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
@@ -56,6 +56,22 @@ public class ElectricityCostPredictController {
         datas.add(responseDto);
 
         Map<String, List<?>> responseMap = costService.convertToResponseMap(datas);        
+        return ResponseEntity.ok(responseMap);
+    }
+	
+	@GetMapping("/dailycost/{name}/{datetime}")
+    public ResponseEntity<Map<String, List<?>>> getDailyCost(
+            @PathVariable String name,
+            @PathVariable String datetime) {
+        Map<String, List<?>> responseMap = costService.getDailyCostData(name, datetime);
+        return ResponseEntity.ok(responseMap);
+    }
+	
+	@GetMapping("/monthlycost/{name}/{datetime}")
+    public ResponseEntity<Map<String, List<?>>> getMonthlyCost(
+            @PathVariable String name,
+            @PathVariable String datetime) {
+        Map<String, List<?>> responseMap = costService.getMonthlyCostData(name, datetime);
         return ResponseEntity.ok(responseMap);
     }
 }
