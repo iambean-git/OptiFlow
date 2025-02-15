@@ -6,7 +6,7 @@ import { useRecoilValue } from "recoil";
 
 export default function MyPage() {
   const navigate = useNavigate();
-  
+
   const labelCss = "w-full h-6 mb-2";
   const inputCss =
     "w-full px-4 py-3 flex items-center border rounded-lg mb-[30px] focus:outline-none focus:ring-2";
@@ -44,13 +44,14 @@ export default function MyPage() {
       });
       console.log("💌[MyPage] 비밀번호 수정 response: ", response);
       clearTimeout(timeoutId); // 응답이 오면 타이머 제거
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (!response.ok) {
+        //기존 비밀번호 잘못 입력했을때 처리하기!!!! 
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
       // ✅ 비밀번호 변경 후 state를 추가하여 대시보드로 이동
       navigate("/dashboard", { state: { passwordChanged: true }, replace: true });
 
-      // const data = await response.json();
-      // console.log("💌[MyPage] 비밀번호 수정 : ", data);
     } catch (err) {
       console.error("❌[MyPage] 비밀번호 수정 실패:", err);
     } finally {
