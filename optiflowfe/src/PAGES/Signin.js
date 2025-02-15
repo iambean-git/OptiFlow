@@ -80,7 +80,7 @@ export default function Signin() {
         setRole(userRole);
 
         // console.log("login 성공");
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       } else {
         console.log("Authorization header not found");
         alert("로그인에 실패하였습니다. ID 또는 Password를 다시 확인해주세요.");

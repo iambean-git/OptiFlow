@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import DashWaterLevel from "../components/dashboard/DashWaterLevel";
 import CustomSelectBox from '../components/CustomSelectBox';
@@ -10,8 +11,12 @@ import FetchFailed from '../components/FetchFailed';
 import { NowDate } from "../recoil/DateAtom";
 import { useRecoilValue } from "recoil";
 import { formatDate } from "../utils/dateUtils";
+import { toast } from 'react-toastify';
+import CustomToast from "../components/ui/CustomToast";
 
 export default function Dashboard() {
+  const location = useLocation();
+
   const [selected, setSelected] = useState({ label: "D 배수지", value: "D" });
   const [selectedModel, setSelectedModel] = useState("xgb");
 
@@ -42,12 +47,24 @@ export default function Dashboard() {
     // fetchData(`2023-10-21T${hours}:00`);
   }, []);
 
-  useEffect(()=>{
+
+  // 비밀번호 변경 후 이동한 경우 토스트 띄우기
+  useEffect(() => {
+    if (location.state?.passwordChanged) {
+      toast(<CustomToast msg={[`비밀번호가 성공적으로 변경되었습니다.`]} type={"dark"} icon={"success"} />, {
+        autoClose: 2000, // 2초 후 자동 닫힘
+        position: "bottom-center"
+      });
+    }
+  }, [location.state]);
+
+
+  useEffect(() => {
     // console.log("🌊 [DashBoard] selected :", selected.value);
-    if(!selectedModel)  return;
+    if (!selectedModel) return;
     fetchData2nd(formatDate(todayDate));
     fetchData3rd(formatDate(todayDate));
-  },[selectedModel, selected]);
+  }, [selectedModel, selected]);
 
   useEffect(() => {
     options.sort((a, b) => a.value.localeCompare(b.value)); // value기준 오름차순 정렬
@@ -116,9 +133,9 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("🌊 [DashBoard] section2Data 데이터 :", section2Data);
-  },[section2Data]);
+  }, [section2Data]);
 
   const fetchData2nd = async (date) => {
     const controller = new AbortController();
@@ -132,8 +149,8 @@ export default function Dashboard() {
       });
       clearTimeout(timeoutId); // 응답이 오면 타이머 제거
 
-      if (!resp.ok)   throw new Error(`HTTP error! Status: ${resp.status}`);
-      
+      if (!resp.ok) throw new Error(`HTTP error! Status: ${resp.status}`);
+
       const data = await resp.json();
       console.log("🌊 [DashBoard] 이전 데이터 :", data);
       setSection3Data(data);

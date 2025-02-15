@@ -1,12 +1,15 @@
 import { BsEnvelopeCheck } from "react-icons/bs";
+import { LuCircleCheckBig } from "react-icons/lu";
 import React from 'react'
 
-export default function CustomToast({ type = "light", msg, closeToast }) {
+export default function CustomToast({ type = "light", msg, closeToast, icon="default" }) {
     return (
         <div className={`flex items-center w-full justify-between text-black p-4 rounded-lg  shadow-md
                         ${type === "dark" ? "bg-[#4ba650]" : "bg-[#f0f9f2]"}`}>
             <div className={`text-4xl mr-4 ${type === "dark" ? "text-white" : "text-green-600"}`}>
-                <BsEnvelopeCheck />
+                {
+                    icon === "success" ? <LuCircleCheckBig /> : <BsEnvelopeCheck />
+                }
             </div>
             <div className='flex flex-col items-start'>
                 {
