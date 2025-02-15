@@ -5,36 +5,80 @@ import { useEffect, useState } from "react";
 import sggData from "../assets/data/sggdata.json";
 import WaterOutFlowGraph from "../components/graph/WaterOutFlowGraph";
 import DatePickerWithOption from "../components/datepicker/DatePickerWithOption";
+import CostPredictGraph from "../components/graph/CostPredictGraph";
 export default function Regions() {
+  const dateOptions = { hourly: "시간별", daily: "일별", monthly: "월별" };
+  const dateAVGOptions = { hourly: "시간별", daily: "일 평균", monthly: "월 평균" };
+
   const { kakao } = window;
   const [map, setMap] = useState(null);
   const [container, setContainer] = useState(null);
   const [graphTitle, setGraphTitle] = useState("J");
   const [dateOption, setDateOption] = useState(null);
   const [graphData, setGraphData] = useState(null);
+  const [costData, setCostData] = useState(null);
+
   useEffect(() => {
     if (!dateOption) return;
     // console.log("🗺 [Regions] dateOption : ", dateOption);
-    fetchWaterOutFlowData(dateOption);
+    fetchWaterOutFlowData();
+    fetchCostPredictData();
   }, [dateOption, graphTitle]);
 
 
   // 배수지별 유출량 데이터
-  const fetchWaterOutFlowData = async (dateOption) => {
+  const fetchWaterOutFlowData = async () => {
     const url = `http://10.125.121.226:8080/api/reservoirdata/${dateOption.option}/${dateOption.selectedValue}/${graphTitle.toLowerCase()}`;
-    const resp = await fetch(url);
-    const data = await resp.json();
-    // console.log("🌊 [Regions] 유출량 데이터 :", data);
+
+    // const url1 = `http://10.125.121.226:8080/api/${dateOption.option}water/j/${dateOption.selectedValue}`;
+    const url1 = ((dateOption.option) === "hourly" ?
+      `http://10.125.121.226:8080/api/predict/lstm/${graphTitle.toLowerCase()}/${dateOption.selectedValue}T00:00:00`
+      :
+      `http://10.125.121.226:8080/api/${dateOption.option}water/${graphTitle.toLowerCase()}/${dateOption.selectedValue}`
+    );
+    const resp = await fetch(url); const resp1 = await fetch(url1);
+    const data = await resp.json(); const data1 = await resp1.json();
+    // console.log("🟡 [Regions] 유출량 실제 데이터 :", data);
+    // console.log("🟡 [Regions] 유출량 예측 데이터 :", data1);
+
+    const graphpropsData = {
+      date: ( dateOption.option === "hourly" ? data1.time: data1.date ),
+      output: data.output,
+      predict: ( dateOption.option === "hourly" ? data1.prediction: data1.predict )
+    }
+    console.log("🟡 [Regions] graphpropsData :", graphpropsData);
 
     if (!data) return;
+    setGraphData(graphpropsData);
+  }
 
-    const result = {};
-    data.map((item, index) => {
-      result[index + 1] = item.totalOutput.toFixed(2);
-    });
+  // 전기요금 예측 데이터
+  const fetchCostPredictData = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
-    // console.log("🌊 [Regions] 유출량 데이터 graphData :", result);
-    setGraphData(result);
+    try {
+      const url = ((dateOption.option) === "hourly" ?
+        `http://10.125.121.226:8080/api/hourlycost/${graphTitle.toLowerCase()}/${dateOption.selectedValue}T00:00:00`
+        :
+        `http://10.125.121.226:8080/api/${dateOption.option}cost/${graphTitle.toLowerCase()}/${dateOption.selectedValue}`
+      );
+      // console.log("⚡ [Regions] 전기요금 url :", url);
+
+
+      const response = await fetch(url, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId); // 응답이 오면 타이머 제거
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data = await response.json();
+      setCostData(data);
+      console.log("⚡ [Regions] 전기요금 데이터 :", data);
+
+    } catch (err) {
+      console.error("❌ [Regions] fetchCostPredictData 실패:", err);
+    }
   }
 
   // 지도 생성
@@ -136,42 +180,6 @@ export default function Regions() {
       {label}
     </div>
 
-  //주소를 지오코드로 변환
-  const addrToGeo = () => {
-    const geocoder = new kakao.maps.services.Geocoder();
-
-    // 주소를 입력하세요
-    const address = "전북 완주군 고산면 성재리 27";
-
-    geocoder.addressSearch(address, (result, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        const coords = {
-          lat: result[0].y,
-          lng: result[0].x,
-        };
-        console.log("좌표:", coords);
-      }
-    }
-    );
-  }
-  //지도 정보 얻어오는 함수
-  const getMapInfo = () => {
-    const center = map.getCenter();           // 지도의 현재 중심좌표를 얻어옵니다  
-    const level = map.getLevel();             // 지도의 현재 레벨을 얻어옵니다
-    const mapTypeId = map.getMapTypeId();     // 지도타입을 얻어옵니다
-    const bounds = map.getBounds();           // 지도의 현재 영역을 얻어옵니다 
-    const swLatLng = bounds.getSouthWest();   // 영역의 남서쪽 좌표를 얻어옵니다 
-    const neLatLng = bounds.getNorthEast();   // 영역의 북동쪽 좌표를 얻어옵니다 
-
-    let message = '지도 중심좌표는 위도 ' + center.getLat() + ', <br>';
-    message += '경도 ' + center.getLng() + ' 이고 <br>';
-    message += '지도 레벨은 ' + level + ' 입니다 <br> <br>';
-    message += '지도 타입은 ' + mapTypeId + ' 이고 <br> ';
-    message += '지도의 남서쪽 좌표는 ' + swLatLng.getLat() + ', ' + swLatLng.getLng() + ' 이고 <br>';
-    message += '북동쪽 좌표는 ' + neLatLng.getLat() + ', ' + neLatLng.getLng() + ' 입니다';
-
-    console.log(message);
-  }
 
   return (
     <div className="w-fit min-[1530px]:w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
@@ -197,8 +205,11 @@ export default function Regions() {
           <div className="pl-3 w-fit">
             {/* ===== 그래프1 ===== */}
             <section className="h-1/2 pb-4 w-[700px]">
-              <div className="w-full h-full border-black bg-white flex justify-center items-center">
-                {
+              <div className="w-full h-full border-black bg-white rounded-lg p-6">
+                <span>{graphTitle} 배수지 {dateOption && dateAVGOptions[dateOption.option]} 유출량</span>
+                <WaterOutFlowGraph graphTitle={graphTitle} data={graphData} datepickerOption={dateOption && dateOption.option} />
+
+                {/* {
                   graphData ?
                     <WaterOutFlowGraph graphTitle={graphTitle} data={graphData} datepickerOption={dateOption && dateOption.option} />
                     :
@@ -209,17 +220,22 @@ export default function Regions() {
                         backgroundBlendMode: "overlay", // 배경 이미지와 색상을 블렌딩
                       }}
                       className="bg-contain bg-center h-64 w-[90%] flex items-center justify-center
-                                text-gray-600 text-lg
-                                  "
+                                text-gray-600 text-lg"
                     >
                       <span className="bg-white bg-opacity-80 rounded-lg ">날짜를 선택하세요</span>
                     </div>
-                }
+                } */}
+
               </div>
             </section>
             {/* ===== 그래프2 ===== */}
             <section className="h-1/2 pt-4 w-[700px]">
-              <div className="w-full h-full border-black bg-white ">
+              <div className="w-full h-full border-black bg-white rounded-lg p-6">
+                <div className='w-full flex justify-between items-end '>
+                  <span>{graphTitle} 배수지 {dateOption && dateOptions[dateOption.option]} 전기 데이터 비교</span>
+                  {costData && <span>{(Number(costData?.percent) || 0).toFixed(2)}% 감소</span>}
+                </div>
+                <CostPredictGraph data={costData} datepickerOption={dateOption && dateOption.option} />
               </div>
             </section>
           </div>

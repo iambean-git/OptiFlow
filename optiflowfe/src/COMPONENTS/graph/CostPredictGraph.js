@@ -1,34 +1,33 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Chart from "react-apexcharts";
 
-
-export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }) {
+export default function CostPredictGraph({ data, datepickerOption }) {
     const [chartXaxis, setChartXaxis] = useState([]);
-    const [chartValue, setChartValue] = useState([]);
-    const [chartValuePredict, setChartValuePredict] = useState([]);
+    const [chartValueTruth, setChartValueTruth] = useState([]);
+    const [chartValueOptimization, setChartValueOptimization] = useState([]);
     const [state, setState] = useState(null);
 
     useEffect(() => {
         if (!data) return;
-        // console.log("🟡 [WaterOutFlowGraph] 유출량 데이터 :", data);
+        // console.log("🟡 [CostPredictGraph] 전기요금 데이터 :", data);
 
         setChartXaxis(data.date);
-        setChartValue(data.output);
-        setChartValuePredict(data.predict);
+        setChartValueTruth(data.truth);
+        setChartValueOptimization(data.optimization);
     }, [data]);
 
     useEffect(() => {
-        if (!chartXaxis || !chartValue) return;
+        if (!chartXaxis || !chartValueTruth) return;
 
         const chartState = {
             series: [
                 {
-                    name: "실측값",
-                    data: chartValue
+                    name: "실 전기 요금",
+                    data: chartValueTruth
                 },
                 {
-                    name: "예측값",
-                    data: chartValuePredict
+                    name: "예측 전기 요금",
+                    data: chartValueOptimization
                 }
             ],
             options: {
@@ -91,11 +90,10 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
                 },
 
                 yaxis:
-                {   
-                    min: 0,
+                {
                     labels: {
                         formatter: function (value) {
-                            return Math.round(value);  // Y축에서 소수점 제거
+                            return new Intl.NumberFormat("ko-KR").format(value);
                         }
                     }
                 },
@@ -122,7 +120,7 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
                                     }
                                 },
                                 formatter: function (value) {
-                                    return value.toFixed(2) + " (m³)";
+                                    return new Intl.NumberFormat("ko-KR").format(value) + "원";
                                 }
                             },
                             {
@@ -132,7 +130,7 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
                                     }
                                 },
                                 formatter: function (value) {
-                                    return value.toFixed(2) + " (m³)";
+                                    return new Intl.NumberFormat("ko-KR").format(value) + "원";
                                 }
                             },
                         ]
@@ -145,7 +143,7 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
 
         setState(chartState);
 
-    }, [chartXaxis, chartValue, chartValuePredict]);
+    }, [chartXaxis, chartValueTruth, chartValueOptimization]);
 
     return (
         <div className='w-full h-full flex flex-col'>
@@ -154,6 +152,11 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
                     <div> 데이터 로딩 중 </div>
                     : <Chart options={state.options} series={state.series} type="line" height={"100%"} />
             }
+            {/* <div className='w-full flex justify-between'>
+                <span>{graphTitle} 배수지 {dateOption[datepickerOption]} 유출량 비교</span>
+                <span>{(Number(data?.percent) || 0).toFixed(2)}% 감소</span>
+            </div> */}
+
         </div>
     )
 }
