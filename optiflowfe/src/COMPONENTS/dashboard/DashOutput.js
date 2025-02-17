@@ -124,7 +124,8 @@ export default function DashOutput({ data }) {
                             if (splitValue.length === 2) {
                                 const date = splitValue[0];
                                 const time = parseInt(splitValue[1].substr(0, 2));
-                                return `${date.replace(/-/g, "-")} ${time}~${time + 1}시`; // 날짜와 시간 포맷팅
+                                // return `${date.replace(/-/g, "-")} ${time}~${time + 1}시`; // 날짜와 시간 포맷팅
+                                return `2024-10-17 ${time}~${time + 1}시`; // 날짜와 시간 포맷팅
                             }
                             return rawValue;
                         },

@@ -5,12 +5,12 @@ export default function AdminModal({ data, close, updatedApproved }) {
     const handleAdmitClick = () => {
 
         const id = data.tmpid;
-        // const pwd = "opti" + generateRandomNum();
-        const pwd = "1234";
+        const pwd = "opti" + generateRandomNum();
+        // const pwd = "1234";
 
-        console.log("[승인]");
-        console.log("[id] : ", id);
-        console.log("[pw] : ", pwd);
+        // console.log("[승인]");
+        // console.log("[id] : ", id);
+        // console.log("[pw] : ", pwd);
 
         const fetchParams = {
             username: id,
@@ -19,6 +19,7 @@ export default function AdminModal({ data, close, updatedApproved }) {
 
         //이메일 내용
         const emailParams = {
+            to_name: data.name,
             to_email: data.email,
             userID: id,
             userPWD: pwd

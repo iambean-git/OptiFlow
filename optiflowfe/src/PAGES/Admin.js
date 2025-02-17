@@ -5,12 +5,7 @@ import AdminModal from "../components/modal/AdminModal";
 import { toast } from 'react-toastify';
 import CustomToast from "../components/ui/CustomToast";
 
-import { userRole } from "../recoil/LoginAtom";
-import { useRecoilValue } from "recoil";
-
 export default function Admin() {
-    const role = useRecoilValue(userRole);
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null); // 에러 상태 저장
     const [inquiriesList, setInquiriesList] = useState([]);
@@ -23,10 +18,6 @@ export default function Admin() {
     const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
-        if (role !== "Role_Admin") {
-
-        }
-        console.log("💌[Admin] 렌더링 : ");
         fetchData();
     }, []);
 
@@ -43,10 +34,10 @@ export default function Admin() {
 
             clearTimeout(timeoutId); // 응답이 오면 타이머 제거
 
-            if (!response.ok)   throw new Error(`HTTP error! Status: ${response.status}`);
-            
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
             const data = await response.json();
-            console.log("💌[Admin] 이용문의 확인 : ", data);
+            // console.log("💌[Admin] 이용문의 확인 : ", data);
             setInquiriesList(data);
         } catch (err) {
             console.error("❌[Admin] fetchData 실패:", err);
@@ -82,7 +73,7 @@ export default function Admin() {
                 }
             });
 
-            if (!response.ok)   throw new Error(`updateInquiryConfirmed 실패! 상태 코드: ${response.status}`);
+            if (!response.ok) throw new Error(`updateInquiryConfirmed 실패! 상태 코드: ${response.status}`);
             console.log(`✅ 문의 ${inquiryId}번 confirmed 업데이트 완료`);
         } catch (err) {
             console.error("❌ updateInquiryConfirmed 중 오류 발생:", err);
@@ -101,7 +92,7 @@ export default function Admin() {
                 }
             });
 
-            if (!response.ok)   throw new Error(`updateInquiryApproved 실패! 상태 코드: ${response.status}`);
+            if (!response.ok) throw new Error(`updateInquiryApproved 실패! 상태 코드: ${response.status}`);
 
             console.log(`✅ 문의 ${inquiryId}번 approved 업데이트 완료`);
         } catch (err) {
@@ -177,7 +168,7 @@ export default function Admin() {
                                         <td className="px-6 py-4">{i.email}</td>
                                         <td className="px-6 py-4">{formatTableDate(i.createdDt)}</td>
                                         <td className="px-6 py-4">
-                                            {modalOpen || i.inquiryDetails.length > 50 ? i.inquiryDetails.substr(0, 30) + "..." : i.inquiryDetails}
+                                            {modalOpen || i.inquiryDetails.length > 42 ? i.inquiryDetails.substr(0, 35) + "..." : i.inquiryDetails}
                                         </td>
                                         <td className="w-[12%] pr-6 text-right py-4">
                                             {i.staffConfirmed ? i.approved ? state_approved : state_read : state_new}

@@ -11,7 +11,6 @@ import LocalTime from "./navBar/LocalTime";
 
 import { loginToken, userName, userRole } from "../recoil/LoginAtom";
 import { useRecoilValue } from "recoil";
-import { useEffect } from "react";
 export default function NavBar() {
 
     const navigate = useNavigate();

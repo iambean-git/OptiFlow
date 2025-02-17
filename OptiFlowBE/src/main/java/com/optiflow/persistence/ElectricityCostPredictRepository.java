@@ -1,5 +1,6 @@
 package com.optiflow.persistence;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,9 @@ import com.optiflow.domain.Reservoir;
 @Repository
 public interface ElectricityCostPredictRepository extends JpaRepository<ElectricityCostPredict, Integer> {
 	Optional<ElectricityCostPredict> findByDatetime(String datetime);
+
 	Optional<ElectricityCostPredict> findByDatetimeAndReservoirId(String datetime, Reservoir reservoirId);
+
+	List<ElectricityCostPredict> findByReservoirIdAndDatetimeBetweenOrderByDatetimeAsc(Reservoir reservoirId,
+			String startDate, String endDate);
 }
