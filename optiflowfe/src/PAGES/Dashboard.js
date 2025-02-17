@@ -55,25 +55,13 @@ export default function Dashboard() {
   useEffect(() => {
     // 최초 실행: 초기 데이터 fetch 및 모델 설정
     fetchData1st(formatDate(todayDate));
+    fetchData2nd(formatDate(currentDateRef.current));
     setSelectedModel("xgb");
 
-    // 1분마다 실행되는 인터벌 설정
-    // const interval = setInterval(() => {
-    //   setCurrentDate((prevDate) => {
-    //     console.log("💥💥1분 업데이트");
-    //     const newDate = new Date(prevDate);
-    //     newDate.setHours(newDate.getHours() + 1); // 1시간 증가
-    //     fetchData1st(formatDate(newDate));
-    //     fetchData2nd(formatDate(newDate));
-    //     return newDate;
-    //   });
-    // }, 60000); // 1분(60초)마다 실행
-    // 1분마다 실행되는 인터벌 설정
     const interval = setInterval(() => {
       console.log("💥💥1분 업데이트");
       currentDateRef.current.setHours(currentDateRef.current.getHours() + 1); // 1시간 증가
       fetchData1st(formatDate(currentDateRef.current));
-      fetchData2nd(formatDate(currentDateRef.current));
     }, 60000); // 1분(60초)마다 실행
 
     return () => clearInterval(interval); // 언마운트 시 인터벌 정리
@@ -234,7 +222,7 @@ export default function Dashboard() {
         </div>
         <section className="px-10 pb-10 pt-6 w-full h-full">
           {
-            loading ? <LoadingSpinner /> :
+            // loading ? <LoadingSpinner /> :
               isfetchFailed ? <FetchFailed msg={"대시보드"} />
                 :
                 <div className="w-full h-full rounded-lg flex flex-col">

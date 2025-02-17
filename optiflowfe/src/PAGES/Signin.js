@@ -1,7 +1,5 @@
 import "../css/signin.css";
 import "../css/videoStyle.css"; 
-
-import loginBG from "../assets/images/loginBG.png";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -31,7 +29,7 @@ export default function Signin() {
 
   //로그인 처리
   const handleClick = () => {
-    console.log("click");
+    // console.log("click");
     fetchLogoin();
   };
 

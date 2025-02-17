@@ -228,7 +228,7 @@ export default function Regions() {
             <section className="h-1/2 pt-4 w-[700px]">
               <div className="w-full h-full border-black bg-white rounded-lg pt-6 px-6">
                 <div className='w-full flex justify-between items-end '>
-                  <span>{graphTitle} 배수지 {dateOption && dateOptions[dateOption.option]} 전기 사용량 비교</span>
+                  <span>{graphData ? graphTitle : ""} 배수지 {dateOption && dateOptions[dateOption.option]} 전기 사용량 비교</span>
                   {costData && <span>{(Number(costData?.percent) || 0).toFixed(2)}% 감소</span>}
                 </div>
                 <div className="w-full h-[90%] flex justify-center items-center">
