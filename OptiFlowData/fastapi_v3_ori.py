@@ -241,40 +241,34 @@ def predict_xgb(dt, model, data):
 
 electricity_rates = {
   'summer': {
-    'off_peak1': 64.37,  # 경부하 요금 (원/kWh)
-    'off_peak2': 64.37,  # 경부하 요금 (원/kWh)
+    'off_peak': 64.37,  # 경부하 요금 (원/kWh)
     'mid_peak': 92.46,  # 중간부하 요금 (원/kWh)
     'on_peak': 123.88   # 최대부하 요금 (원/kWh)
   },
   'spring_fall': {
-    'off_peak1': 64.37,  # 경부하 요금 (원/kWh)
-    'off_peak2': 64.37,  # 경부하 요금 (원/kWh)
+    'off_peak': 64.37,  # 경부하 요금 (원/kWh)
     'mid_peak': 69.50,  # 중간부하 요금 (원/kWh)
     'on_peak': 86.88    # 최대부하 요금 (원/kWh)
   },
   'winter': {
-    'off_peak1': 71.88,  # 경부하 요금 (원/kWh)
-    'off_peak2': 71.88,  # 경부하 요금 (원/kWh)
+    'off_peak': 71.88,  # 경부하 요금 (원/kWh)
     'mid_peak': 90.80,  # 중간부하 요금 (원/kWh)
     'on_peak': 116.47   # 최대부하 요금 (원/kWh)
   }
 }
 time_periods = {
   'summer': {
-    'off_peak1': [(time(23, 0), time(4, 0))],
-    'off_peak2': [(time(4, 0), time(9, 0))],
+    'off_peak': [(time(23, 0), time(9, 0))],
     'mid_peak': [(time(9, 0), time(11, 0)), (time(12, 0), time(13, 0)), (time(17, 0), time(23, 0))],
     'on_peak': [(time(11, 0), time(12, 0)), (time(13, 0), time(17, 0))]
   },
   'spring_fall': {
-    'off_peak1': [(time(23, 0), time(5, 0))],
-    'off_peak2': [(time(5, 0), time(9, 0))],
+    'off_peak': [(time(23, 0), time(9, 0))],
     'mid_peak': [(time(9, 0), time(11, 0)), (time(12, 0), time(13, 0)), (time(17, 0), time(23, 0))],
     'on_peak': [(time(11, 0), time(12, 0)), (time(13, 0), time(17, 0))]
   },
   'winter': {
-    'off_peak1': [(time(23, 0), time(4, 0))],
-    'off_peak2': [(time(4, 0), time(9, 0))],
+    'off_peak': [(time(23, 0), time(9, 0))],
     'mid_peak': [(time(9, 0), time(10, 0)), (time(12, 0), time(17, 0)), (time(20, 0), time(22, 0))],
     'on_peak': [(time(10, 0), time(12, 0)), (time(17, 0), time(20, 0)), (time(22, 0), time(23, 0))]
   }
@@ -329,10 +323,8 @@ def optimize_pump_flow(data, outflow, v_initial, capacity, max_flow = 250):
       hourly_flow = expected_outflow
       
       # 심야 시간 요금 절약을 위해 조정 (추가적인 충전 고려)
-      if period == 'off_peak1' and storage + hourly_flow - expected_outflow <= v_max:
-        hourly_flow += max((v_max - (storage - expected_outflow)) * 0.15, 0) # 추가 충전
-      if period == 'off_peak2' and storage + hourly_flow - expected_outflow <= v_max:
-        hourly_flow += max((v_max - (storage - expected_outflow)) * 0.40, 0) # 추가 충전
+      if period == 'off_peak' and storage + hourly_flow - expected_outflow <= v_max:
+        hourly_flow += max((v_max - (storage - expected_outflow)) * 0.10, 0) # 추가 충전
       elif period == 'mid_peak' and storage + hourly_flow - expected_outflow <= v_max:
         hourly_flow += max((v_max - (storage - expected_outflow)) * 0.05, 0) # 추가 충전
       if period == 'on_peak' and storage + hourly_flow - expected_outflow >= v_min:
