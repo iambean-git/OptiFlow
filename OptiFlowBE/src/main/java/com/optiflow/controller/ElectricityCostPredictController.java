@@ -22,8 +22,11 @@ import com.optiflow.persistence.ReservoirDataRepository;
 import com.optiflow.persistence.ReservoirRepository;
 import com.optiflow.service.ElectricityCostPredictService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api")
+@Tag(name = "ElectrictityCostPredict API", description = "전력량 예측 관련 API")
 public class ElectricityCostPredictController {
 	
 	private static final Logger log = LoggerFactory.getLogger(WaterDemandPredictController.class);

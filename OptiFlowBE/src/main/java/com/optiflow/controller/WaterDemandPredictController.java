@@ -23,8 +23,11 @@ import com.optiflow.persistence.ReservoirDataRepository;
 import com.optiflow.persistence.ReservoirRepository;
 import com.optiflow.service.WaterDemandPredictService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api")
+@Tag(name = "WaterDemandPredict API", description = "물 수요량 예측 관련 API")
 public class WaterDemandPredictController {
 
 	private static final Logger log = LoggerFactory.getLogger(WaterDemandPredictController.class);

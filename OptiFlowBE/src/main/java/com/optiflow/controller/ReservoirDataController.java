@@ -21,8 +21,11 @@ import com.optiflow.domain.ReservoirData;
 import com.optiflow.persistence.ReservoirRepository;
 import com.optiflow.service.ReservoirDataService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/reservoirdata")
+@Tag(name = "ReservoirData API", description = "배수지 관련 데이터 API")
 public class ReservoirDataController {
 
 	@Autowired

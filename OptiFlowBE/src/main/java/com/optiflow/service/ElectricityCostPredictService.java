@@ -59,19 +59,19 @@ public class ElectricityCostPredictService {
 		String datetime = requestDto.getDatetime();
 		String name = requestDto.getName();
 
-//		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(name);
-//		int reservoirId = reservoirOptional.get().getReservoirId();
-//		Optional<Reservoir> reservoirEntity = reservoirRepo.findById(reservoirId);
-//		// DB에서 기존 예측 데이터 조회
-//		Optional<ElectricityCostPredict> existingPrediction = costRepo.findByDatetimeAndReservoirId(datetime,
-//				reservoirEntity.get());
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(name);
+		int reservoirId = reservoirOptional.get().getReservoirId();
+		Optional<Reservoir> reservoirEntity = reservoirRepo.findById(reservoirId);
+		// DB에서 기존 예측 데이터 조회
+		Optional<ElectricityCostPredict> existingPrediction = costRepo.findByDatetimeAndReservoirId(datetime,
+				reservoirEntity.get());
 
-//		if (existingPrediction.isPresent()) {
-//			ElectricityCostPredictResponseDto responseDto = new ElectricityCostPredictResponseDto();
-//			responseDto.setTruth(existingPrediction.get().getTruth());
-//			responseDto.setOptimization(existingPrediction.get().getOptimization());
-//			return responseDto;
-//		} else {
+		if (existingPrediction.isPresent()) {
+			ElectricityCostPredictResponseDto responseDto = new ElectricityCostPredictResponseDto();
+			responseDto.setTruth(existingPrediction.get().getTruth());
+			responseDto.setOptimization(existingPrediction.get().getOptimization());
+			return responseDto;
+		} else {
 			// DB에 데이터가 없으면 FastAPI 호출 및 DB 저장
 			RestTemplate restTemplate = new RestTemplate(); // 필요하다면 빈 주입 방식으로 변경 고려
 			HttpHeaders headers = new HttpHeaders();
@@ -90,7 +90,7 @@ public class ElectricityCostPredictService {
 				e.printStackTrace();
 				return new ElectricityCostPredictResponseDto();
 			}
-//		}
+		}
 	}
 
 	// 월별 데이터 조회 메소드 추가
@@ -142,7 +142,7 @@ public class ElectricityCostPredictService {
 
 		for (ElectricityCostPredict prediction : monthlyPredictions) {
 			LocalDateTime date = LocalDateTime.parse(prediction.getDatetime());
-			
+
 			LocalDateTime monthKey = LocalDateTime.of(date.getYear(), date.getMonth(), 1, 0, 0, 0);
 
 			int mothlyTruthSum = prediction.getTruth().stream().mapToInt(ElectricityCostPredictItemDto::getValue).sum();
@@ -234,8 +234,8 @@ public class ElectricityCostPredictService {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
 			for (MonthlyElectricityCostDto monthlyData : monthlyDatas) {
-				truthValueList.add(monthlyData.getTruthSum()); 
-				optimizationValueList.add(monthlyData.getOptiSum()); 
+				truthValueList.add(monthlyData.getTruthSum());
+				optimizationValueList.add(monthlyData.getOptiSum());
 				monthList.add(monthlyData.getDate().format(formatter));
 			}
 

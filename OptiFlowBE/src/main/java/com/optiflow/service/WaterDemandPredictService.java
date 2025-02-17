@@ -59,55 +59,52 @@ public class WaterDemandPredictService {
 		predict.setOptiflow(optiflow);
 		return waterRepo.save(predict);
 	}
-	
-	
+
 	public WaterDemandPredictResponseDto getPrediction(WaterDemandPredictRequestDto requestDto) {
 
-        String datetime = requestDto.getDatetime();
-        String name = requestDto.getName();
-        String modelName = requestDto.getModelName();
-        
-//        Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(name);
-//		int reservoirId = reservoirOptional.get().getReservoirId();
-//		Optional<Reservoir> reservoirEntity = reservoirRepo.findById(reservoirId);
-//        // DB에서 기존 예측 데이터 조회
-//        Optional<WaterDemandPredict> existingPrediction = waterRepo.findByDatetimeAndReservoirIdAndUsedModel(datetime,reservoirEntity.get(), modelName);
+		String datetime = requestDto.getDatetime();
+		String name = requestDto.getName();
+		String modelName = requestDto.getModelName();
 
-//        if (existingPrediction.isPresent()) {
-//            // DB에 데이터가 존재하면 DB 데이터 반환
-//        	WaterDemandPredictResponseDto responseDto = new WaterDemandPredictResponseDto();
-//            responseDto.setPrediction(existingPrediction.get().getPrediction());
-//            responseDto.setOptiflow(existingPrediction.get().getOptiflow());
-//            return responseDto;
-//        } else {
-            // DB에 데이터가 없으면 FastAPI 호출 및 DB 저장
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(name);
+		int reservoirId = reservoirOptional.get().getReservoirId();
+		Optional<Reservoir> reservoirEntity = reservoirRepo.findById(reservoirId);
+		// DB에서 기존 예측 데이터 조회
+		Optional<WaterDemandPredict> existingPrediction = waterRepo.findByDatetimeAndReservoirIdAndUsedModel(datetime,
+				reservoirEntity.get(), modelName);
 
-            try {
-                String requestJson = new ObjectMapper().writeValueAsString(requestDto);
-                HttpEntity<String> request = new HttpEntity<>(requestJson, headers);
+		if (existingPrediction.isPresent()) {
+			// DB에 데이터가 존재하면 DB 데이터 반환
+			WaterDemandPredictResponseDto responseDto = new WaterDemandPredictResponseDto();
+			responseDto.setPrediction(existingPrediction.get().getPrediction());
+			responseDto.setOptiflow(existingPrediction.get().getOptiflow());
+			return responseDto;
+		} else {
+			// DB에 데이터가 없으면 FastAPI 호출 및 DB 저장
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
 
-                WaterDemandPredictResponseDto responseDto = restTemplate.postForObject(
-                    fastapiUrl + "/api/predict/" + modelName,
-                    request,
-                    WaterDemandPredictResponseDto.class
-                );
+			try {
+				String requestJson = new ObjectMapper().writeValueAsString(requestDto);
+				HttpEntity<String> request = new HttpEntity<>(requestJson, headers);
 
-                if (responseDto == null) {
-                    return new WaterDemandPredictResponseDto(); 
-                } else {
-                    savePredict(name, modelName, datetime, responseDto.getPrediction(), responseDto.getOptiflow());
-                    return responseDto;
-                }
+				WaterDemandPredictResponseDto responseDto = restTemplate.postForObject(
+						fastapiUrl + "/api/predict/" + modelName, request, WaterDemandPredictResponseDto.class);
 
-            } catch (Exception e) {
-                return new WaterDemandPredictResponseDto();
-            }
-//        }
-    }
-	
+				if (responseDto == null) {
+					return new WaterDemandPredictResponseDto();
+				} else {
+					savePredict(name, modelName, datetime, responseDto.getPrediction(), responseDto.getOptiflow());
+					return responseDto;
+				}
+
+			} catch (Exception e) {
+				return new WaterDemandPredictResponseDto();
+			}
+		}
+	}
+
 	public Map<String, List<?>> getDailyCostData(String name, String datetime) {
 		Optional<Reservoir> reservoir = reservoirRepo.findByName(name);
 		YearMonth yearMonth = YearMonth.parse(datetime, DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -126,9 +123,10 @@ public class WaterDemandPredictService {
 		for (WaterDemandPredict prediction : dailyPredictions) {
 			LocalDateTime date = LocalDateTime.parse(prediction.getDatetime());
 
-			double dailyPredictSum = prediction.getPrediction().stream().mapToDouble(WaterDemandPredictionItemDto::getValue).sum()/24;
+			double dailyPredictSum = prediction.getPrediction().stream()
+					.mapToDouble(WaterDemandPredictionItemDto::getValue).sum() / 24;
 			double dailyOptiSum = prediction.getOptiflow().stream().mapToDouble(WaterDemandPredictionItemDto::getValue)
-					.sum()/24;
+					.sum() / 24;
 
 			DailyWaterDemandPredictDto dailyDto = dailyDataMap.getOrDefault(date, new DailyWaterDemandPredictDto(date));
 			dailyDto.addPredictSum(dailyPredictSum);
@@ -152,16 +150,18 @@ public class WaterDemandPredictService {
 				.findByReservoirIdAndDatetimeBetweenOrderByDatetimeAsc(reservoir.get(), startTime, endTime);
 
 		// 일별 합계 계산
-		Map<LocalDateTime, MonthlyWaterDemandPredictDto> monthlyDataMap = new LinkedHashMap<>(); // 순서 보장 LinkedHashMap 사용
+		Map<LocalDateTime, MonthlyWaterDemandPredictDto> monthlyDataMap = new LinkedHashMap<>(); // 순서 보장 LinkedHashMap
+																									// 사용
 
 		for (WaterDemandPredict prediction : monthlyPredictions) {
 			LocalDateTime date = LocalDateTime.parse(prediction.getDatetime());
-			
+
 			LocalDateTime monthKey = LocalDateTime.of(date.getYear(), date.getMonth(), 1, 0, 0, 0);
 
-			double monthlyPredictSum = prediction.getPrediction().stream().mapToDouble(WaterDemandPredictionItemDto::getValue).sum()/12;
-			double monthlyOptiSum = prediction.getOptiflow().stream().mapToDouble(WaterDemandPredictionItemDto::getValue)
-					.sum()/12;
+			double monthlyPredictSum = prediction.getPrediction().stream()
+					.mapToDouble(WaterDemandPredictionItemDto::getValue).sum() / 12;
+			double monthlyOptiSum = prediction.getOptiflow().stream()
+					.mapToDouble(WaterDemandPredictionItemDto::getValue).sum() / 12;
 
 			MonthlyWaterDemandPredictDto monthlyDto = monthlyDataMap.getOrDefault(monthKey,
 					new MonthlyWaterDemandPredictDto(monthKey));
@@ -203,7 +203,7 @@ public class WaterDemandPredictService {
 
 		return responseMap;
 	}
-	
+
 	public Map<String, List<?>> convertToResponseMapForDaily(List<DailyWaterDemandPredictDto> dailyDatas) {
 		Map<String, List<?>> responseMap = new HashMap<>();
 
@@ -238,8 +238,8 @@ public class WaterDemandPredictService {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
 			for (MonthlyWaterDemandPredictDto monthlyData : monthlyDatas) {
-				predictValueList.add(monthlyData.getPredictSum()); 
-				optiValueList.add(monthlyData.getOptiSum()); 
+				predictValueList.add(monthlyData.getPredictSum());
+				optiValueList.add(monthlyData.getOptiSum());
 				monthList.add(monthlyData.getDate().format(formatter));
 			}
 		}
@@ -332,8 +332,6 @@ public class WaterDemandPredictService {
 //			}
 //		}
 //	}
-
-
 
 //public WaterDemandPredictResponseDto getPrediction(WaterDemandPredictRequestDto requestDto) {
 //
