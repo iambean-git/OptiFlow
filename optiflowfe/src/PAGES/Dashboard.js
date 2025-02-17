@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import DashWaterLevel from "../components/dashboard/DashWaterLevel";
@@ -36,17 +36,48 @@ export default function Dashboard() {
 
   // const loadingSpinner = <div className='w-full h-full flex justify-center items-center'><img className="size-[10vw]" src='/images/loadingSpinner.gif' /></div>
   const todayDate = (useRecoilValue(NowDate));
+  // const [currentDate, setCurrentDate] = useState(new Date(todayDate));
+  const currentDateRef = useRef(new Date(todayDate)); // useRef 사용하여 리렌더링 방지
+
+  // useEffect(() => {
+  //   fetchData1st(formatDate(todayDate));
+  //   fetchData2nd(formatDate(todayDate));
+  //   // fetchData3rd(formatDate(todayDate));
+  //   setSelectedModel("xgb");
+
+  //   // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
+  //   // const hours = "10";
+  //   // fetchData(`2023-10-21T${hours}:00`);
+  // }, []);
+
+
+  // 1분 간격 fetch 버전
   useEffect(() => {
+    // 최초 실행: 초기 데이터 fetch 및 모델 설정
     fetchData1st(formatDate(todayDate));
-    fetchData2nd(formatDate(todayDate));
-    // fetchData3rd(formatDate(todayDate));
     setSelectedModel("xgb");
 
-    // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
-    // const hours = "10";
-    // fetchData(`2023-10-21T${hours}:00`);
-  }, []);
+    // 1분마다 실행되는 인터벌 설정
+    // const interval = setInterval(() => {
+    //   setCurrentDate((prevDate) => {
+    //     console.log("💥💥1분 업데이트");
+    //     const newDate = new Date(prevDate);
+    //     newDate.setHours(newDate.getHours() + 1); // 1시간 증가
+    //     fetchData1st(formatDate(newDate));
+    //     fetchData2nd(formatDate(newDate));
+    //     return newDate;
+    //   });
+    // }, 60000); // 1분(60초)마다 실행
+    // 1분마다 실행되는 인터벌 설정
+    const interval = setInterval(() => {
+      console.log("💥💥1분 업데이트");
+      currentDateRef.current.setHours(currentDateRef.current.getHours() + 1); // 1시간 증가
+      fetchData1st(formatDate(currentDateRef.current));
+      fetchData2nd(formatDate(currentDateRef.current));
+    }, 60000); // 1분(60초)마다 실행
 
+    return () => clearInterval(interval); // 언마운트 시 인터벌 정리
+  }, []); // 최초 실행은 한 번만
 
   // 비밀번호 변경 후 이동한 경우 토스트 띄우기
   useEffect(() => {

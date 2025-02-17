@@ -33,7 +33,6 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
             ],
             options: {
                 chart: {
-                    height: 350,
                     type: 'line',
                     fontFamily: 'SUIT',
                     zoom: {
@@ -152,7 +151,7 @@ export default function WaterOutFlowGraph({ graphTitle, data, datepickerOption }
             {
                 state == null ?
                     <div> 데이터 로딩 중 </div>
-                    : <Chart options={state.options} series={state.series} type="line" height={"100%"} />
+                    : <Chart options={state.options} series={state.series} type="line" height={"93%"} />
             }
         </div>
     )

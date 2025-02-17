@@ -22,17 +22,16 @@ export default function CostPredictGraph({ data, datepickerOption }) {
         const chartState = {
             series: [
                 {
-                    name: "실 전기 요금",
+                    name: "실측 기반",
                     data: chartValueTruth
                 },
                 {
-                    name: "예측 전기 요금",
+                    name: "예측 기반",
                     data: chartValueOptimization
                 }
             ],
             options: {
                 chart: {
-                    height: 350,
                     type: 'line',
                     fontFamily: 'SUIT',
                     zoom: {
@@ -146,17 +145,12 @@ export default function CostPredictGraph({ data, datepickerOption }) {
     }, [chartXaxis, chartValueTruth, chartValueOptimization]);
 
     return (
-        <div className='w-full h-full flex flex-col'>
+        <div className='w-full h-full flex flex-col '>
             {
                 state == null ?
                     <div> 데이터 로딩 중 </div>
-                    : <Chart options={state.options} series={state.series} type="line" height={"100%"} />
+                    : <Chart options={state.options} series={state.series} type="line" height={"93%"} />
             }
-            {/* <div className='w-full flex justify-between'>
-                <span>{graphTitle} 배수지 {dateOption[datepickerOption]} 유출량 비교</span>
-                <span>{(Number(data?.percent) || 0).toFixed(2)}% 감소</span>
-            </div> */}
-
         </div>
     )
 }

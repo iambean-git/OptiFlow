@@ -13,7 +13,7 @@ export default function Regions() {
   const { kakao } = window;
   const [map, setMap] = useState(null);
   const [container, setContainer] = useState(null);
-  const [graphTitle, setGraphTitle] = useState("J");
+  const [graphTitle, setGraphTitle] = useState("D");
   const [dateOption, setDateOption] = useState(null);
   const [graphData, setGraphData] = useState(null);
   const [costData, setCostData] = useState(null);
@@ -42,9 +42,9 @@ export default function Regions() {
     // console.log("🟡 [Regions] 유출량 예측 데이터 :", data1);
 
     const graphpropsData = {
-      date: ( dateOption.option === "hourly" ? data1.time: data1.date ),
+      date: (dateOption.option === "hourly" ? data1.time : data1.date),
       output: data.output,
-      predict: ( dateOption.option === "hourly" ? data1.prediction: data1.predict )
+      predict: (dateOption.option === "hourly" ? data1.prediction : data1.predict)
     }
     console.log("🟡 [Regions] graphpropsData :", graphpropsData);
 
@@ -74,7 +74,7 @@ export default function Regions() {
 
       const data = await response.json();
       setCostData(data);
-      console.log("⚡ [Regions] 전기요금 데이터 :", data);
+      // console.log("⚡ [Regions] 전기요금 데이터 :", data);
 
     } catch (err) {
       console.error("❌ [Regions] fetchCostPredictData 실패:", err);
@@ -136,9 +136,7 @@ export default function Regions() {
       const markerimgSrc = m.type == "reservoir" ? "/images/marker_blue.png" : "/images/marker_red.png";
       const markerimageSize = m.type == "reservoir" ? new kakao.maps.Size(42, 45) : new kakao.maps.Size(50, 54); // 마커이미지의 크기
       const markerimageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-
       const makerImage = new kakao.maps.MarkerImage(markerimgSrc, markerimageSize, markerimageOption);
-
       const positon = new kakao.maps.LatLng(m.positon[0], m.positon[1]);
 
       const marker = new kakao.maps.Marker({
@@ -170,7 +168,7 @@ export default function Regions() {
 
   const clickMarkers = (label) => {
     if (label == "정수장") return;
-    console.log(label);
+    // console.log(label);
     setGraphTitle(label);
   };
 
@@ -205,42 +203,52 @@ export default function Regions() {
           <div className="pl-3 w-fit">
             {/* ===== 그래프1 ===== */}
             <section className="h-1/2 pb-4 w-[700px]">
-              <div className="w-full h-full border-black bg-white rounded-lg p-6">
-                <span>{graphTitle} 배수지 {dateOption && dateAVGOptions[dateOption.option]} 유출량</span>
-                <WaterOutFlowGraph graphTitle={graphTitle} data={graphData} datepickerOption={dateOption && dateOption.option} />
-
-                {/* {
-                  graphData ?
-                    <WaterOutFlowGraph graphTitle={graphTitle} data={graphData} datepickerOption={dateOption && dateOption.option} />
-                    :
-                    <div
-                      style={{
-                        backgroundImage: "url('/images/graph_capture_01.png')",
-                        backgroundColor: "rgba(255, 255, 255, 0.78)", // 검은색 반투명 배경
-                        backgroundBlendMode: "overlay", // 배경 이미지와 색상을 블렌딩
-                      }}
-                      className="bg-contain bg-center h-64 w-[90%] flex items-center justify-center
-                                text-gray-600 text-lg"
-                    >
-                      <span className="bg-white bg-opacity-80 rounded-lg ">날짜를 선택하세요</span>
-                    </div>
-                } */}
+              <div className="w-full h-full border-black bg-white rounded-lg pt-6 px-6">
+                <div className='w-full flex justify-between items-end '>
+                  <span>{graphData ? graphTitle : ""} 배수지 {dateOption && dateAVGOptions[dateOption.option]} 유출량</span>
+                </div>
+                <div className="w-full h-[90%] flex items-center justify-center">
+                  {
+                    graphData ?
+                      <WaterOutFlowGraph graphTitle={graphTitle} data={graphData} datepickerOption={dateOption && dateOption.option} />
+                      :
+                      <div
+                        style={{ backgroundImage: "url('/images/graph_capture_02.png')" }}
+                        className="bg-contain bg-center h-64 w-[90%] flex items-center justify-center
+                                text-gray-600 text-lg bg-white/80 bg-blend-overlay "
+                      >
+                        <span className="bg-white bg-opacity-80 rounded-lg ">날짜를 선택하세요</span>
+                      </div>
+                  }
+                </div>
 
               </div>
             </section>
             {/* ===== 그래프2 ===== */}
             <section className="h-1/2 pt-4 w-[700px]">
-              <div className="w-full h-full border-black bg-white rounded-lg p-6">
+              <div className="w-full h-full border-black bg-white rounded-lg pt-6 px-6">
                 <div className='w-full flex justify-between items-end '>
-                  <span>{graphTitle} 배수지 {dateOption && dateOptions[dateOption.option]} 전기 데이터 비교</span>
+                  <span>{graphTitle} 배수지 {dateOption && dateOptions[dateOption.option]} 전기 사용량 비교</span>
                   {costData && <span>{(Number(costData?.percent) || 0).toFixed(2)}% 감소</span>}
                 </div>
-                <CostPredictGraph data={costData} datepickerOption={dateOption && dateOption.option} />
+                <div className="w-full h-[90%] flex justify-center items-center">
+                  {
+                    graphData ?
+                      <CostPredictGraph data={costData} datepickerOption={dateOption && dateOption.option} />
+                      :
+                      <div
+                        style={{ backgroundImage: "url('/images/graph_capture_02.png')" }}
+                        className="bg-contain bg-center h-64 w-[90%] flex items-center justify-center
+                                text-gray-600 text-lg bg-white/80 bg-blend-overlay "
+                      >
+                        <span className="bg-white bg-opacity-80 rounded-lg ">날짜를 선택하세요</span>
+                      </div>
+                  }
+                </div>
               </div>
             </section>
           </div>
         </div>
-
 
       </div>
     </div>
