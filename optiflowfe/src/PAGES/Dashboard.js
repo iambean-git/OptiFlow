@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import DashWaterLevel from "../components/dashboard/DashWaterLevel";
 import CustomSelectBox from '../components/CustomSelectBox';
@@ -10,8 +11,12 @@ import FetchFailed from '../components/FetchFailed';
 import { NowDate } from "../recoil/DateAtom";
 import { useRecoilValue } from "recoil";
 import { formatDate } from "../utils/dateUtils";
+import { toast } from 'react-toastify';
+import CustomToast from "../components/ui/CustomToast";
 
 export default function Dashboard() {
+  const location = useLocation();
+
   const [selected, setSelected] = useState({ label: "D 배수지", value: "D" });
   const [selectedModel, setSelectedModel] = useState("xgb");
 
@@ -31,23 +36,54 @@ export default function Dashboard() {
 
   // const loadingSpinner = <div className='w-full h-full flex justify-center items-center'><img className="size-[10vw]" src='/images/loadingSpinner.gif' /></div>
   const todayDate = (useRecoilValue(NowDate));
+  // const [currentDate, setCurrentDate] = useState(new Date(todayDate));
+  const currentDateRef = useRef(new Date(todayDate)); // useRef 사용하여 리렌더링 방지
+
+  // useEffect(() => {
+  //   fetchData1st(formatDate(todayDate));
+  //   fetchData2nd(formatDate(todayDate));
+  //   // fetchData3rd(formatDate(todayDate));
+  //   setSelectedModel("xgb");
+
+  //   // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
+  //   // const hours = "10";
+  //   // fetchData(`2023-10-21T${hours}:00`);
+  // }, []);
+
+
+  // 1분 간격 fetch 버전
   useEffect(() => {
+    // 최초 실행: 초기 데이터 fetch 및 모델 설정
     fetchData1st(formatDate(todayDate));
-    fetchData2nd(formatDate(todayDate));
-    // fetchData3rd(formatDate(todayDate));
+    fetchData2nd(formatDate(currentDateRef.current));
     setSelectedModel("xgb");
 
-    // ============= 💥 원하는 시간으로 패치해보고 싶을 때 ==================
-    // const hours = "10";
-    // fetchData(`2023-10-21T${hours}:00`);
-  }, []);
+    const interval = setInterval(() => {
+      console.log("💥💥1분 업데이트");
+      currentDateRef.current.setHours(currentDateRef.current.getHours() + 1); // 1시간 증가
+      fetchData1st(formatDate(currentDateRef.current));
+    }, 60000); // 1분(60초)마다 실행
 
-  useEffect(()=>{
+    return () => clearInterval(interval); // 언마운트 시 인터벌 정리
+  }, []); // 최초 실행은 한 번만
+
+  // 비밀번호 변경 후 이동한 경우 토스트 띄우기
+  useEffect(() => {
+    if (location.state?.passwordChanged) {
+      toast(<CustomToast msg={[`비밀번호가 성공적으로 변경되었습니다.`]} type={"dark"} icon={"success"} />, {
+        autoClose: 2000, // 2초 후 자동 닫힘
+        position: "bottom-center"
+      });
+    }
+  }, [location.state]);
+
+
+  useEffect(() => {
     // console.log("🌊 [DashBoard] selected :", selected.value);
-    if(!selectedModel)  return;
+    if (!selectedModel) return;
     fetchData2nd(formatDate(todayDate));
     fetchData3rd(formatDate(todayDate));
-  },[selectedModel, selected]);
+  }, [selectedModel, selected]);
 
   useEffect(() => {
     options.sort((a, b) => a.value.localeCompare(b.value)); // value기준 오름차순 정렬
@@ -116,9 +152,9 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("🌊 [DashBoard] section2Data 데이터 :", section2Data);
-  },[section2Data]);
+  }, [section2Data]);
 
   const fetchData2nd = async (date) => {
     const controller = new AbortController();
@@ -132,8 +168,8 @@ export default function Dashboard() {
       });
       clearTimeout(timeoutId); // 응답이 오면 타이머 제거
 
-      if (!resp.ok)   throw new Error(`HTTP error! Status: ${resp.status}`);
-      
+      if (!resp.ok) throw new Error(`HTTP error! Status: ${resp.status}`);
+
       const data = await resp.json();
       console.log("🌊 [DashBoard] 이전 데이터 :", data);
       setSection3Data(data);
@@ -186,7 +222,7 @@ export default function Dashboard() {
         </div>
         <section className="px-10 pb-10 pt-6 w-full h-full">
           {
-            loading ? <LoadingSpinner /> :
+            // loading ? <LoadingSpinner /> :
               isfetchFailed ? <FetchFailed msg={"대시보드"} />
                 :
                 <div className="w-full h-full rounded-lg flex flex-col">

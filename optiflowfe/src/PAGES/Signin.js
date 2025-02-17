@@ -1,7 +1,5 @@
 import "../css/signin.css";
 import "../css/videoStyle.css"; 
-
-import loginBG from "../assets/images/loginBG.png";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -31,7 +29,7 @@ export default function Signin() {
 
   //로그인 처리
   const handleClick = () => {
-    console.log("click");
+    // console.log("click");
     fetchLogoin();
   };
 
@@ -80,7 +78,7 @@ export default function Signin() {
         setRole(userRole);
 
         // console.log("login 성공");
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       } else {
         console.log("Authorization header not found");
         alert("로그인에 실패하였습니다. ID 또는 Password를 다시 확인해주세요.");

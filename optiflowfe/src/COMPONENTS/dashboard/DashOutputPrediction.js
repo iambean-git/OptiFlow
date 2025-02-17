@@ -99,8 +99,10 @@ export default function DashOutputPrediction({ data, setModel }) {
 
                 yaxis: [
                     {
-                        min: Math.min(...chartValuePrediction, ...chartValueOptiflow),  // 유출량 & 유입량 최소값
+                        // min: Math.min(...chartValuePrediction, ...chartValueOptiflow),  // 유출량 & 유입량 최소값
                         max: Math.max(...chartValuePrediction, ...chartValueOptiflow),  // 유출량 & 유입량 최대값
+                        min: 0,
+                        // max: 300,                        
                         labels: {
                             formatter: function (value) {
                                 return Math.round(value) + "";  // Y축에서 소수점 제거
@@ -110,8 +112,10 @@ export default function DashOutputPrediction({ data, setModel }) {
                     },
                     {
                         labels: { show: false }, // 레이블 숨김
-                        min: Math.min(...chartValuePrediction, ...chartValueOptiflow),  // 유출량 & 유입량 최소값
+                        // min: Math.min(...chartValuePrediction, ...chartValueOptiflow),  // 유출량 & 유입량 최소값
                         max: Math.max(...chartValuePrediction, ...chartValueOptiflow),  // 유출량 & 유입량 최대값
+                        min: 0,
+                        // max: 300,  
 
                     },
                     {
