@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import CustomToast from "../components/ui/CustomToast";
 
 export default function Dashboard() {
+  const server = process.env.REACT_APP_SERVER_ADDR;
   const location = useLocation();
 
   const [selected, setSelected] = useState({ label: "D 배수지", value: "D" });
@@ -34,7 +35,6 @@ export default function Dashboard() {
 
   const [error, setError] = useState(null); // 에러 상태 저장
 
-  // const loadingSpinner = <div className='w-full h-full flex justify-center items-center'><img className="size-[10vw]" src='/images/loadingSpinner.gif' /></div>
   const todayDate = (useRecoilValue(NowDate));
   // const [currentDate, setCurrentDate] = useState(new Date(todayDate));
   const currentDateRef = useRef(new Date(todayDate)); // useRef 사용하여 리렌더링 방지
@@ -90,8 +90,6 @@ export default function Dashboard() {
     // console.log("🌊 [DashBoard] options :", options);
   }, [options]);
 
-
-
   useEffect(() => {
     if (!waterDetailInfo) return;
     setSection2Data(waterDetailInfo[selected.value]);
@@ -99,14 +97,12 @@ export default function Dashboard() {
 
 
   const fetchData1st = async (date) => {
-    console.log("🌊 [DashBoard] fetchData1st 실행 :");
     setLoading(true);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
     try {
-      const url = `http://10.125.121.226:8080/api/reservoirdata/${date}`;
-      console.log("🌊 [DashBoard] fetch :");
+      const url = `${server}/api/reservoirdata/${date}`;
       const response = await fetch(url, {
         signal: controller.signal,
       });
@@ -116,7 +112,7 @@ export default function Dashboard() {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
       const data = await response.json();
-      console.log("🌊 [DashBoard] 수위 데이터 :", data);
+      // console.log("🌊 [DashBoard] 수위 데이터 :", data);
 
       const section1_data = [];
       const ops = [];
@@ -137,7 +133,7 @@ export default function Dashboard() {
         };
       });
 
-      console.log("🌊 [DashBoard] section1_data 데이터 :", section1_data);
+      // console.log("🌊 [DashBoard] section1_data 데이터 :", section1_data);
 
       setSection1Data(section1_data);
       setOptions(ops);
@@ -153,7 +149,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    console.log("🌊 [DashBoard] section2Data 데이터 :", section2Data);
+    // console.log("🌊 [DashBoard] section2Data 데이터 :", section2Data);
   }, [section2Data]);
 
   const fetchData2nd = async (date) => {
@@ -162,7 +158,7 @@ export default function Dashboard() {
 
     //이전 데이터
     try {
-      const url = `http://10.125.121.226:8080/api/reservoirdata/${selected.value.toLowerCase()}/${date}`;
+      const url = `${server}/api/reservoirdata/${selected.value.toLowerCase()}/${date}`;
       const resp = await fetch(url, {
         signal: controller.signal,
       });
@@ -171,7 +167,7 @@ export default function Dashboard() {
       if (!resp.ok) throw new Error(`HTTP error! Status: ${resp.status}`);
 
       const data = await resp.json();
-      console.log("🌊 [DashBoard] 이전 데이터 :", data);
+      // console.log("🌊 [DashBoard] 이전 데이터 :", data);
       setSection3Data(data);
 
     } catch (err) {
@@ -185,7 +181,7 @@ export default function Dashboard() {
     const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
     try {
-      const url = `http://10.125.121.226:8080/api/predict/${selectedModel}/${selected.value.toLowerCase()}/${date}`;
+      const url = `${server}/api/predict/${selectedModel}/${selected.value.toLowerCase()}/${date}`;
       console.log("예측 데이터 패치 url :", url);
       const resp = await fetch(url, {
         signal: controller.signal,

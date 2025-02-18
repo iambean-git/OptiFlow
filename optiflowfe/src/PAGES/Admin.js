@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import CustomToast from "../components/ui/CustomToast";
 
 export default function Admin() {
+    const server = process.env.REACT_APP_SERVER_ADDR;
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null); // 에러 상태 저장
     const [inquiriesList, setInquiriesList] = useState([]);
@@ -27,7 +29,7 @@ export default function Admin() {
         const timeoutId = setTimeout(() => controller.abort(), 2000); // 2초 후 요청 중단
 
         try {
-            const url = `http://10.125.121.226:8080/api/inquiries`;
+            const url = `${server}/api/inquiries`;
             const response = await fetch(url, {
                 signal: controller.signal,
             });
@@ -48,7 +50,7 @@ export default function Admin() {
     };
 
     const handleClickRow = (selectedInquiry) => {
-        console.log(selectedInquiry.inquiryId + "번 문의 클릭");
+        // console.log(selectedInquiry.inquiryId + "번 문의 클릭");
         setSelectedData(selectedInquiry);
         // 선택된 행이 이미 확인된 경우 변경하지 않음
         if (selectedInquiry.staffConfirmed) return;
@@ -66,7 +68,7 @@ export default function Admin() {
 
     const updateInquiryConfirmed = async (inquiryId) => {
         try {
-            const response = await fetch(`http://10.125.121.226:8080/api/inquiries/confirm/${inquiryId}`, {
+            const response = await fetch(`${server}/api/inquiries/confirm/${inquiryId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -74,7 +76,7 @@ export default function Admin() {
             });
 
             if (!response.ok) throw new Error(`updateInquiryConfirmed 실패! 상태 코드: ${response.status}`);
-            console.log(`✅ 문의 ${inquiryId}번 confirmed 업데이트 완료`);
+            // console.log(`✅ 문의 ${inquiryId}번 confirmed 업데이트 완료`);
         } catch (err) {
             console.error("❌ updateInquiryConfirmed 중 오류 발생:", err);
         }
@@ -85,16 +87,14 @@ export default function Admin() {
         if (selectedData.approved) return;
         // 서버에 업데이트 요청
         try {
-            const response = await fetch(`http://10.125.121.226:8080/api/inquiries/approve/${inquiryId}`, {
+            const response = await fetch(`${server}/api/inquiries/approve/${inquiryId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 }
             });
-
             if (!response.ok) throw new Error(`updateInquiryApproved 실패! 상태 코드: ${response.status}`);
-
-            console.log(`✅ 문의 ${inquiryId}번 approved 업데이트 완료`);
+            // console.log(`✅ 문의 ${inquiryId}번 approved 업데이트 완료`);
         } catch (err) {
             console.error("❌ updateInquiryApproved 중 오류 발생:", err);
         }

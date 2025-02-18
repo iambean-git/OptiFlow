@@ -1,4 +1,3 @@
-
 import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
 
@@ -7,6 +6,8 @@ import WaterOutFlowGraph from "../components/graph/WaterOutFlowGraph";
 import DatePickerWithOption from "../components/datepicker/DatePickerWithOption";
 import CostPredictGraph from "../components/graph/CostPredictGraph";
 export default function Regions() {
+  const server = process.env.REACT_APP_SERVER_ADDR;
+
   const dateOptions = { hourly: "시간별", daily: "일별", monthly: "월별" };
   const dateAVGOptions = { hourly: "시간별", daily: "일 평균", monthly: "월 평균" };
 
@@ -28,13 +29,12 @@ export default function Regions() {
 
   // 배수지별 유출량 데이터
   const fetchWaterOutFlowData = async () => {
-    const url = `http://10.125.121.226:8080/api/reservoirdata/${dateOption.option}/${dateOption.selectedValue}/${graphTitle.toLowerCase()}`;
+    const url = `${server}/api/reservoirdata/${dateOption.option}/${dateOption.selectedValue}/${graphTitle.toLowerCase()}`;
 
-    // const url1 = `http://10.125.121.226:8080/api/${dateOption.option}water/j/${dateOption.selectedValue}`;
     const url1 = ((dateOption.option) === "hourly" ?
-      `http://10.125.121.226:8080/api/predict/lstm/${graphTitle.toLowerCase()}/${dateOption.selectedValue}T00:00:00`
+      `${server}/api/predict/lstm/${graphTitle.toLowerCase()}/${dateOption.selectedValue}T00:00:00`
       :
-      `http://10.125.121.226:8080/api/${dateOption.option}water/${graphTitle.toLowerCase()}/${dateOption.selectedValue}`
+      `${server}/api/${dateOption.option}water/${graphTitle.toLowerCase()}/${dateOption.selectedValue}`
     );
     const resp = await fetch(url); const resp1 = await fetch(url1);
     const data = await resp.json(); const data1 = await resp1.json();
@@ -59,12 +59,11 @@ export default function Regions() {
 
     try {
       const url = ((dateOption.option) === "hourly" ?
-        `http://10.125.121.226:8080/api/hourlycost/${graphTitle.toLowerCase()}/${dateOption.selectedValue}T00:00:00`
+        `${server}/api/hourlycost/${graphTitle.toLowerCase()}/${dateOption.selectedValue}T00:00:00`
         :
-        `http://10.125.121.226:8080/api/${dateOption.option}cost/${graphTitle.toLowerCase()}/${dateOption.selectedValue}`
+        `${server}/api/${dateOption.option}cost/${graphTitle.toLowerCase()}/${dateOption.selectedValue}`
       );
       // console.log("⚡ [Regions] 전기요금 url :", url);
-
 
       const response = await fetch(url, {
         signal: controller.signal,

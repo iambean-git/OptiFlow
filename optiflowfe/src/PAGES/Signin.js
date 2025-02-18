@@ -7,6 +7,7 @@ import { useSetRecoilState } from "recoil";
 import { loginToken, userName, userRole } from "../recoil/LoginAtom";
 
 export default function Signin() {
+  const server = process.env.REACT_APP_SERVER_ADDR;
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [pwd, setPwd] = useState("");
@@ -41,7 +42,7 @@ export default function Signin() {
   };
 
   const fetchLogoin = async () => {
-    const url = "http://10.125.121.226:8080/login";
+    const url = `${server}/login`;
 
     const loginData = {
       method: "POST",
