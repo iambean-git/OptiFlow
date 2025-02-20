@@ -2,7 +2,6 @@ package com.optiflow.persistence;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +23,7 @@ public interface ReservoirDataRepository extends JpaRepository<ReservoirData,Res
     
 	List<ReservoirData> findByObservationTime(LocalDateTime observationTime);
 	List<ReservoirData> findByReservoirIdAndObservationTimeBetween(Reservoir reservoirId, LocalDateTime startTime, LocalDateTime endTime);
+	
 	@Query(value = "SELECT " +
             "DATE_FORMAT(rd.observation_time, '%Y-%m-%d') AS observationTime, " +
             "r.reservoir_id AS reservoirId, " +

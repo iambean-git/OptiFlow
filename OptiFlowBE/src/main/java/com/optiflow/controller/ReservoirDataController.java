@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.optiflow.domain.Reservoir;
 import com.optiflow.domain.ReservoirData;
-import com.optiflow.dto.ReservoirStats;
 import com.optiflow.persistence.ReservoirRepository;
 import com.optiflow.service.ReservoirDataService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/reservoirdata")
+@Tag(name = "ReservoirData API", description = "배수지 관련 데이터 API")
 public class ReservoirDataController {
 
 	@Autowired
@@ -36,7 +38,7 @@ public class ReservoirDataController {
 			@PathVariable String datetime) {
 		
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
-		if (!reservoirOptional.isPresent()) { // 없을 경우 404 에러 반환
+		if (!reservoirOptional.isPresent()) { 
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Reservoir reservoir = reservoirOptional.get();
@@ -77,20 +79,20 @@ public class ReservoirDataController {
 	}
 
 	@GetMapping("/daily/{reservoirName}")
-	public ResponseEntity<List<ReservoirStats>> getDailyStatsByReservoirId(@PathVariable String reservoirName) {
+	public ResponseEntity<Map<String, List<?>>> getDailyStatsByReservoirId(@PathVariable String reservoirName) {
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
 		
         if (!reservoirOptional.isPresent()) { // 없을 경우 404 에러 반환
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
         }
         int reservoirId = reservoirOptional.get().getReservoirId();
-		List<ReservoirStats> stats = reservoirDataService.findDailyStatsByReservoirId(reservoirId);
+        Map<String, List<?>> stats = reservoirDataService.findDailyStatsByReservoirId(reservoirId);
 		return new ResponseEntity<>(stats, HttpStatus.OK);
 	}
 
 	 // 시간별 통계 (일별 기준)
     @GetMapping("/hourly/{date}/{reservoirName}") 
-    public ResponseEntity<List<ReservoirStats>> findHourlyStatsByDailyObservationTimeAndReservoirId(
+    public ResponseEntity<Map<String, List<?>>> findHourlyStatsByDailyObservationTimeAndReservoirId(
             @PathVariable String date,
             @PathVariable String reservoirName) {
     	
@@ -99,13 +101,13 @@ public class ReservoirDataController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
         }
         int reservoirId = reservoirOptional.get().getReservoirId();
-        List<ReservoirStats> stats = reservoirDataService.findHourlyStatsByDailyObservationTimeAndReservoirId(date, reservoirId);
+        Map<String, List<?>> stats = reservoirDataService.findHourlyStatsByDailyObservationTimeAndReservoirId(date, reservoirId);
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
     // 일별 통계 (월별 기준)
     @GetMapping("/daily/{month}/{reservoirName}")
-    public ResponseEntity<List<ReservoirStats>> findDailyStatsByMonthlyObservationTimeAndReservoirId(
+    public ResponseEntity<Map<String, List<?>>> findDailyStatsByMonthlyObservationTimeAndReservoirId(
             @PathVariable String month,
             @PathVariable String reservoirName) {
     	
@@ -114,13 +116,13 @@ public class ReservoirDataController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         int reservoirId = reservoirOptional.get().getReservoirId();
-        List<ReservoirStats> stats = reservoirDataService.findDailyStatsByMonthlyObservationTimeAndReservoirId(month, reservoirId);
+        Map<String, List<?>> stats = reservoirDataService.findDailyStatsByMonthlyObservationTimeAndReservoirId(month, reservoirId);
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 
     // 월별 통계 (년별 기준)
     @GetMapping("/monthly/{year}/{reservoirName}") 
-    public ResponseEntity<List<ReservoirStats>> findMonthlyStatsByYearlyObservationTimeAndReservoirId(
+    public ResponseEntity<Map<String, List<?>>> findMonthlyStatsByYearlyObservationTimeAndReservoirId(
             @PathVariable String year,
             @PathVariable String reservoirName) {
     	
@@ -129,7 +131,7 @@ public class ReservoirDataController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         int reservoirId = reservoirOptional.get().getReservoirId();
-        List<ReservoirStats> stats = reservoirDataService.findMonthlyStatsByYearlyObservationTimeAndReservoirId(year, reservoirId);
+        Map<String, List<?>> stats = reservoirDataService.findMonthlyStatsByYearlyObservationTimeAndReservoirId(year, reservoirId);
         return new ResponseEntity<>(stats, HttpStatus.OK);
     }
 }
