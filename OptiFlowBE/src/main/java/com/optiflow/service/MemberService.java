@@ -62,7 +62,7 @@ public class MemberService {
 
         String encodedNewPassword = encoder.encode(requestDto.getNewpw());
         member.setPassword(encodedNewPassword);
-        memberRepo.save(member); // Transactional 어노테이션으로 인해 save() 생략 가능하지만 명시적으로 작성
+        memberRepo.save(member);
     }
 
 }

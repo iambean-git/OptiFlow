@@ -38,7 +38,7 @@ public class ReservoirDataController {
 			@PathVariable String datetime) {
 		
 		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(reservoirName);
-		if (!reservoirOptional.isPresent()) { // 없을 경우 404 에러 반환
+		if (!reservoirOptional.isPresent()) { 
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Reservoir reservoir = reservoirOptional.get();

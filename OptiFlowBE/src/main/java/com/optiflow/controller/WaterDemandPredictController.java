@@ -94,13 +94,3 @@ public class WaterDemandPredictController {
     }
 
 }
-
-//	@PostMapping("/save")
-//    public ResponseEntity<Predict> savePredict(@RequestBody Predict predict) {
-//		System.out.println("Received from fastAPI: " + predict);
-//        // 받은 모델 데이터를 DB에 저장
-//		Optional<Reservoir> reservoirOptional = reservoirRepo.findByName(predict.getReservoirId());
-//		int reservoirId = reservoirOptional.get().getReservoirId();
-//		Predict savedPredict = predictService.savePredict(predict.getDatetime(), predict.getPrediction(), predict.getOptiflow());
-//        return ResponseEntity.ok(savedPredict);
-//    }
