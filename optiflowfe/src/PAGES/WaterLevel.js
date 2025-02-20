@@ -11,22 +11,22 @@ import { maxDate10am } from "../recoil/DateAtom";
 import { useRecoilValue } from "recoil";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 export default function WaterLevel() {
+    const server = process.env.REACT_APP_SERVER_ADDR;
+
     const defaultDate = useRecoilValue(maxDate10am);
     const [selectedDate, setSelectedDate] = useState(defaultDate);
     const [waterFlowTag, setWaterFlowTag] = useState(LoadingSpinner);
 
     const [waterLevel, setWaterLevel] = useState('');
-    console.log("🔥[DashWaterInfo] 렌더링 : ");
 
     useEffect(() => {
         if (!selectedDate) return;
         // console.log("💥 formatDate 확인 : ", formatDate(selectedDate));
         const fetchWaterLevelData = async () => {
-            const url = `http://10.125.121.226:8080/api/reservoirdata/${formatDate(selectedDate)}`;
+            const url = `${server}/api/reservoirdata/${formatDate(selectedDate)}`;
             const resp = await fetch(url);
             const data = await resp.json();
-            console.log("🌊 [WaterLevel] 수위 데이터resp :", resp);
-            console.log("🌊 [WaterLevel] 수위 데이터 :", data);
+            // console.log("🌊 [WaterLevel] 수위 데이터 :", data);
 
             // 동일한 값이면 업데이트 방지
             if (JSON.stringify(data) === JSON.stringify(waterLevel)) {

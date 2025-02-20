@@ -5,8 +5,8 @@ import { userName } from "../recoil/LoginAtom";
 import { useRecoilValue } from "recoil";
 
 export default function MyPage() {
+  const server = process.env.REACT_APP_SERVER_ADDR;
   const navigate = useNavigate();
-
   const labelCss = "w-full h-6 mb-2";
   const inputCss =
     "w-full px-4 py-3 flex items-center border rounded-lg mb-[30px] focus:outline-none focus:ring-2";
@@ -33,7 +33,7 @@ export default function MyPage() {
     };
 
     try {
-      const url = `http://10.125.121.226:8080/api/members/password`;
+      const url = `${server}/api/members/password`;
       const response = await fetch(url, {
         signal: controller.signal,
         method: "PUT",
@@ -42,7 +42,7 @@ export default function MyPage() {
         },
         body: JSON.stringify(requestBody)
       });
-      console.log("💌[MyPage] 비밀번호 수정 response: ", response);
+      // console.log("💌[MyPage] 비밀번호 수정 response: ", response);
       clearTimeout(timeoutId); // 응답이 오면 타이머 제거
       if (!response.ok) {
         //기존 비밀번호 잘못 입력했을때 처리하기!!!! 

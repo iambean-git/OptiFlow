@@ -44,7 +44,7 @@ export default function AdminModal({ data, close, updatedApproved }) {
 
     const fetchMakeNewMember = async(fetechData) => {
         try {
-            const url = `http://10.125.121.226:8080/api/members`;
+            const url = `${process.env.REACT_APP_SERVER_ADDR}/api/members`;
             const postData = {
                 method: 'POST',
                 headers: {

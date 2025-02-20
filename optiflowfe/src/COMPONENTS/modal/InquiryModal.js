@@ -27,7 +27,7 @@ export default function InquiryModal({ open, close, data, isAdmin = false }) {
 
     const fetchPost = async () => {
         try {
-            const url = `http://10.125.121.226:8080/api/inquiries`;
+            const url = `${process.env.REACT_APP_SERVER_ADDR}/api/inquiries`;
             const postData = {
                 method: 'POST',
                 headers: {
