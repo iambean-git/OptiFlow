@@ -1,8 +1,8 @@
 # 💧 OPTIFLOW
 [K-Digital 부산대 8회차] AI 활용 빅데이터분석 풀스택웹서비스 SW 개발자 양성과정 AI학습모델 웹서비스 개발 프로젝트
 - **주제:** 상수도 시설 모니터링 및 배수지 수요량 예측을 통한 운영 최적화 
-
-![OPTIFLOW](./assets/thumbnail.jpg)
+[![OPTIFLOW](./assets/thumbnail.jpg)](https://www.youtube.com/watch?v=HKep8_t_vEM)
+** 위 이미지 클릭시 `시연영상`을 보실 수 있습니다.
 
 <br/>
 
@@ -12,11 +12,6 @@
 <br/>
 
 ## 👥 팀원 구성
-<!-- |이름|담당|GITHUB|
-|:------:|:---:|---|
-|조은빈|FRONT-END|[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/iambean-git)|
-|정원영|BACK-END|[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wonny725)|
-|윤찬희|DATA|[![이미지](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chanheeYun)| -->
 
 |조은빈|정원영|윤찬희|
 |:---:|:---:|:---:|
