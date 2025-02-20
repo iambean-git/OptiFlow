@@ -12,10 +12,10 @@ import lombok.Setter;
 @Getter @Setter
 public class ElectricityCostPredictResponseDto {
 	
-	@JsonProperty("truth") // JSON 키 "prediction" 과 매핑
+	@JsonProperty("truth") 
 	private List<ElectricityCostPredictItemDto> truth;
 	
-	@JsonProperty("optimization") // JSON 키 "prediction" 과 매핑
+	@JsonProperty("optimization")
 	private List<ElectricityCostPredictItemDto> optimization;
 
 	public ElectricityCostPredictResponseDto() {
