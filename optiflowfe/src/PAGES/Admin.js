@@ -39,7 +39,6 @@ export default function Admin() {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
             const data = await response.json();
-            // console.log("💌[Admin] 이용문의 확인 : ", data);
             setInquiriesList(data);
         } catch (err) {
             console.error("❌[Admin] fetchData 실패:", err);
@@ -50,7 +49,6 @@ export default function Admin() {
     };
 
     const handleClickRow = (selectedInquiry) => {
-        // console.log(selectedInquiry.inquiryId + "번 문의 클릭");
         setSelectedData(selectedInquiry);
         // 선택된 행이 이미 확인된 경우 변경하지 않음
         if (selectedInquiry.staffConfirmed) return;

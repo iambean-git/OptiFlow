@@ -1,17 +1,10 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RecoilRoot } from "recoil";
-import { toast, ToastContainer, Zoom } from "react-toastify";
+import { ToastContainer, Zoom } from "react-toastify";
 
 import ProtectedRoute from "./components/ProtectedRoute"; // ProtectedRoute 추가
 
-import "./css/fonts/Freesentation.css";
-import "./css/fonts/Pretendard.css";
-
 import "./css/fonts/SUIT.css";
-
-import Test from "./Test";
-import GraphTest from "./test/GraphTest";
-import FreeTest from "./test/FreeTest";
 
 import Signin from "./pages/Signin";
 import NotLogined from "./pages/NotLogined";
@@ -38,10 +31,6 @@ function App() {
         <Routes>
           <Route path="/*" element={<NotFound />} />
 
-          <Route path="/test" element={<Test />} />
-          <Route path="/graph" element={<GraphTest />} />
-          <Route path="/free" element={<FreeTest />} />
-
           <Route path="/login" element={<Signin />} />
           <Route path="/unauthorized" element={<NotLogined />} />
 
@@ -59,7 +48,6 @@ function App() {
           <Route element={<ProtectedRoute requiredRole="Role_Admin" />}>
             <Route path="/admin" element={<Admin />} />
           </Route>
-
 
         </Routes>
       </RecoilRoot>

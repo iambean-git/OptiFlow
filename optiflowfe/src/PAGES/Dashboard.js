@@ -182,6 +182,7 @@ export default function Dashboard() {
 
     try {
       const url = `${server}/api/predict/${selectedModel}/${selected.value.toLowerCase()}/${date}`;
+      // const url = `${server}/api/predict/${selectedModel}/${selected.value.toLowerCase()}/2023-10-21T00:00`;
       console.log("예측 데이터 패치 url :", url);
       const resp = await fetch(url, {
         signal: controller.signal,

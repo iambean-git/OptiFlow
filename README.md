@@ -44,7 +44,7 @@
 
 ## ⭐ Main Feature
 ### 1️⃣ 메인 화면
-<img src="./assets/capture/main1.gif" width="45%"  alt="main1" /> &nbsp; &nbsp; <img src="./assets/capture/main2.GIF" width="45%"  alt="main2" />
+<img src="./assets/capture/main1.GIF" width="45%"  alt="main1" /> &nbsp; &nbsp; <img src="./assets/capture/main2.GIF" width="45%"  alt="main2" />
 <img src="./assets/capture/main3.gif" width="45%"  alt="main3" /> &nbsp; &nbsp; <img src="./assets/capture/main4.GIF" width="45%"  alt="main4" />
 
 - Optiflow 주요 서비스 소개
@@ -62,11 +62,11 @@
 
 ### 3️⃣ 대시보드
 ![대시보드](./assets/capture/capture_dashboard.png)
-- 공통 : 아이콘 클릭 및 SelectBox를 통한 배수지 변경
-- 영역 1 : 전체 배수지 현재 수위 실시간 안내
-- 영역 2 : 선택된 배수지의 상세 정보 제공 (수위, 현재 저수량, 1시간 뒤 예상 저수량)
-- 영역 3 : 지난 24시간 유입량 및 유출량 확인
-- 영역 4 : 추후 24시간 예측 유출량 및 추천 유입량 안내 (XG Boost / LSTM 모델 변경 가능)
+- `공통` : 아이콘 클릭 및 SelectBox를 통한 배수지 변경
+- `영역 1` : 전체 배수지 `실시간 현재 수위 안내
+- `영역 2` : 선택된 배수지의 상세 정보 제공 (수위, 현재 저수량, 1시간 뒤 예상 저수량)
+- `영역 3` : 지난 24시간 유입량 및 유출량 확인
+- `영역 4` : 추후 24시간 예측 유출량 및 추천 유입량 안내 (XG Boost / LSTM 모델 변경 가능)
 
 <br>
 
@@ -84,16 +84,37 @@
     - 시각적 참고로 위해 가상으로 설치된 위치로, 실제 위치와 다를 수 있습니다.
 - 마커 클릭시, 선택되는 배수지 변경
 - 시간별, 일별, 월별 통계 정보를 볼 수 있음
-- 그래프 1 : 실제 유출량 및 AI모델로 예측된 유출량
-- 그래프 2 : 실측 기반 전기 사용량과 AI모델 사용시 예측 되는 전기 사용량
+- `그래프 1` : 실제 유출량 및 AI모델로 예측된 유출량
+- `그래프 2` : 실측 기반 전기 사용량과 AI모델 사용시 예측 되는 전기 사용량
 
 <br>
 
 ### 6️⃣ 관리자 페이지
-- 
+<img src="./assets/capture/capture_admin0.png" width="45%"  alt="admin0" /> &nbsp; <img src="./assets/capture/capture_admin.png" width="45%"  alt="admin1" />
+- `관리자 권한`으로 로그인시, `이용 문의 관리` 탭에 접근 가능
+- 해당 페이지에서는 이용 문의가 테이블 형태로 나타남
+- 하나의 문의 클릭시 우측에 상세 내역을 볼 수 있음
+- `"신규/승인대기/승인완료"` 3가지 상태로 구분하며, 신규 문의를 읽으면 자동으로 승인대기로 변경
+- `승인하기` 버튼 클릭 시, 임의 비밀번호 생성해 사용자에게 안내 메일 발송
+
+<br>
+
+### 6️⃣ 기타
+<img src="./assets/capture/capture_spinner.gif" width="31%"  alt="spinner" /> &nbsp; <img src="./assets/capture/capture_failed.png" width="31%"  alt="failed" /> &nbsp; <img src="./assets/capture/capture_404.png" width="31%"  alt="notfound" /> 
+- 데이터 로딩이 느려질 시, 스피너를 통해 로딩 화면 구현
+- 서버 통신 실패 등, 데이터 로드에 실패 시, 오류 페이지 처리
+- 잘못된 경로 접근시 404페이지
+
+
+<br>
 
 ## 🔨 Server Architecture
+<img src="./assets/architecture.png" width="75%"  alt="architecture" />
+
+<br>
 
 ## 📋 ERD
+
+<br>
 
 ## 📋 느낀점
