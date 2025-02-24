@@ -1,4 +1,4 @@
-import "../../css/videoStyle.css"; 
+import "../../css/videoStyle.css";
 import { useEffect, useRef, useState } from "react";
 
 export default function MainComponent2({ isvisible }) {
@@ -9,7 +9,7 @@ export default function MainComponent2({ isvisible }) {
       setTimeout(() => {
         setIsAnimated(true);
       }, 200); // 200ms(0.2초) 후 애니메이션 실행
-    } 
+    }
   }, [isvisible]);
 
   return (
@@ -30,7 +30,13 @@ export default function MainComponent2({ isvisible }) {
 
         <div className={`text-2xl mt-3 font-semibold `}>
           <p>어둠 속에서 빛나는 효율,</p>
-          <p>배수지의 수요 예측 및 심야 가동을 통한 비용 절감</p>
+          <p>
+            <span className="whitespace-nowrap">
+              배수지의 수요 예측
+            </span>
+            <span className="whitespace-nowrap">
+              및 심야 가동을 통한 비용 절감
+            </span> </p>
         </div>
         <div className="mt-10">
           <p>AI가 예측하고, 효율을 디자인하다.</p>

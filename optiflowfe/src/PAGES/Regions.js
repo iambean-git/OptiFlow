@@ -85,7 +85,7 @@ export default function Regions() {
     const containerOBJ = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
     setContainer(containerOBJ);
     const options = { //지도를 생성할 때 필요한 기본 옵션
-      center: new kakao.maps.LatLng(35.7992, 126.9260), //지도 첫 로드시 중심좌표.
+      center: new kakao.maps.LatLng(35.7992, 127), //지도 첫 로드시 중심좌표.
       level: 10 //지도의 레벨(확대, 축소 정도)
     };
 
@@ -179,7 +179,7 @@ export default function Regions() {
 
 
   return (
-    <div className="w-fit min-[1530px]:w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
+    <div className="w-full min-[1530px]:w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
       <NavBar />
       <div className="w-full h-screen pl-[260px] flex flex-col">
         <section className="w-full h-[160px] px-10 flex justify-between items-end">
@@ -194,14 +194,14 @@ export default function Regions() {
 
         <div className="px-10 pb-10 pt-6 w-full h-full flex">
           {/* ===== 지도 section ===== */}
-          <section className="w-full h-full min-w-[620px] pr-3 relative">
+          <section className="flex-grow h-full pr-3 relative">
             <p className="absolute bottom-2 right-5 z-10 text-xs bg-white bg-opacity-80 p-1 rounded-sm">지도에 표시된 정수장 및 배수지의 위치는 시각적 참고를 위해 설정된 가상의 위치로, 실제 위치와 다를 수 있습니다.</p>
             <div id="map" className="w-full h-full border rounded-lg"></div>
           </section>
 
           <div className="pl-3 w-fit">
             {/* ===== 그래프1 ===== */}
-            <section className="h-1/2 pb-4 w-[700px]">
+            <section className="h-1/2 pb-4 xl:w-[550px] 2xl:w-[700px]">
               <div className="w-full h-full border-black bg-white rounded-lg pt-6 px-6">
                 <div className='w-full flex justify-between items-end '>
                   <span>{graphData ? graphTitle : ""} 배수지 {dateOption && dateAVGOptions[dateOption.option]} 유출량</span>
@@ -213,7 +213,7 @@ export default function Regions() {
                       :
                       <div
                         style={{ backgroundImage: "url('/images/graph_capture_02.png')" }}
-                        className="bg-contain bg-center h-64 w-[90%] flex items-center justify-center
+                        className="bg-contain bg-no-repeat bg-center h-64 w-[90%] flex items-center justify-center
                                 text-gray-600 text-lg bg-white/80 bg-blend-overlay "
                       >
                         <span className="bg-white bg-opacity-80 rounded-lg ">날짜를 선택하세요</span>
@@ -224,7 +224,7 @@ export default function Regions() {
               </div>
             </section>
             {/* ===== 그래프2 ===== */}
-            <section className="h-1/2 pt-4 w-[700px]">
+            <section className="h-1/2 pt-4 xl:w-[550px] 2xl:w-[700px]">
               <div className="w-full h-full border-black bg-white rounded-lg pt-6 px-6">
                 <div className='w-full flex justify-between items-end '>
                   <span>{graphData ? graphTitle : ""} 배수지 {dateOption && dateOptions[dateOption.option]} 전기 사용량 비교</span>
@@ -237,7 +237,7 @@ export default function Regions() {
                       :
                       <div
                         style={{ backgroundImage: "url('/images/graph_capture_02.png')" }}
-                        className="bg-contain bg-center h-64 w-[90%] flex items-center justify-center
+                        className="bg-contain bg-no-repeat bg-center h-64 w-[90%] flex items-center justify-center
                                 text-gray-600 text-lg bg-white/80 bg-blend-overlay "
                       >
                         <span className="bg-white bg-opacity-80 rounded-lg ">날짜를 선택하세요</span>

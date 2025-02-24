@@ -13,9 +13,9 @@ export default function Admin() {
     const [inquiriesList, setInquiriesList] = useState([]);
     const [selectedData, setSelectedData] = useState(null);
 
-    const state_new = <span className="border rounded-md px-5 py-1 border-[#e53870] text-[#e53870]">new</span>;
-    const state_read = <span className="border rounded-md px-2 py-1 border-[#3a93ee] text-[#3a93ee]">승인 대기</span>;
-    const state_approved = <span className="border rounded-md px-2 py-1 border-[#4ba650] text-[#4ba650]">승인 완료</span>;
+    const state_new = <span className={`border rounded-md px-5 py-1 border-[#e53870] text-[#e53870]`}>new</span>;
+    const state_read = <span className={`border rounded-md px-1.5 2xl:px-2 py-1 border-[#3a93ee] text-[#3a93ee] ${selectedData ? "text-xs" : "text-sm"}`} >승인 대기</span>;
+    const state_approved = <span className={`border rounded-md px-1.5 2xl:px-2 py-1 border-[#4ba650] text-[#4ba650] ${selectedData ? "text-xs" : "text-sm"}`}>승인 완료</span>;
 
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -137,10 +137,10 @@ export default function Admin() {
                                     <th scope="col" className="text-center py-3">
                                         지역
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="px-2 2xl:px-6 py-3">
                                         메일
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="px-2 2xl:px-6 py-3">
                                         일시
                                     </th>
                                     <th scope="col" className="px-6 py-3">
@@ -161,10 +161,10 @@ export default function Admin() {
                                         onClick={() => { handleClickRow(i) }}
                                     >
                                         <td className="w-[3%] min-w-10 py-3 text-center">{idx + 1}</td>
-                                        <td className="w-[8%] min-w-16 text-center py-4">{i.name}</td>
-                                        <td className="w-[10%] min-w-20 text-center py-4">{i.location}</td>
-                                        <td className="px-6 py-4">{i.email}</td>
-                                        <td className="px-6 py-4">{formatTableDate(i.createdDt)}</td>
+                                        <td className="w-[5%] 2xl:w-[8%] min-w-16 text-center py-4">{i.name}</td>
+                                        <td className="w-[5%] 2xl:w-[10%] min-w-20 text-center py-4">{i.location}</td>
+                                        <td className="px-2 2xl:px-6 py-4">{i.email}</td>
+                                        <td className="px-2 2xl:px-6 py-4">{formatTableDate(i.createdDt)}</td>
                                         <td className="px-6 py-4">
                                             {modalOpen || i.inquiryDetails.length > 42 ? i.inquiryDetails.substr(0, 35) + "..." : i.inquiryDetails}
                                         </td>
@@ -179,7 +179,7 @@ export default function Admin() {
                     {/* 테이블 종료*/}
 
                     {/* 문의 상세 보기 */}
-                    <div className={`bg-white h-full w-1/4 shadow-md rounded-lg ${selectedData ? "block" : "hidden"}`}>
+                    <div className={`bg-white h-full xl:w-[30vw] 2xl:w-1/4 shadow-md rounded-lg ${selectedData ? "block" : "hidden"}`}>
                         <div className="w-full h-full rounded-lg">
                             <AdminModal data={selectedData} close={() => setSelectedData(null)} updatedApproved={updateInquiryApproved} />
                         </div>

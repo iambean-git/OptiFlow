@@ -68,7 +68,7 @@ export default function MyPage() {
     <div className="w-full min-w-[1000px] h-screen bg-[#f2f2f2]">
       <NavBar />
       <div className="w-full h-screen pl-[260px] flex flex-col justify-center items-center">
-        <div className="w-1/4 px-10 py-8 bg-white rounded-md flex flex-col items-center justify-center">
+        <div className="w-1/3 2xl:w-1/4 px-10 py-8 bg-white rounded-md flex flex-col items-center justify-center">
           <div className="w-full h-1/4 flex justify-center items-center text-2xl mb-10 text-[#3b82f6] font-semibold">
             비밀번호 변경
           </div>

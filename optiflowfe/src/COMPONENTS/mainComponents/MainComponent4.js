@@ -35,7 +35,7 @@ export default function MainComponent4({isvisible}) {
     <div className="main-component-container flex justify-center">
       <div className="w-full h-full flex flex-col  justify-center items-center">
         {/* ==========  3번째 영역 [] ========== */}
-        <section className={`w-[55%] grow flex justify-between items-center px-14  ${isAnimaged ? "animationSlideUp" : "opacity-0"}`}>
+        <section className={`w-[70%] 2xl:w-[55%] grow flex justify-between items-center px-14  ${isAnimaged ? "animationSlideUp" : "opacity-0"}`}>
           <img src="/images/mainImg/cap_waterflow.png" alt="dashboard"
             className="rounded-lg mr-12 h-1/2 shadow-xl border" />
           <div className={`flex flex-col justify-center`}>
@@ -66,7 +66,7 @@ export default function MainComponent4({isvisible}) {
         </section>
 
         <div className="w-full h-1/5 bg-[#eef2f9] flex justify-center ">
-          <div className="w-[55%] h-full flex flex-col justify-center items-center">
+          <div className="w-[70%] 2xl:w-[55%] h-full flex flex-col justify-center items-center">
             <p className="text-xl mb-5 font-semibold">
               OPTIFLOW와 함께 하세요.
             </p>

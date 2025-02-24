@@ -30,7 +30,7 @@ export default function MainComponent3({ isvisible }) {
         className="background-video opacity-30"
       />
 
-      <div className="w-[55%] h-full grid grid-rows-2 py-20 p-4 gap-10">
+      <div className="w-[70%] 2xl:w-[55%] h-full grid grid-rows-2 py-20 p-4 gap-10 ">
 
         {/* ==========  1번째 영역 [DASHBOARD] ========== */}
         <section className={`flex justify-between  ${isAnimaged ? "animationSlideUp" : "opacity-0"}`}>
