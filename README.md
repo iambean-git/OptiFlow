@@ -108,8 +108,51 @@
 
 <br>
 
-## 📋 배수량 예측 및 전기 요금 절약
+## 📋 배수량 예측 및 전기 요금 절감
+### 1️⃣ 배수지 유출량 예측 (LSTM 및 XG Boost)
+- 향후 `24시간` 유출량 예측 결과 모델별 비교
+<img src="./assets/data/predict_24h.png" width="100%"  alt="predict" />
 
 <br>
 
-## 📋 느낀점
+- 향후 `일주일(168시간)` 유출량 예측 결과 모델별 비교
+<img src="./assets/data/predict_168h.png" width="100%"  alt="predict" />
+
+<br>
+
+### 2️⃣ 전기요금 절감 알고리즘
+- 알고리즘 구성 과정
+
+    <img src="./assets/data/algorithm.png" width="80%"  alt="predict" />
+<br>
+
+- 시간대별 전기요금 정보를 반영한 유입량 결정
+
+    <img src="./assets/data/algorithm2.png" width="80%"  alt="predict" />
+    
+    - off-peak : 경부하 요금 적용 시간대
+    - mid-peak : 중간부하 요금 적용 시간대
+    - on-peak : 최대부하 요금 적용 시간대
+
+
+<br>
+
+
+
+
+<br>
+
+### 3️⃣ 프로젝트 결과
+
+<img src="./assets/data/result.png" width="80%"  alt="predict" />
+
+
+<br>
+
+- D배수지 시간별 전기 요금 ( 파랑 : 실측 기반 / 초록 : 예측 기반 )
+    + 약 8.93% 감소 (배수지별, 일자별 상이)
+
+    <img src="./assets/data/predict_hourly.png" width="80%"  alt="predict" />
+
+<br>
+
